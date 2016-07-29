@@ -1,11 +1,13 @@
-state = {
-  view: ''
-  game: ''
+var Map = require('./map/map.js');
+
+var state = {
+  view: '',
+  game: '',
   games:[]
 }
 window.onload= function(){
-  console.log('hello world') 
-  
+  map = new Map({lat:51.4700,lng:-0.4543}, 6)
+  map.bindClick();
 }
 
 var main = function(){
