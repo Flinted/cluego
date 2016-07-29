@@ -54,6 +54,8 @@
 	window.onload= function(){
 	  state.game = new Game();
 	  state.game.map.bindClick();
+	  state.game.ajax.go("GET", "/test")
+	  console.log(state.game.ajax.response)
 	}
 	
 	var main = function(){
@@ -159,10 +161,8 @@
 	      if (request.status === 200){
 	      var jsonString = request.responseText;
 	      this.response = JSON.parse(jsonString);}
-	      this.return();
 	    }.bind(this)
 	    request.send(null);
-	
 	  }
 	
 	}

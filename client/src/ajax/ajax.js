@@ -11,10 +11,8 @@ Ajax.prototype = {
       if (request.status === 200){
       var jsonString = request.responseText;
       this.response = JSON.parse(jsonString);}
-      this.return();
     }.bind(this)
     request.send(null);
-
   }
 
 }

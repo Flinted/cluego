@@ -14,6 +14,11 @@ app.get("/", function(req,res){
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
     })
 
+app.get("/test", function(req,res){
+  console.log("testing")
+  // res.sendFile(path.join(__dirname + '/client/build/index.html'));
+    })
+
 app.listen('3000', function(){
   console.log("run run running on 3000");
 })
