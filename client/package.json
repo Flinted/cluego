@@ -4,7 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "mocha specs"
+    "test": "mocha src/game/specs && mocha src/team/specs && mocha src/objective/specs"
   },
   "author": "",
   "license": "ISC"
