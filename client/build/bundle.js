@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Game = __webpack_require__(2);
+	var Game = __webpack_require__(1);
 	var View = __webpack_require__(4);
 	
 	var state = {
@@ -66,6 +66,74 @@
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Ajax = __webpack_require__(2);
+	var Map = __webpack_require__(3);
+	var View = __webpack_require__(4)
+	
+	var Game = function(){
+	  this.ajax = new Ajax();
+	  this.map = new Map({lat:51.4700,lng:-0.4543}, 6);
+	  this.objectives = [];
+	  this.teams = [];
+	  this.currentObj = '';
+	  this.state = "create"
+	}
+	
+	Game.prototype = {
+	  createObjective: function(input){
+	    // creates a new objective using form input
+	  },
+	
+	  addTeam: function(){
+	    // new up a team and add it to teams array
+	  },
+	
+	  updateCurrent: function(){
+	    // changes currentObj to next objective in array
+	  },
+	
+	  changeState: function(){
+	    if(this.state === "create"){
+	      this.state = "play";
+	    }else{
+	      this.state = "create";
+	    }
+	  },
+	
+	
+	}
+	
+	module.exports = Game;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	var Ajax = function(){
+	  this.response = ''
+	}
+	
+	Ajax.prototype = {
+	  go: function(type, route){
+	    var request = new XMLHttpRequest();
+	    request.open(type,route);
+	    request.setRequestHeader('Content-Type', 'application/json');
+	    request.onload = function(){
+	      if (request.status === 200){
+	      var jsonString = request.responseText;
+	      this.response = JSON.parse(jsonString);
+	    }
+	    }.bind(this)
+	    request.send(null);
+	  }
+	
+	}
+	module.exports = Ajax;
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 	var Map = function(latLng, zoom){
@@ -112,74 +180,6 @@
 
 
 /***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Ajax = __webpack_require__(3);
-	var Map = __webpack_require__(1);
-	var View = __webpack_require__(4)
-	
-	var Game = function(){
-	  this.ajax = new Ajax();
-	  this.map = new Map({lat:51.4700,lng:-0.4543}, 6);
-	  this.objectives = [];
-	  this.teams = [];
-	  this.currentObj = '';
-	  this.state = "create"
-	}
-	
-	Game.prototype = {
-	  createObjective: function(input){
-	    // creates a new objective using form input
-	  },
-	
-	  addTeam: function(){
-	    // new up a team and add it to teams array
-	  },
-	
-	  updateCurrent: function(){
-	    // changes currentObj to next objective in array
-	  },
-	
-	  changeState: function(){
-	    if(this.state === "create"){
-	      this.state = "play";
-	    }else{
-	      this.state = "create";
-	    }
-	  },
-	
-	
-	}
-	
-	module.exports = Game;
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	var Ajax = function(){
-	  this.response = ''
-	}
-	
-	Ajax.prototype = {
-	  go: function(type, route){
-	    var request = new XMLHttpRequest();
-	    request.open(type,route);
-	    request.setRequestHeader('Content-Type', 'application/json');
-	    request.onload = function(){
-	      if (request.status === 200){
-	      var jsonString = request.responseText;
-	      this.response = JSON.parse(jsonString);
-	    }
-	    }.bind(this)
-	    request.send(null);
-	  }
-	
-	}
-	module.exports = Ajax;
-
-/***/ },
 /* 4 */
 /***/ function(module, exports) {
 
@@ -217,17 +217,51 @@
 	  },
 	
 	  populateCreate: function(event){
+	
 	    var info = document.getElementById('info');
 	    info.innerHTML = "<h1>Create</h1>"
+	
 	    var p = document.createElement('p');
 	    p.innerHTML = "latitude:" + event.latLng.lat()
-	    var p2 = document.createElement('p');
-	    p2.innerHTML = "longitude:" + event.latLng.lng()
 	
+	    var p2 = document.createElement('p');
+	    p2.innerHTML = "longitude:" + event.latLng.lng();
+	
+	 //------------    form    ----------\\
+	    var form = document.createElement('form');
+	    var input = document.createElement('input');
+	    var button = document.createElement('input');
+	    var objective = document.getElementById( 'objective' );
+	    form.addEventListener('submit', function(event){
+	      event.preventDefault()
+	      handleSubmit(event)
+	    })
+	    
+	    input.type = "text";
+	    input.value = "input";
+	    // input.placeholder = "Add a question"
+	    button.type = "submit";
+	    button.value = "Submit";
+	    
+	    // form.action = console.log("yeah")
+	
+	    form.appendChild(input);
+	    form.appendChild(button);
+	    
+	
+	 //------------    form    ----------\\
+	
+	    info.appendChild(form);
 	    info.appendChild(p);
 	    info.appendChild(p2);
-	
 	  },
+	
+	  handleSubmit: function(form){
+	    //take information from the form 
+	    //and send to objectives.JS.
+	    console.log(form)
+	  },
+	
 	
 	  populatePlay: function(){
 	    var info = document.getElementById('info');
