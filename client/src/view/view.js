@@ -32,17 +32,51 @@ View.prototype = {
   },
 
   populateCreate: function(event){
+
     var info = document.getElementById('info');
     info.innerHTML = "<h1>Create</h1>"
+
     var p = document.createElement('p');
     p.innerHTML = "latitude:" + event.latLng.lat()
+
     var p2 = document.createElement('p');
-    p2.innerHTML = "longitude:" + event.latLng.lng()
+    p2.innerHTML = "longitude:" + event.latLng.lng();
+
+ //------------        form         ----------\\
+    
+    var form = document.createElement('form');
+    form.id = "objective";
+    var input = document.createElement('input');
+    input.type = "text";
+    input.value = "input";
+    var button = document.createElement('input');
+    button.type = "submit";
+    button.value = "Submit";
+    
+    
+
+    form.appendChild(input);
+    form.appendChild(button);
+    info.appendChild(form);
+    
+    var objective = document.getElementById( 'objective' );
+    objective.addEventListener('submit', function(event){
+      event.preventDefault()
+      this.handleSubmit(event)
+    }.bind(this))
+
+ //------------        form        ----------\\
 
     info.appendChild(p);
     info.appendChild(p2);
-
   },
+
+  handleSubmit: function(form){
+    //take information from the form 
+    //and send to objectives.JS.
+    console.log("yeah", form)
+  },
+
 
   populatePlay: function(){
     var info = document.getElementById('info');
