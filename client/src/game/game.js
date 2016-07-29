@@ -8,18 +8,29 @@ var Game = function(){
   this.objectives = [];
   this.teams = [];
   this.currentObj = '';
-  this.state = "create";
+  this.state = "create"
 }
 
 Game.prototype = {
-  createObjective: function(){
-
+  createObjective: function(input){
+    // creates a new objective using form input
   },
 
   addTeam: function(){
+    // new up a team and add it to teams array
+  },
 
-  
-  }
+  updateCurrent: function(){
+    // changes currentObj to next objective in array
+  },
+
+  changeState: function(){
+    if(this.state === "create"){
+      this.state = "play";
+    }else{
+      this.state = "create";
+    }
+  },
 
 
 }

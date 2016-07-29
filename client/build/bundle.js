@@ -55,7 +55,7 @@
 	window.onload= function(){
 	  state.game = new Game();
 	  state.view = new View(state.game);
-	  state.game.map.bindClick();
+	  state.view.initialise();
 	  // state.game.ajax.go("GET", "/test")
 	  // console.log(state.game.ajax.response)
 	}
@@ -99,12 +99,12 @@
 	      infoWindow.open( this.map, marker ) 
 	    })
 	  };
-	  // looks for clicks on map
-	  this.bindClick = function(){
-	    google.maps.event.addListener( this.googleMap, 'click', function(event){
-	      console.log('clicked')
-	    }.bind(this))
-	  };
+	  // // looks for clicks on map
+	  // this.bindClick = function(){
+	  //   google.maps.event.addListener( this.googleMap, 'click', function(event){
+	  //     if(this.state === "create"){console.log('createMode')}else{console.log("Playmode")}
+	  //   }.bind(this))
+	  // };
 	}
 	
 	
@@ -125,18 +125,29 @@
 	  this.objectives = [];
 	  this.teams = [];
 	  this.currentObj = '';
-	  this.state = "create";
+	  this.state = "create"
 	}
 	
 	Game.prototype = {
-	  createObjective: function(){
-	
+	  createObjective: function(input){
+	    // creates a new objective using form input
 	  },
 	
 	  addTeam: function(){
+	    // new up a team and add it to teams array
+	  },
 	
-	  
-	  }
+	  updateCurrent: function(){
+	    // changes currentObj to next objective in array
+	  },
+	
+	  changeState: function(){
+	    if(this.state === "create"){
+	      this.state = "play";
+	    }else{
+	      this.state = "create";
+	    }
+	  },
 	
 	
 	}
@@ -175,6 +186,45 @@
 	
 	var View = function(game){
 	  this.game = game;
+	}
+	
+	View.prototype = {
+	  initialise: function(){
+	    this.mapBindClick();
+	  },
+	
+	  // looks for clicks on map
+	  mapBindClick: function(){
+	    google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
+	      if(this.game.state === "create"){
+	        this.populateCreate(event);
+	        this.game.changeState();
+	      }else{
+	        this.populatePlay(event);
+	        this.game.changeState();
+	      }
+	    }.bind(this))
+	  },
+	
+	  populateCreate: function(event){
+	    var info = document.getElementById('info');
+	    info.innerHTML = "<h1>Create</h1>"
+	    var p = document.createElement('p');
+	    p.innerHTML = "latitude:" + event.latLng.lat()
+	    var p2 = document.createElement('p');
+	    p2.innerHTML = "longitude:" + event.latLng.lng()
+	
+	    info.appendChild(p);
+	    info.appendChild(p2);
+	
+	  },
+	
+	  populatePlay: function(){
+	    var info = document.getElementById('info');
+	    info.innerHTML = "<h1>Play</h1>"
+	  }
+	
+	
 	}
 	
 	module.exports = View;

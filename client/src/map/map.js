@@ -29,12 +29,12 @@ var Map = function(latLng, zoom){
       infoWindow.open( this.map, marker ) 
     })
   };
-  // looks for clicks on map
-  this.bindClick = function(){
-    google.maps.event.addListener( this.googleMap, 'click', function(event){
-      console.log('clicked')
-    }.bind(this))
-  };
+  // // looks for clicks on map
+  // this.bindClick = function(){
+  //   google.maps.event.addListener( this.googleMap, 'click', function(event){
+  //     if(this.state === "create"){console.log('createMode')}else{console.log("Playmode")}
+  //   }.bind(this))
+  // };
 }
 
 

@@ -9,7 +9,7 @@ var state = {
 window.onload= function(){
   state.game = new Game();
   state.view = new View(state.game);
-  state.game.map.bindClick();
+  state.view.initialise();
   // state.game.ajax.go("GET", "/test")
   // console.log(state.game.ajax.response)
 }
