@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Map = __webpack_require__(1);
+	var Game = __webpack_require__(2);
 	
 	var state = {
 	  view: '',
@@ -52,8 +52,8 @@
 	  games:[]
 	}
 	window.onload= function(){
-	  map = new Map({lat:51.4700,lng:-0.4543}, 6)
-	  map.bindClick();
+	  state.game = new Game();
+	  state.game.map.bindClick();
 	}
 	
 	var main = function(){
@@ -121,6 +121,62 @@
 	
 	module.exports = Map
 
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Ajax = __webpack_require__(3);
+	var Map = __webpack_require__(1);
+	var View = __webpack_require__(4)
+	
+	var Game = function(){
+	  this.ajax = new Ajax();
+	  this.map = new Map({lat:51.4700,lng:-0.4543}, 6);
+	  this.objectives = [];
+	  this.teams = [];
+	  this.currentObj = '';
+	  this.view = new View();
+	  this.state = "create";
+	}
+	
+	module.exports = Game;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	var Ajax = function(){
+	  this.response = ''
+	}
+	
+	Ajax.prototype = {
+	  go: function(type, route){
+	    var request = new XMLHttpRequest();
+	    request.open(type,route);
+	    request.setRequestHeader('Content-Type', 'application/json');
+	    request.onload = function(){
+	      if (request.status === 200){
+	      var jsonString = request.responseText;
+	      this.response = JSON.parse(jsonString);}
+	      this.return();
+	    }.bind(this)
+	    request.send(null);
+	
+	  }
+	
+	}
+	module.exports = Ajax;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	var View = function(){
+	
+	}
+	
+	module.exports = View;
 
 /***/ }
 /******/ ]);
