@@ -16,7 +16,7 @@ app.get("/", function(req,res){
 
 app.get("/test", function(req,res){
   console.log("testing")
-  // res.sendFile(path.join(__dirname + '/client/build/index.html'));
+  // res.status(200).end()
     })
 
 app.listen('3000', function(){

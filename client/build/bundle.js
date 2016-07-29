@@ -45,6 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(2);
+	var View = __webpack_require__(4);
 	
 	var state = {
 	  view: '',
@@ -53,29 +54,15 @@
 	}
 	window.onload= function(){
 	  state.game = new Game();
+	  state.view = new View(state.game);
 	  state.game.map.bindClick();
-	  state.game.ajax.go("GET", "/test")
-	  console.log(state.game.ajax.response)
+	  // state.game.ajax.go("GET", "/test")
+	  // console.log(state.game.ajax.response)
 	}
 	
 	var main = function(){
 	  
 	}
-	
-	
-	
-	
-	// SAMPLE JSON AJAX REQUEST
-	// var request = new XMLHttpRequest();
-	// request.open("GET","/bucketlist");
-	// request.setRequestHeader('Content-Type', 'application/json');
-	// request.onload = function(){
-	//   if (request.status === 200){
-	//     CODE HERE
-	//   }
-	// }.bind(this)
-	// request.send(null);
-
 
 /***/ },
 /* 1 */
@@ -138,8 +125,20 @@
 	  this.objectives = [];
 	  this.teams = [];
 	  this.currentObj = '';
-	  this.view = new View();
 	  this.state = "create";
+	}
+	
+	Game.prototype = {
+	  createObjective: function(){
+	
+	  },
+	
+	  addTeam: function(){
+	
+	  
+	  }
+	
+	
 	}
 	
 	module.exports = Game;
@@ -160,7 +159,8 @@
 	    request.onload = function(){
 	      if (request.status === 200){
 	      var jsonString = request.responseText;
-	      this.response = JSON.parse(jsonString);}
+	      this.response = JSON.parse(jsonString);
+	    }
 	    }.bind(this)
 	    request.send(null);
 	  }
@@ -172,8 +172,9 @@
 /* 4 */
 /***/ function(module, exports) {
 
-	var View = function(){
 	
+	var View = function(game){
+	  this.game = game;
 	}
 	
 	module.exports = View;

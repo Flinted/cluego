@@ -10,7 +10,8 @@ Ajax.prototype = {
     request.onload = function(){
       if (request.status === 200){
       var jsonString = request.responseText;
-      this.response = JSON.parse(jsonString);}
+      this.response = JSON.parse(jsonString);
+    }
     }.bind(this)
     request.send(null);
   }

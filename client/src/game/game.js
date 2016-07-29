@@ -8,8 +8,20 @@ var Game = function(){
   this.objectives = [];
   this.teams = [];
   this.currentObj = '';
-  this.view = new View();
   this.state = "create";
+}
+
+Game.prototype = {
+  createObjective: function(){
+
+  },
+
+  addTeam: function(){
+
+  
+  }
+
+
 }
 
 module.exports = Game;
