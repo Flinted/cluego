@@ -10,8 +10,8 @@ window.onload= function(){
   state.game = new Game();
   state.view = new View(state.game);
   state.view.initialise();
-  // state.game.ajax.go("GET", "/test")
-  // console.log(state.game.ajax.response)
+  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
+  state.game.map.addRectangle({lat:51.4700,lng:-0.4543}, 80)
 }
 
 var main = function(){

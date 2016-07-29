@@ -7,25 +7,29 @@ var Objective = function(params){
   this.found = [];
   this.foundMessage = params.foundMessage;
   this.points = 0;
-
 }
 
 Objective.prototype = {
   checkFound: function(latLng, team){
-
+    // should compare latLng of selection to coordinates latlng
+    // will need to factor in tolerance to see if correct 
+    // if found will need to addFound for the team and give points
   },
 
   giveHint: function(latLng, team){
     team.addPenalty(2)
-    if(this.hintCount >= this.hints.length){
+    this.hintCount +=1;
+
+    if(this.hintCount > this.hints.length){
       this.directionHint(latLng);
     }else{
-      this.hintcount +=1;
       return this.hints[this.hintCount-1];
     }
   },
 
   directionHint: function(latLng){
+
+    // should give an arrow directional hint that then dissapears
   },
 
   addFound: function(team){
