@@ -16,16 +16,26 @@ describe("Objective", function(){
   })
 
   it("Should create objective", function(){
-    assert.deepEqual("Clue1", objective.clue)
+    assert.deepEqual(objective.clue, "Clue1")
   })
-  
-
   
   it("Should add to found and give points", function(){
     objective.addFound(redteam)
     assert.deepEqual(redteam, objective.found[0])
-    assert.deepEqual(5, redteam.totalPoints())
+    assert.deepEqual(redteam.totalPoints(), 5)
+  })
+
+  it("Should give hints", function(){
+    objective.giveHint("latLng", redteam)
+    assert.deepEqual(objective.hintCount, 1)
+    assert.deepEqual(redteam.penalties, 2)
   })
   
+  it("should switch to directional hints when all used", function(){
+    assert.deepEqual(objective.giveHint("latLng", redteam),'hint1')
+    assert.deepEqual(objective.giveHint("latLng", redteam),'hint2')
+    assert.deepEqual(objective.giveHint("latLng", redteam),'hint3')
+    assert.equal(objective.giveHint("latLng", redteam), undefined)
+  })
 
 })
