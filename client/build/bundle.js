@@ -71,11 +71,11 @@
 	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: 50.0700, lng: -0.4543}, state.game.teams[0] )  
+	  state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
+	  
 	}
 	
 	var main = function(){
-	  
 	}
 
 /***/ },
@@ -422,10 +422,18 @@
 	    }
 	  },
 	
+	  // updates compass with bearing to next clue if not hints left
 	  directionHint: function(latLng){
-	    console.log(latLng, this.latLng)
-	    // console.log(google.maps.geometry.spherical.interpolate(latLng,this.latLng))
-	    // should give an arrow directional hint that then dissapears
+	    var marker1 = new google.maps.Marker({
+	          position:  latLng
+	        })
+	    var marker2 = new google.maps.Marker({
+	          position:  this.latLng
+	        })
+	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition())
+	
+	      var compassDisc = document.getElementById("compassDiscImg");
+	      compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
 	  },
 	
 	  // adds point with info to the given team
