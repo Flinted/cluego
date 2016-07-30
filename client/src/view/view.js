@@ -31,7 +31,7 @@ View.prototype = {
         this.populateCreate(event);
       }else{
         this.populatePlay(event);
-        console.log(this.game.currentObj.checkFound(event.latLng));
+        this.game.currentObj.checkFound(event.latLng);
       }
     }.bind(this))
   },
