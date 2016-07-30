@@ -12,11 +12,11 @@ View.prototype = {
   setButtons: function(){
     var create = document.getElementById('create');
     create.addEventListener('click',function(){
-      this.game.changeState();
+      this.game.changeToCreate();
     }.bind(this))
     var play = document.getElementById('play');
     play.addEventListener('click',function(){
-      this.game.changeState();
+      this.game.changeToPlay();
     }.bind(this))
   },
   

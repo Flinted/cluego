@@ -1,10 +1,11 @@
 var Ajax = require('../ajax/ajax.js');
 var Map = require('../map/map.js');
-var View = require('../view/view.js')
+var View = require('../view/view.js');
+var Team = require('../team/team.js');
 
 var Game = function(){
   this.ajax = new Ajax();
-  this.map = new Map({lat:51.4700,lng:-0.4543}, 6);
+  this.map = new Map({lat:51.4700,lng:-0.4543}, 10);
   this.objectives = [];
   this.teams = [];
   this.currentObj = this.objectives[0] || 0;
@@ -12,12 +13,16 @@ var Game = function(){
 }
 
 Game.prototype = {
-  createObjective: function(input){
     // creates a new objective using form input
+  createObjective: function(input){
+    var objective = new Objective(params);
+    this.objectives.push(objective);
   },
 
-  addTeam: function(){
     // new up a team and add it to the teams array
+  addTeam: function(name){
+    var team = new Team(name);
+    this.teams.push(team);
   },
 
   updateCurrent: function(){
@@ -30,13 +35,13 @@ Game.prototype = {
     })
   },
 
-  changeState: function(){
-    if(this.state === "create"){
+  changeToPlay: function(){
       this.state = "play";
-    }else{
-      this.state = "create";
-    }
   },
+
+  changeToCreate: function(){
+    this.state = "create"
+  }
 
 
 }
