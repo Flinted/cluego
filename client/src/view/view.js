@@ -18,6 +18,10 @@ View.prototype = {
     play.addEventListener('click',function(){
       this.game.changeToPlay();
     }.bind(this))
+    var toggle = document.getElementById('toggle');
+    toggle.addEventListener('click',function(){
+      this.game.map.toggleMarkers();
+    }.bind(this))
   },
   
   // looks for clicks on map
@@ -27,6 +31,7 @@ View.prototype = {
         this.populateCreate(event);
       }else{
         this.populatePlay(event);
+        console.log(this.game.currentObj.checkFound(event.latLng));
       }
     }.bind(this))
   },

@@ -10,7 +10,6 @@ var Map = function(latLng, zoom){
   this.infoWindow = new google.maps.InfoWindow({
     content: ""
   })
-
   this.markers = []
   this.circles = []
   this.path = ''
@@ -45,21 +44,18 @@ Map.prototype = {
     }.bind(this))
   },
   
-//   addRectangle: function(latLng, tolerance){new google.maps.Rectangle({
-//     strokeColor: 'black',
-//     strokeOpacity: 0.8,
-//     strokeWeight: 2,
-//     fillColor: 'wheat',
-//     fillOpacity: 0.35,
-//     map: this.googleMap,
-//     bounds: {
-//       north: 51.4705,
-//       south: 51.4695,
-//       east: -0.4535,
-//       west: -0.4551
-//     }
-//   });
-// },
+  // changes markers, paths and circles to visible or hidden
+  toggleMarkers: function(){
+    if(this.markers[0].visible === false){var setter = true}else{var setter = false}
+
+      for(marker of this.markers){
+        marker.setVisible(setter);
+      }
+      for(circle of this.circles){
+        circle.setVisible(setter);
+      }
+      this.path.setVisible(setter)
+    },
 
   // connects all markers in the array
   addPath: function(markers){
@@ -78,32 +74,33 @@ Map.prototype = {
     this.path.setMap(this.googleMap)
   },
 
+  // shows circle around marker based on tolerance
+  drawCircle: function(latLng, tolerance){ 
+    var circle = new google.maps.Circle({
+      strokeColor: 'black',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: 'wheat',
+      fillOpacity: 0.35,
+      map: this.googleMap,
+      center: latLng,
+      radius: tolerance
+    })
+    this.circles.push(circle);
+  },
 
-  addCircle: function(latLng, tolerance){ new google.maps.Circle({
-    strokeColor: 'black',
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillColor: 'wheat',
-    fillOpacity: 0.35,
-    map: this.googleMap,
-    center: latLng,
-    radius: tolerance
-  })
-},
-
-addArrow: function(){
-            // Create the polyline and add the symbol via the 'icons' property.
-            var line = new google.maps.Polyline({
-              path: [{lat: 22.291, lng: 153.027}, {lat: 18.291, lng: 153.027}],
-              icons: [{
-                icon: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                offset: '100%'
-              }],
-              map: this.googleMap
-            });
-          }
-
-        }
+  addArrow: function(){
+  // Create the polyline and add the symbol via the 'icons' property.
+    var line = new google.maps.Polyline({
+        path: [{lat: 22.291, lng: 153.027}, {lat: 18.291, lng: 153.027}],
+        icons: [{
+        icon: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        offset: '100%'
+        }],
+        map: this.googleMap
+        });
+      }
+  }
 
 
 

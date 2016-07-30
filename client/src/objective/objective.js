@@ -1,48 +1,36 @@
-var Objective = function(params){
+var Objective = function(params, map){
   this.clue = params.clue;
   this.hints =  params.hints;
+  this.googleMap= map
   this.hintCount = 0;
   this.latLng = params.latLng;
   this.tolerance =  params.tolerance;
   this.found = [];
   this.foundMessage = params.foundMessage;
   this.points = 0;
-  this.circle = params.circle;
-
-  // var latLng = this.marker.getPosition();
-  //    var center = this.circle.getCenter();
-  //    var radius = this.circle.getRadius();
-  //    if (this.circleBounds.contains(latLng) &&
-  //        (google.maps.geometry.spherical.computeDistanceBetween(latLng, center) <= radius)) {
-  //        this.lastMarkerPos = latLng;
-  //        this._geocodePosition(latLng);
+  this.circle = new google.maps.Circle({
+    map: this.googleMap,
+    center: this.latLng,
+    radius: this.tolerance,
+    visible: false
+  });
 }
 
 Objective.prototype = {
-  // creates a range using the tolerance and checks if given coords fall within this.
+  // checks if given coords fall within this.
   checkFound: function(latLng, team){
-    var lat = this.latLng.lat
-    var lng = this.latLng.lng
-    if(this.tolerance < 10){var toleranceConvert = "0.000" + this.tolerance}else{ var toleranceConvert = Number("0.0" + this.tolerance/10)}
-    var latRange = {upper: lat + toleranceConvert ,lower: lat - toleranceConvert}
-    var lngRange = {upper: lng + toleranceConvert ,lower: lng - toleranceConvert}
-
-    if(latLng.lat < latRange.upper && latLng.lat > latRange.lower && latLng.lng < lngRange.upper && latLng.lng >lngRange.lower ){
-      console.log("Success!")
-    }else{
-      console.log("Fail!")
+    if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
+        console.log('FOUND!');
+    } else {
+        console.log('NOTHING HERE!');
     }
-    // should compare latLng of selection to coordinates latlng
-    // will need to factor in tolerance to see if correct 
-    // if found will need to addFound for the team and give points
   },
-
 
   // returns next hint in the array or a directional hint if all used.  charges penalty for use
   giveHint: function(latLng, team){
     team.addPenalty(2)
     this.hintCount +=1;
-
+    console.log(latLng)
     if(this.hintCount > this.hints.length){
       this.directionHint(latLng);
     }else{
@@ -51,7 +39,8 @@ Objective.prototype = {
   },
 
   directionHint: function(latLng){
-
+    console.log(latLng, this.latLng)
+    // console.log(google.maps.geometry.spherical.interpolate(latLng,this.latLng))
     // should give an arrow directional hint that then dissapears
   },
 

@@ -46,7 +46,6 @@
 
 	var Game = __webpack_require__(1);
 	var View = __webpack_require__(4);
-	var Objective = __webpack_require__(5)
 	
 	var state = {
 	  view: '',
@@ -59,21 +58,20 @@
 	  state.view.initialise();
 	  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
 	  state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
-	  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4633})
-	  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4833})
 	  state.game.map.addPath();
-	  // state.game.map.addArrow();
-	  state.game.map.addCircle({lat:51.4700,lng:-0.4543}, 80)
-	  // state.game.objectives.push(new Objective({
-	  //     clue: "Clue1",
-	  //     hints: ['hint1', 'hint2', 'hint3'],
-	  //     latLng: {lat: 51.4700, lng: -0.4543},
-	  //     tolerance: 50,
-	  //     foundMessage: "Well Done"
-	  //   }))
-	  // state.game.objectives[0].checkFound({lat: 51.4700, lng: -0.4543})
-	  // state.game.objectives[0].checkFound({lat: 51.4000, lng: -0.4043})
-	  // state.game.objectives[0].checkFound({lat: 51.4749, lng: -0.4590})
+	  state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
+	  state.game.createObjective({
+	      clue: "Clue1",
+	      hints: ['hint1', 'hint2', 'hint3'],
+	      latLng: {lat: 51.4700, lng: -0.4543},
+	      tolerance: 50,
+	      foundMessage: "Well Done"
+	    })
+	  state.game.addTeam("testTeam")
+	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  state.game.currentObj.giveHint({lat: 50.0700, lng: -0.4543}, state.game.teams[0] )  
 	}
 	
 	var main = function(){
@@ -88,21 +86,24 @@
 	var Map = __webpack_require__(3);
 	var View = __webpack_require__(4);
 	var Team = __webpack_require__(6);
+	var Objective = __webpack_require__(5)
+	
 	
 	var Game = function(){
 	  this.ajax = new Ajax();
 	  this.map = new Map({lat:51.4700,lng:-0.4543}, 10);
 	  this.objectives = [];
 	  this.teams = [];
-	  this.currentObj = this.objectives[0] || 0;
+	  this.currentObj = 0;
 	  this.state = "create"
 	}
 	
 	Game.prototype = {
 	    // creates a new objective using form input
 	  createObjective: function(input){
-	    var objective = new Objective(params);
+	    var objective = new Objective(input, this.map.googleMap);
 	    this.objectives.push(objective);
+	    if(this.currentObj === 0){this.currentObj = objective}
 	  },
 	
 	    // new up a team and add it to the teams array
@@ -175,7 +176,6 @@
 	  this.infoWindow = new google.maps.InfoWindow({
 	    content: ""
 	  })
-	
 	  this.markers = []
 	  this.circles = []
 	  this.path = ''
@@ -210,21 +210,18 @@
 	    }.bind(this))
 	  },
 	  
-	//   addRectangle: function(latLng, tolerance){new google.maps.Rectangle({
-	//     strokeColor: 'black',
-	//     strokeOpacity: 0.8,
-	//     strokeWeight: 2,
-	//     fillColor: 'wheat',
-	//     fillOpacity: 0.35,
-	//     map: this.googleMap,
-	//     bounds: {
-	//       north: 51.4705,
-	//       south: 51.4695,
-	//       east: -0.4535,
-	//       west: -0.4551
-	//     }
-	//   });
-	// },
+	  // changes markers, paths and circles to visible or hidden
+	  toggleMarkers: function(){
+	    if(this.markers[0].visible === false){var setter = true}else{var setter = false}
+	
+	      for(marker of this.markers){
+	        marker.setVisible(setter);
+	      }
+	      for(circle of this.circles){
+	        circle.setVisible(setter);
+	      }
+	      this.path.setVisible(setter)
+	    },
 	
 	  // connects all markers in the array
 	  addPath: function(markers){
@@ -243,32 +240,33 @@
 	    this.path.setMap(this.googleMap)
 	  },
 	
+	  // shows circle around marker based on tolerance
+	  drawCircle: function(latLng, tolerance){ 
+	    var circle = new google.maps.Circle({
+	      strokeColor: 'black',
+	      strokeOpacity: 0.8,
+	      strokeWeight: 2,
+	      fillColor: 'wheat',
+	      fillOpacity: 0.35,
+	      map: this.googleMap,
+	      center: latLng,
+	      radius: tolerance
+	    })
+	    this.circles.push(circle);
+	  },
 	
-	  addCircle: function(latLng, tolerance){ new google.maps.Circle({
-	    strokeColor: 'black',
-	    strokeOpacity: 0.8,
-	    strokeWeight: 2,
-	    fillColor: 'wheat',
-	    fillOpacity: 0.35,
-	    map: this.googleMap,
-	    center: latLng,
-	    radius: tolerance
-	  })
-	},
-	
-	addArrow: function(){
-	            // Create the polyline and add the symbol via the 'icons' property.
-	            var line = new google.maps.Polyline({
-	              path: [{lat: 22.291, lng: 153.027}, {lat: 18.291, lng: 153.027}],
-	              icons: [{
-	                icon: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-	                offset: '100%'
-	              }],
-	              map: this.googleMap
-	            });
-	          }
-	
-	        }
+	  addArrow: function(){
+	  // Create the polyline and add the symbol via the 'icons' property.
+	    var line = new google.maps.Polyline({
+	        path: [{lat: 22.291, lng: 153.027}, {lat: 18.291, lng: 153.027}],
+	        icons: [{
+	        icon: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+	        offset: '100%'
+	        }],
+	        map: this.googleMap
+	        });
+	      }
+	  }
 	
 	
 	
@@ -299,6 +297,10 @@
 	    play.addEventListener('click',function(){
 	      this.game.changeToPlay();
 	    }.bind(this))
+	    var toggle = document.getElementById('toggle');
+	    toggle.addEventListener('click',function(){
+	      this.game.map.toggleMarkers();
+	    }.bind(this))
 	  },
 	  
 	  // looks for clicks on map
@@ -308,6 +310,7 @@
 	        this.populateCreate(event);
 	      }else{
 	        this.populatePlay(event);
+	        console.log(this.game.currentObj.checkFound(event.latLng));
 	      }
 	    }.bind(this))
 	  },
@@ -379,51 +382,39 @@
 /* 5 */
 /***/ function(module, exports) {
 
-	var Objective = function(params){
+	var Objective = function(params, map){
 	  this.clue = params.clue;
 	  this.hints =  params.hints;
+	  this.googleMap= map
 	  this.hintCount = 0;
 	  this.latLng = params.latLng;
 	  this.tolerance =  params.tolerance;
 	  this.found = [];
 	  this.foundMessage = params.foundMessage;
 	  this.points = 0;
-	  this.circle = params.circle;
-	
-	  // var latLng = this.marker.getPosition();
-	  //    var center = this.circle.getCenter();
-	  //    var radius = this.circle.getRadius();
-	  //    if (this.circleBounds.contains(latLng) &&
-	  //        (google.maps.geometry.spherical.computeDistanceBetween(latLng, center) <= radius)) {
-	  //        this.lastMarkerPos = latLng;
-	  //        this._geocodePosition(latLng);
+	  this.circle = new google.maps.Circle({
+	    map: this.googleMap,
+	    center: this.latLng,
+	    radius: this.tolerance,
+	    visible: false
+	  });
 	}
 	
 	Objective.prototype = {
-	  // creates a range using the tolerance and checks if given coords fall within this.
+	  // checks if given coords fall within this.
 	  checkFound: function(latLng, team){
-	    var lat = this.latLng.lat
-	    var lng = this.latLng.lng
-	    if(this.tolerance < 10){var toleranceConvert = "0.000" + this.tolerance}else{ var toleranceConvert = Number("0.0" + this.tolerance/10)}
-	    var latRange = {upper: lat + toleranceConvert ,lower: lat - toleranceConvert}
-	    var lngRange = {upper: lng + toleranceConvert ,lower: lng - toleranceConvert}
-	
-	    if(latLng.lat < latRange.upper && latLng.lat > latRange.lower && latLng.lng < lngRange.upper && latLng.lng >lngRange.lower ){
-	      console.log("Success!")
-	    }else{
-	      console.log("Fail!")
+	    if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
+	        console.log('FOUND!');
+	    } else {
+	        console.log('NOTHING HERE!');
 	    }
-	    // should compare latLng of selection to coordinates latlng
-	    // will need to factor in tolerance to see if correct 
-	    // if found will need to addFound for the team and give points
 	  },
-	
 	
 	  // returns next hint in the array or a directional hint if all used.  charges penalty for use
 	  giveHint: function(latLng, team){
 	    team.addPenalty(2)
 	    this.hintCount +=1;
-	
+	    console.log(latLng)
 	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
 	    }else{
@@ -432,7 +423,8 @@
 	  },
 	
 	  directionHint: function(latLng){
-	
+	    console.log(latLng, this.latLng)
+	    // console.log(google.maps.geometry.spherical.interpolate(latLng,this.latLng))
 	    // should give an arrow directional hint that then dissapears
 	  },
 	
