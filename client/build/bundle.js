@@ -98,45 +98,45 @@
 	  this.objectives = [];
 	  this.teams = [];
 	  this.currentObj = 0;
-	  this.state = "create"
+	  this.state = "create";
 	}
 	
 	Game.prototype = {
 	    // creates a new objective using form input
-	  createObjective: function(input){
-	    var objective = new Objective(input, this.map.googleMap);
-	    this.objectives.push(objective);
-	    if(this.currentObj === 0){this.currentObj = objective}
-	  },
+	    createObjective: function(input){
+	      var objective = new Objective(input, this.map.googleMap);
+	      this.objectives.push(objective);
+	      if(this.currentObj === 0){this.currentObj = objective};
+	    },
 	
 	    // new up a team and add it to the teams array
-	  addTeam: function(name){
-	    var team = new Team(name);
-	    this.teams.push(team);
-	  },
+	    addTeam: function(name){
+	      var team = new Team(name);
+	      this.teams.push(team);
+	    },
 	
-	  updateCurrent: function(){
-	    if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
+	    updateCurrent: function(){
+	      if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
 	
-	    this.objectives.forEach(function(objective, index){
-	      if(objective === currentObj){
-	        currentObj = objectives[index+1]
-	        return} 
-	    })
-	  },
+	        this.objectives.forEach(function(objective, index){
+	          if(objective === currentObj){
+	            currentObj = objectives[index+1];
+	            return} 
+	          })
+	    },
 	
-	  changeToPlay: function(){
+	    changeToPlay: function(){
 	      this.state = "play";
-	  },
+	    },
 	
-	  changeToCreate: function(){
-	    this.state = "create"
+	    changeToCreate: function(){
+	      this.state = "create";
+	    }
+	
+	
 	  }
 	
-	
-	}
-	
-	module.exports = Game;
+	  module.exports = Game;
 
 /***/ },
 /* 2 */
@@ -179,8 +179,8 @@
 	  this.infoWindow = new google.maps.InfoWindow({
 	    content: ""
 	  })
-	  this.markers = []
-	  this.circles = []
+	  this.markers = [];
+	  this.circles = [];
 	  this.path = ''
 	}
 	
@@ -202,7 +202,7 @@
 	  // creates marker and info window
 	  addInfoWindow: function(latLng, content){
 	    var marker = this.addMarker(latLng);
-	    this.markers.push(marker)
+	    this.markers.push(marker);
 	    marker.addListener('click', function(event){
 	      this.infoWindow.close();
 	      var infoWindow = new google.maps.InfoWindow({
@@ -223,7 +223,7 @@
 	      for(circle of this.circles){
 	        circle.setVisible(setter);
 	      }
-	      this.path.setVisible(setter)
+	      this.path.setVisible(setter);
 	    },
 	
 	  // connects all markers in the array
@@ -231,7 +231,7 @@
 	    var markerPath = [];
 	    this.markers.forEach(function(marker){
 	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
-	      markerPath.push(latLng)
+	      markerPath.push(latLng);
 	    })
 	    this.path = new google.maps.Polyline({
 	      path: markerPath,
@@ -240,7 +240,7 @@
 	      strokeOpacity: 0.2,
 	      strokeWeight: 6
 	    });
-	    this.path.setMap(this.googleMap)
+	    this.path.setMap(this.googleMap);
 	  },
 	
 	  // shows circle around marker based on tolerance
@@ -275,7 +275,7 @@
 	
 	
 	
-	        module.exports = Map
+	        module.exports = Map;
 
 
 /***/ },
@@ -332,10 +332,7 @@
 	        this.ran = true;
 	        this.game.map.addInfoWindow(state.latLng);
 	        this.game.map.drawCircle(state.latLng, state.tolerance)
-	        console.log(this.game.map.markers)
-	        console.log(state.latLng)
-	
-	
+	     
 	        if (this.readyForNext){
 	        this.readyForNext = false;
 	        this.populateCreate(event);}
@@ -432,7 +429,6 @@
 	
 	
 	   populatePlay: function(){
-	
 	     var info = document.getElementById('info');
 	     info.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
 	     console.log(state.hints[0])
@@ -514,7 +510,7 @@
 	var Objective = function(params, map){
 	  this.clue = params.clue;
 	  this.hints =  params.hints;
-	  this.googleMap= map
+	  this.googleMap= map;
 	  this.hintCount = 0;
 	  this.latLng = params.latLng;
 	  this.tolerance =  params.tolerance;
@@ -533,15 +529,15 @@
 	  // checks if given coords fall within this.
 	  checkFound: function(latLng, team){
 	    if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
-	        console.log('FOUND!');
+	      console.log('FOUND!');
 	    } else {
-	        console.log('NOTHING HERE!');
+	      console.log('NOTHING HERE!');
 	    }
 	  },
 	
 	  // returns next hint in the array or a directional hint if all used.  charges penalty for use
 	  giveHint: function(latLng, team){
-	    team.addPenalty(2)
+	    team.addPenalty(2);
 	    this.hintCount +=1;
 	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
@@ -553,33 +549,33 @@
 	  // updates compass with bearing to next clue if not hints left
 	  directionHint: function(latLng){
 	    var marker1 = new google.maps.Marker({
-	          position:  latLng
-	        })
+	      position:  latLng
+	    })
 	    var marker2 = new google.maps.Marker({
-	          position:  this.latLng
-	        })
-	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition())
+	      position:  this.latLng
+	    })
+	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
 	
-	      var compassDisc = document.getElementById("compassDiscImg");
-	      compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
+	    var compassDisc = document.getElementById("compassDiscImg");
+	    compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
 	  },
 	
 	  // adds point with info to the given team
 	  addFound: function(team){
 	    this.found.push(team);
 	    var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)}
-	    team.addPoints(point)
+	    team.addPoints(point);
 	  },
 	
 	  // returns points base on order found for the addFound function
 	  givePoints: function(team){
 	    this.found.forEach(function(foundTeam, index){
 	      if(foundTeam.name === team.name){
-	        this.points = 5 - index
+	        this.points = 5 - index;
 	        if(this.points < 0){ this.points = 0}
 	      }
-	    }.bind(this))
-	        return this.points
+	  }.bind(this))
+	    return this.points;
 	  }
 	}
 	

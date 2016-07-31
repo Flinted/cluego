@@ -48,10 +48,7 @@ View.prototype = {
         this.ran = true;
         this.game.map.addInfoWindow(state.latLng);
         this.game.map.drawCircle(state.latLng, state.tolerance)
-        console.log(this.game.map.markers)
-        console.log(state.latLng)
-
-
+     
         if (this.readyForNext){
         this.readyForNext = false;
         this.populateCreate(event);}
@@ -148,7 +145,6 @@ View.prototype = {
 
 
    populatePlay: function(){
-
      var info = document.getElementById('info');
      info.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
      console.log(state.hints[0])
