@@ -56,6 +56,7 @@
 	  state.game = new Game();
 	  state.view = new View(state.game);
 	  state.view.initialise();
+	  state.game.map.initialise()
 	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
 	  // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
 	  // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
@@ -167,6 +168,69 @@
 /* 3 */
 /***/ function(module, exports) {
 
+	  var styles = [
+	  {
+	    "featureType": "poi",
+	    "stylers": [
+	      { "visibility": "off" }
+	    ]
+	  },{
+	    "featureType": "road",
+	    "stylers": [
+	      { "visibility": "on" }
+	    ]
+	  },{
+	    "featureType": "water",
+	    "stylers": [
+	      { "color": "#80d4f6" }
+	    ]
+	  },{
+	    "featureType": "landscape.natural.terrain",
+	    "stylers": [
+	      { "visibility": "off" }
+	    ]
+	  },{
+	    "featureType": "road.highway",
+	    "elementType": "labels",
+	    "stylers": [
+	      { "visibility": "off" }
+	    ]
+	  },{
+	    "featureType": "landscape.natural",
+	    "elementType": "geometry.fill",
+	    "stylers": [
+	      { "visibility": "on" },
+	      { "saturation": 22 },
+	      { "gamma": 0.56 },
+	      { "lightness": 60 },
+	      { "color": "#a5d296" }
+	    ]
+	  },{
+	    "elementType": "labels.text.fill",
+	    "stylers": [
+	      { "weight": 2.1 },
+	      { "lightness": 100 },
+	      { "invert_lightness": true }
+	    ]
+	  },{
+	    "featureType": "landscape.man_made",
+	    "stylers": [
+	      { "color": "#8c9184" },
+	      { "lightness": 15 }
+	    ]
+	  },{
+	    "featureType": "administrative.country",
+	    "elementType": "labels.text",
+	    "stylers": [
+	      { "saturation": 100 },
+	      { "weight": 0.6 }
+	    ]
+	  }
+	]
+	
+	
+	
+	
 	var Map = function(latLng, zoom){
 	  this.googleMap = new google.maps.Map(document.getElementById('map'), {
 	    center: latLng,
@@ -185,6 +249,9 @@
 	}
 	
 	Map.prototype = {
+	  initialise: function(){
+	    this.googleMap.setOptions({styles: styles})
+	  },
 	  // returns marker and adds to map
 	  addMarker: function(latLng){
 	    var marker = new google.maps.Marker({
@@ -357,11 +424,6 @@
 	    },
 	   populateCreate: function(event){
 	     var create = document.getElementById('createArea');
-	     // var play = document.getElementById('playArea');
-	     // console.log(create)
-	     // console.log(play)
-	     // create.style.display = 'block';
-	     // play.style.display = 'none';
 	     create.innerHTML = "<h1>Create</h1>"  
 	     var p = document.createElement('p');
 	     p.innerHTML = "latitude:" + event.latLng.lat()
@@ -432,9 +494,6 @@
 	   },
 	   populatePlay: function(){
 	     var play = document.getElementById('playArea');
-	     // var create = document.getElementById('createArea');
-	     // play.style.display = 'block';
-	     // create.style.display = 'none';
 	     play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
 	     var button = document.createElement('button');
 	     button.innerHTML = "Get a Hint"

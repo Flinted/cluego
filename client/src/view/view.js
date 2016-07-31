@@ -73,11 +73,6 @@ View.prototype = {
     },
    populateCreate: function(event){
      var create = document.getElementById('createArea');
-     // var play = document.getElementById('playArea');
-     // console.log(create)
-     // console.log(play)
-     // create.style.display = 'block';
-     // play.style.display = 'none';
      create.innerHTML = "<h1>Create</h1>"  
      var p = document.createElement('p');
      p.innerHTML = "latitude:" + event.latLng.lat()
@@ -148,9 +143,6 @@ View.prototype = {
    },
    populatePlay: function(){
      var play = document.getElementById('playArea');
-     // var create = document.getElementById('createArea');
-     // play.style.display = 'block';
-     // create.style.display = 'none';
      play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
      var button = document.createElement('button');
      button.innerHTML = "Get a Hint"

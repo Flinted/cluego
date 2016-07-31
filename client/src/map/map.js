@@ -1,3 +1,66 @@
+  var styles = [
+  {
+    "featureType": "poi",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "road",
+    "stylers": [
+      { "visibility": "on" }
+    ]
+  },{
+    "featureType": "water",
+    "stylers": [
+      { "color": "#80d4f6" }
+    ]
+  },{
+    "featureType": "landscape.natural.terrain",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "road.highway",
+    "elementType": "labels",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "landscape.natural",
+    "elementType": "geometry.fill",
+    "stylers": [
+      { "visibility": "on" },
+      { "saturation": 22 },
+      { "gamma": 0.56 },
+      { "lightness": 60 },
+      { "color": "#a5d296" }
+    ]
+  },{
+    "elementType": "labels.text.fill",
+    "stylers": [
+      { "weight": 2.1 },
+      { "lightness": 100 },
+      { "invert_lightness": true }
+    ]
+  },{
+    "featureType": "landscape.man_made",
+    "stylers": [
+      { "color": "#8c9184" },
+      { "lightness": 15 }
+    ]
+  },{
+    "featureType": "administrative.country",
+    "elementType": "labels.text",
+    "stylers": [
+      { "saturation": 100 },
+      { "weight": 0.6 }
+    ]
+  }
+]
+
+
+
+
 var Map = function(latLng, zoom){
   this.googleMap = new google.maps.Map(document.getElementById('map'), {
     center: latLng,
@@ -16,6 +79,9 @@ var Map = function(latLng, zoom){
 }
 
 Map.prototype = {
+  initialise: function(){
+    this.googleMap.setOptions({styles: styles})
+  },
   // returns marker and adds to map
   addMarker: function(latLng){
     var marker = new google.maps.Marker({

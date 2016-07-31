@@ -10,6 +10,7 @@ window.onload= function(){
   state.game = new Game();
   state.view = new View(state.game);
   state.view.initialise();
+  state.game.map.initialise()
   // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
   // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
   // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
