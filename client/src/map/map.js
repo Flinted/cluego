@@ -58,7 +58,7 @@ Map.prototype = {
     },
 
   // connects all markers in the array
-  addPath: function(markers){
+  addPath: function(){
     var markerPath = [];
     this.markers.forEach(function(marker){
       var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
@@ -68,7 +68,7 @@ Map.prototype = {
       path: markerPath,
       geodesic: true,
       strokeColor: 'black',
-      strokeOpacity: 0.4,
+      strokeOpacity: 0.2,
       strokeWeight: 6
     });
     this.path.setMap(this.googleMap)
@@ -82,6 +82,8 @@ Map.prototype = {
       strokeWeight: 2,
       fillColor: 'wheat',
       fillOpacity: 0.35,
+      geodesic: false,
+      clickable: false,
       map: this.googleMap,
       center: latLng,
       radius: tolerance
