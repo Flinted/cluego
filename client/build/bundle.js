@@ -98,45 +98,45 @@
 	  this.objectives = [];
 	  this.teams = [];
 	  this.currentObj = 0;
-	  this.state = "create"
+	  this.state = "create";
 	}
 	
 	Game.prototype = {
 	    // creates a new objective using form input
-	  createObjective: function(input){
-	    var objective = new Objective(input, this.map.googleMap);
-	    this.objectives.push(objective);
-	    if(this.currentObj === 0){this.currentObj = objective}
-	  },
+	    createObjective: function(input){
+	      var objective = new Objective(input, this.map.googleMap);
+	      this.objectives.push(objective);
+	      if(this.currentObj === 0){this.currentObj = objective};
+	    },
 	
 	    // new up a team and add it to the teams array
-	  addTeam: function(name){
-	    var team = new Team(name);
-	    this.teams.push(team);
-	  },
+	    addTeam: function(name){
+	      var team = new Team(name);
+	      this.teams.push(team);
+	    },
 	
-	  updateCurrent: function(){
-	    if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
+	    updateCurrent: function(){
+	      if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
 	
-	    this.objectives.forEach(function(objective, index){
-	      if(objective === currentObj){
-	        currentObj = objectives[index+1]
-	        return} 
-	    })
-	  },
+	        this.objectives.forEach(function(objective, index){
+	          if(objective === currentObj){
+	            currentObj = objectives[index+1];
+	            return} 
+	          })
+	    },
 	
-	  changeToPlay: function(){
+	    changeToPlay: function(){
 	      this.state = "play";
-	  },
+	    },
 	
-	  changeToCreate: function(){
-	    this.state = "create"
+	    changeToCreate: function(){
+	      this.state = "create";
+	    }
+	
+	
 	  }
 	
-	
-	}
-	
-	module.exports = Game;
+	  module.exports = Game;
 
 /***/ },
 /* 2 */
@@ -172,15 +172,15 @@
 	    center: latLng,
 	    zoom: zoom,
 	    zoomControlOptions: {
-	      position: google.maps.ControlPosition.BOTTOM_CENTER
+	      position: google.maps.ControlPosition.TOP_RIGHT 
 	    }
 	  });
 	
 	  this.infoWindow = new google.maps.InfoWindow({
 	    content: ""
 	  })
-	  this.markers = []
-	  this.circles = []
+	  this.markers = [];
+	  this.circles = [];
 	  this.path = ''
 	}
 	
@@ -202,7 +202,7 @@
 	  // creates marker and info window
 	  addInfoWindow: function(latLng, content){
 	    var marker = this.addMarker(latLng);
-	    this.markers.push(marker)
+	    this.markers.push(marker);
 	    marker.addListener('click', function(event){
 	      this.infoWindow.close();
 	      var infoWindow = new google.maps.InfoWindow({
@@ -223,7 +223,7 @@
 	      for(circle of this.circles){
 	        circle.setVisible(setter);
 	      }
-	      this.path.setVisible(setter)
+	      this.path.setVisible(setter);
 	    },
 	
 	  // connects all markers in the array
@@ -231,7 +231,7 @@
 	    var markerPath = [];
 	    this.markers.forEach(function(marker){
 	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
-	      markerPath.push(latLng)
+	      markerPath.push(latLng);
 	    })
 	    this.path = new google.maps.Polyline({
 	      path: markerPath,
@@ -240,7 +240,7 @@
 	      strokeOpacity: 0.2,
 	      strokeWeight: 6
 	    });
-	    this.path.setMap(this.googleMap)
+	    this.path.setMap(this.googleMap);
 	  },
 	
 	  // shows circle around marker based on tolerance
@@ -275,7 +275,7 @@
 	
 	
 	
-	        module.exports = Map
+	        module.exports = Map;
 
 
 /***/ },
@@ -289,27 +289,27 @@
 	 foundMessage: "",
 	 latLng: ''
 	}
-	
 	var View = function(game){
 	  this.game = game;
 	  this.readyForNext = true;
 	  this.ran = false;
 	}
-	
 	View.prototype = {
 	  initialise: function(){
 	    this.mapBindClick();
 	    this.setButtons();
 	  },
-	
 	  setButtons: function(){
 	    var create = document.getElementById('create');
 	    create.addEventListener('click',function(){
 	      this.game.changeToCreate();
+	        this.switchCreate();
+	      
 	    }.bind(this))
 	    var play = document.getElementById('play');
 	    play.addEventListener('click',function(){
 	      this.populatePlay()
+	        this.switchPlay();
 	      this.game.changeToPlay();
 	    }.bind(this))
 	    var toggle = document.getElementById('toggle');
@@ -332,10 +332,7 @@
 	        this.ran = true;
 	        this.game.map.addInfoWindow(state.latLng);
 	        this.game.map.drawCircle(state.latLng, state.tolerance)
-	        console.log(this.game.map.markers)
-	        console.log(state.latLng)
-	
-	
+	        
 	        if (this.readyForNext){
 	        this.readyForNext = false;
 	        this.populateCreate(event);}
@@ -345,48 +342,57 @@
 	      }
 	    }.bind(this))
 	  },
-	
-	
+	  switchCreate: function(){
+	    var create = document.getElementById('createArea');
+	    var play = document.getElementById('playArea');
+	    if (create.style.display === 'none'){
+	    create.style.display = 'block';
+	    play.style.display = 'none';}
+	    },
+	  switchPlay: function(){
+	    var create = document.getElementById('createArea');
+	    var play = document.getElementById('playArea');
+	    if (play.style.display === 'none'){
+	    create.style.display = 'none';
+	    play.style.display = 'block';}
+	    },
 	   populateCreate: function(event){
-	     var info = document.getElementById('info');
-	     info.innerHTML = "<h1>Create</h1>"
-	
+	     var create = document.getElementById('createArea');
+	     // var play = document.getElementById('playArea');
+	     // console.log(create)
+	     // console.log(play)
+	     // create.style.display = 'block';
+	     // play.style.display = 'none';
+	     create.innerHTML = "<h1>Create</h1>"  
 	     var p = document.createElement('p');
 	     p.innerHTML = "latitude:" + event.latLng.lat()
-	
 	     var p2 = document.createElement('p');
 	     p2.innerHTML = "longitude:" + event.latLng.lng();
 	     
 	     var form = document.createElement('form');
 	     form.id = "objective";
-	
 	     var input1 = document.createElement('input');
 	     input1.type = "text";
 	     input1.name = "question";
 	     input1.required = true;
 	     input1.placeholder = "Question";
-	
 	     var input2 = document.createElement('input');
 	     input2.type = "text";
 	     input2.name = "hint1";
 	     input2.placeholder = "Hint 1";
-	
 	     var input3 = document.createElement('input');
 	     input3.type = "text";
 	     input3.name = "hint2";
 	     input3.placeholder = "Hint 2";
-	
 	     var input4 = document.createElement('input');
 	     input4.type = "text";
 	     input4.name = "hint3";
 	     input4.placeholder = "Hint 3";
-	
 	     var input5 = document.createElement('input');
 	     input5.type = "text";
 	     input5.name = "foundMessage";
 	     input5.required = true;
 	     input5.placeholder = "'found goal' message";
-	
 	     var input6 = document.createElement('input');
 	     input6.type = "number";
 	     input6.name = "setTolerance";
@@ -395,11 +401,9 @@
 	       state.tolerance = Number(event.target.value)
 	       this.game.map.drawCircle(state.latLng, state.tolerance)
 	     }.bind(this))
-	
-	     var button = document.createElement('input');
-	     button.type = "submit";
-	     button.name = "enter";
-	
+	   var button = document.createElement('input');
+	   button.type = "submit";
+	   button.name = "enter";
 	     form.appendChild(input1);
 	     form.appendChild(input2);
 	     form.appendChild(input3);
@@ -407,17 +411,15 @@
 	     form.appendChild(input5);
 	     form.appendChild(input6);
 	     form.appendChild(button);
-	     info.appendChild(form);
-	     info.appendChild(p);
-	     info.appendChild(p2);
-	
+	     create.appendChild(form);
+	     create.appendChild(p);
+	     create.appendChild(p2);
 	     var objective = document.getElementById( 'objective' );
 	     objective.addEventListener('submit', function(event){
 	      event.preventDefault()
 	      this.handleSubmit(event)
 	    }.bind(this))
 	   },
-	
 	   handleSubmit: function(event){
 	     state.clue = event.srcElement[0].value
 	     state.hints=[event.srcElement[1].value,
@@ -429,33 +431,24 @@
 	     this.game.map.addPath();
 	     this.ran = false
 	   },
-	
-	
 	   populatePlay: function(){
-	
-	     var info = document.getElementById('info');
-	     info.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
-	     console.log(state.hints[0])
-	
+	     var play = document.getElementById('playArea');
+	     // var create = document.getElementById('createArea');
+	     // play.style.display = 'block';
+	     // create.style.display = 'none';
+	     play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
 	     var button = document.createElement('button');
 	     button.innerHTML = "Get a Hint"
 	     button.addEventListener('click', function(event){
 	     // var = i
 	       for (i = 0; i < state.hints.length; i++){
-	       info.innerHTML += state.hints[i]
-	     console.log('clicked', i);}
-	       
-	     })
-	     info.appendChild(button);
-	   },
-	
-	   foundCorrectLocation: function(){
-	     var info = document.getElementById('info');
-	     info.innerHTML = state.foundMessage
-	   }
-	
+	       play.innerHTML += state.hints[i]
+	     }
+	    
+	     play.appendChild(button);
+	   })
 	  }
-	
+	}
 	  module.exports = View;
 
 /***/ },
@@ -514,7 +507,7 @@
 	var Objective = function(params, map){
 	  this.clue = params.clue;
 	  this.hints =  params.hints;
-	  this.googleMap= map
+	  this.googleMap= map;
 	  this.hintCount = 0;
 	  this.latLng = params.latLng;
 	  this.tolerance =  params.tolerance;
@@ -533,15 +526,15 @@
 	  // checks if given coords fall within this.
 	  checkFound: function(latLng, team){
 	    if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
-	        console.log('FOUND!');
+	      console.log('FOUND!');
 	    } else {
-	        console.log('NOTHING HERE!');
+	      console.log('NOTHING HERE!');
 	    }
 	  },
 	
 	  // returns next hint in the array or a directional hint if all used.  charges penalty for use
 	  giveHint: function(latLng, team){
-	    team.addPenalty(2)
+	    team.addPenalty(2);
 	    this.hintCount +=1;
 	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
@@ -553,33 +546,33 @@
 	  // updates compass with bearing to next clue if not hints left
 	  directionHint: function(latLng){
 	    var marker1 = new google.maps.Marker({
-	          position:  latLng
-	        })
+	      position:  latLng
+	    })
 	    var marker2 = new google.maps.Marker({
-	          position:  this.latLng
-	        })
-	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition())
+	      position:  this.latLng
+	    })
+	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
 	
-	      var compassDisc = document.getElementById("compassDiscImg");
-	      compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
+	    var compassDisc = document.getElementById("compassDiscImg");
+	    compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
 	  },
 	
 	  // adds point with info to the given team
 	  addFound: function(team){
 	    this.found.push(team);
 	    var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)}
-	    team.addPoints(point)
+	    team.addPoints(point);
 	  },
 	
 	  // returns points base on order found for the addFound function
 	  givePoints: function(team){
 	    this.found.forEach(function(foundTeam, index){
 	      if(foundTeam.name === team.name){
-	        this.points = 5 - index
+	        this.points = 5 - index;
 	        if(this.points < 0){ this.points = 0}
 	      }
-	    }.bind(this))
-	        return this.points
+	  }.bind(this))
+	    return this.points;
 	  }
 	}
 	

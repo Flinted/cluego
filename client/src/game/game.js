@@ -11,42 +11,42 @@ var Game = function(){
   this.objectives = [];
   this.teams = [];
   this.currentObj = 0;
-  this.state = "create"
+  this.state = "create";
 }
 
 Game.prototype = {
     // creates a new objective using form input
-  createObjective: function(input){
-    var objective = new Objective(input, this.map.googleMap);
-    this.objectives.push(objective);
-    if(this.currentObj === 0){this.currentObj = objective}
-  },
+    createObjective: function(input){
+      var objective = new Objective(input, this.map.googleMap);
+      this.objectives.push(objective);
+      if(this.currentObj === 0){this.currentObj = objective};
+    },
 
     // new up a team and add it to the teams array
-  addTeam: function(name){
-    var team = new Team(name);
-    this.teams.push(team);
-  },
+    addTeam: function(name){
+      var team = new Team(name);
+      this.teams.push(team);
+    },
 
-  updateCurrent: function(){
-    if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
+    updateCurrent: function(){
+      if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
 
-    this.objectives.forEach(function(objective, index){
-      if(objective === currentObj){
-        currentObj = objectives[index+1]
-        return} 
-    })
-  },
+        this.objectives.forEach(function(objective, index){
+          if(objective === currentObj){
+            currentObj = objectives[index+1];
+            return} 
+          })
+    },
 
-  changeToPlay: function(){
+    changeToPlay: function(){
       this.state = "play";
-  },
+    },
 
-  changeToCreate: function(){
-    this.state = "create"
+    changeToCreate: function(){
+      this.state = "create";
+    }
+
+
   }
 
-
-}
-
-module.exports = Game;
+  module.exports = Game;

@@ -3,15 +3,15 @@ var Map = function(latLng, zoom){
     center: latLng,
     zoom: zoom,
     zoomControlOptions: {
-      position: google.maps.ControlPosition.BOTTOM_CENTER
+      position: google.maps.ControlPosition.TOP_RIGHT 
     }
   });
 
   this.infoWindow = new google.maps.InfoWindow({
     content: ""
   })
-  this.markers = []
-  this.circles = []
+  this.markers = [];
+  this.circles = [];
   this.path = ''
 }
 
@@ -33,7 +33,7 @@ Map.prototype = {
   // creates marker and info window
   addInfoWindow: function(latLng, content){
     var marker = this.addMarker(latLng);
-    this.markers.push(marker)
+    this.markers.push(marker);
     marker.addListener('click', function(event){
       this.infoWindow.close();
       var infoWindow = new google.maps.InfoWindow({
@@ -54,7 +54,7 @@ Map.prototype = {
       for(circle of this.circles){
         circle.setVisible(setter);
       }
-      this.path.setVisible(setter)
+      this.path.setVisible(setter);
     },
 
   // connects all markers in the array
@@ -62,7 +62,7 @@ Map.prototype = {
     var markerPath = [];
     this.markers.forEach(function(marker){
       var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
-      markerPath.push(latLng)
+      markerPath.push(latLng);
     })
     this.path = new google.maps.Polyline({
       path: markerPath,
@@ -71,7 +71,7 @@ Map.prototype = {
       strokeOpacity: 0.2,
       strokeWeight: 6
     });
-    this.path.setMap(this.googleMap)
+    this.path.setMap(this.googleMap);
   },
 
   // shows circle around marker based on tolerance
@@ -106,4 +106,4 @@ Map.prototype = {
 
 
 
-        module.exports = Map
+        module.exports = Map;

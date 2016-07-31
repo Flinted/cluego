@@ -1,7 +1,7 @@
 var Objective = function(params, map){
   this.clue = params.clue;
   this.hints =  params.hints;
-  this.googleMap= map
+  this.googleMap= map;
   this.hintCount = 0;
   this.latLng = params.latLng;
   this.tolerance =  params.tolerance;
@@ -20,15 +20,15 @@ Objective.prototype = {
   // checks if given coords fall within this.
   checkFound: function(latLng, team){
     if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
-        console.log('FOUND!');
+      console.log('FOUND!');
     } else {
-        console.log('NOTHING HERE!');
+      console.log('NOTHING HERE!');
     }
   },
 
   // returns next hint in the array or a directional hint if all used.  charges penalty for use
   giveHint: function(latLng, team){
-    team.addPenalty(2)
+    team.addPenalty(2);
     this.hintCount +=1;
     if(this.hintCount > this.hints.length){
       this.directionHint(latLng);
@@ -40,33 +40,33 @@ Objective.prototype = {
   // updates compass with bearing to next clue if not hints left
   directionHint: function(latLng){
     var marker1 = new google.maps.Marker({
-          position:  latLng
-        })
+      position:  latLng
+    })
     var marker2 = new google.maps.Marker({
-          position:  this.latLng
-        })
-    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition())
+      position:  this.latLng
+    })
+    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
 
-      var compassDisc = document.getElementById("compassDiscImg");
-      compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
+    var compassDisc = document.getElementById("compassDiscImg");
+    compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
   },
 
   // adds point with info to the given team
   addFound: function(team){
     this.found.push(team);
     var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)}
-    team.addPoints(point)
+    team.addPoints(point);
   },
 
   // returns points base on order found for the addFound function
   givePoints: function(team){
     this.found.forEach(function(foundTeam, index){
       if(foundTeam.name === team.name){
-        this.points = 5 - index
+        this.points = 5 - index;
         if(this.points < 0){ this.points = 0}
       }
-    }.bind(this))
-        return this.points
+  }.bind(this))
+    return this.points;
   }
 }
 
