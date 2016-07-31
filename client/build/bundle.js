@@ -56,25 +56,25 @@
 	  state.game = new Game();
 	  state.view = new View(state.game);
 	  state.view.initialise();
-	  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
-	  state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
-	  state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
-	  state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
-	  state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
-	  state.game.map.addPath();
-	  state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
-	  state.game.createObjective({
-	      clue: "Clue1",
-	      hints: ['hint1', 'hint2', 'hint3'],
-	      latLng: {lat: 51.4700, lng: -0.4543},
-	      tolerance: 50,
-	      foundMessage: "Well Done"
-	    })
+	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
+	  // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
+	  // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
+	  // state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
+	  // state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
+	  // state.game.map.addPath();
+	  // state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
+	  // state.game.createObjective({
+	  //     clue: "Clue1",
+	  //     hints: ['hint1', 'hint2', 'hint3'],
+	  //     latLng: {lat: 51.4700, lng: -0.4543},
+	  //     tolerance: 50,
+	  //     foundMessage: "Well Done"
+	  //   })
 	  state.game.addTeam("testTeam")
-	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
 	  
 	}
 	
@@ -251,6 +251,8 @@
 	      strokeWeight: 2,
 	      fillColor: 'wheat',
 	      fillOpacity: 0.35,
+	      geodesic: false,
+	      clickable: false,
 	      map: this.googleMap,
 	      center: latLng,
 	      radius: tolerance
@@ -283,7 +285,7 @@
 	var state = {
 	 clue: "",
 	 hints: [],
-	 tolerance: 0,
+	 tolerance: 100,
 	 foundMessage: "",
 	 latLng: ''
 	}
@@ -320,6 +322,9 @@
 	      if(this.game.state === "create"){
 	        this.populateCreate(event);
 	        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+	        this.game.map.addInfoWindow(state.latLng)
+	        this.game.map.addPath()
+	        this.game.map.drawCircle(state.latLng, state.tolerance)
 	      }else{
 	        this.populatePlay(event);
 	        this.game.currentObj.checkFound(event.latLng);
@@ -364,6 +369,15 @@
 	     input5.name = "foundMessage";
 	     input5.placeholder = "'found goal' message";
 	
+	     var input6 = document.createElement('input');
+	     input6.type = "number";
+	     input6.name = "setTolerance";
+	     input6.value = state.tolerance;
+	     input6.addEventListener('change', function(event){
+	       state.tolerance = Number(event.target.value)
+	       this.game.map.drawCircle(state.latLng, state.tolerance)
+	     }.bind(this))
+	
 	     var button = document.createElement('input');
 	     button.type = "submit";
 	     button.name = "enter";
@@ -373,6 +387,7 @@
 	     form.appendChild(input3);
 	     form.appendChild(input4);
 	     form.appendChild(input5);
+	     form.appendChild(input6);
 	     form.appendChild(button);
 	     info.appendChild(form);
 	     info.appendChild(p);
@@ -393,10 +408,7 @@
 	     state.foundMessage = event.srcElement[4].value
 	     var capturedState = state
 	     this.game.createObjective(capturedState)
-	     console.log(this.game.objectives)
-	     console.log(this.game.currentObj)
-	     console.log(state.latLng)
-	     console.log("your a state", capturedState)
+	
 	   },
 	
 	

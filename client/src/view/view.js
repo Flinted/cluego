@@ -1,7 +1,7 @@
 var state = {
  clue: "",
  hints: [],
- tolerance: 0,
+ tolerance: 100,
  foundMessage: "",
  latLng: ''
 }
@@ -38,6 +38,9 @@ View.prototype = {
       if(this.game.state === "create"){
         this.populateCreate(event);
         state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+        this.game.map.addInfoWindow(state.latLng)
+        this.game.map.addPath()
+        this.game.map.drawCircle(state.latLng, state.tolerance)
       }else{
         this.populatePlay(event);
         this.game.currentObj.checkFound(event.latLng);
@@ -82,6 +85,15 @@ View.prototype = {
      input5.name = "foundMessage";
      input5.placeholder = "'found goal' message";
 
+     var input6 = document.createElement('input');
+     input6.type = "number";
+     input6.name = "setTolerance";
+     input6.value = state.tolerance;
+     input6.addEventListener('change', function(event){
+       state.tolerance = Number(event.target.value)
+       this.game.map.drawCircle(state.latLng, state.tolerance)
+     }.bind(this))
+
      var button = document.createElement('input');
      button.type = "submit";
      button.name = "enter";
@@ -91,6 +103,7 @@ View.prototype = {
      form.appendChild(input3);
      form.appendChild(input4);
      form.appendChild(input5);
+     form.appendChild(input6);
      form.appendChild(button);
      info.appendChild(form);
      info.appendChild(p);
@@ -111,10 +124,7 @@ View.prototype = {
      state.foundMessage = event.srcElement[4].value
      var capturedState = state
      this.game.createObjective(capturedState)
-     console.log(this.game.objectives)
-     console.log(this.game.currentObj)
-     console.log(state.latLng)
-     console.log("your a state", capturedState)
+
    },
 
 

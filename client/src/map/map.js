@@ -82,6 +82,8 @@ Map.prototype = {
       strokeWeight: 2,
       fillColor: 'wheat',
       fillOpacity: 0.35,
+      geodesic: false,
+      clickable: false,
       map: this.googleMap,
       center: latLng,
       radius: tolerance
