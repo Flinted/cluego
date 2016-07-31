@@ -88,8 +88,8 @@
 	var Ajax = __webpack_require__(2);
 	var Map = __webpack_require__(3);
 	var View = __webpack_require__(4);
-	var Team = __webpack_require__(6);
-	var Objective = __webpack_require__(5)
+	var Team = __webpack_require__(5);
+	var Objective = __webpack_require__(6)
 	
 	
 	var Game = function(){
@@ -227,7 +227,7 @@
 	    },
 	
 	  // connects all markers in the array
-	  addPath: function(markers){
+	  addPath: function(){
 	    var markerPath = [];
 	    this.markers.forEach(function(marker){
 	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
@@ -237,7 +237,7 @@
 	      path: markerPath,
 	      geodesic: true,
 	      strokeColor: 'black',
-	      strokeOpacity: 0.4,
+	      strokeOpacity: 0.2,
 	      strokeWeight: 6
 	    });
 	    this.path.setMap(this.googleMap)
@@ -292,6 +292,8 @@
 	
 	var View = function(game){
 	  this.game = game;
+	  this.readyForNext = true;
+	  this.ran = false;
 	}
 	
 	View.prototype = {
@@ -320,17 +322,31 @@
 	  mapBindClick: function(){
 	    google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
 	      if(this.game.state === "create"){
-	        this.populateCreate(event);
 	        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
-	        this.game.map.addInfoWindow(state.latLng)
-	        this.game.map.addPath()
+	        if(this.ran){
+	          this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
+	          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	          this.game.map.markers.pop()
+	          this.game.map.circles.pop()
+	        }
+	        this.ran = true;
+	        this.game.map.addInfoWindow(state.latLng);
 	        this.game.map.drawCircle(state.latLng, state.tolerance)
+	        console.log(this.game.map.markers)
+	        console.log(state.latLng)
+	
+	
+	        if (this.readyForNext){
+	        this.readyForNext = false;
+	        this.populateCreate(event);}
 	      }else{
 	        this.populatePlay(event);
 	        this.game.currentObj.checkFound(event.latLng);
 	      }
 	    }.bind(this))
 	  },
+	
+	
 	   populateCreate: function(event){
 	     var info = document.getElementById('info');
 	     info.innerHTML = "<h1>Create</h1>"
@@ -347,6 +363,7 @@
 	     var input1 = document.createElement('input');
 	     input1.type = "text";
 	     input1.name = "question";
+	     input1.required = true;
 	     input1.placeholder = "Question";
 	
 	     var input2 = document.createElement('input');
@@ -367,6 +384,7 @@
 	     var input5 = document.createElement('input');
 	     input5.type = "text";
 	     input5.name = "foundMessage";
+	     input5.required = true;
 	     input5.placeholder = "'found goal' message";
 	
 	     var input6 = document.createElement('input');
@@ -408,7 +426,8 @@
 	     state.foundMessage = event.srcElement[4].value
 	     var capturedState = state
 	     this.game.createObjective(capturedState)
-	
+	     this.game.map.addPath();
+	     this.ran = false
 	   },
 	
 	
@@ -441,6 +460,55 @@
 
 /***/ },
 /* 5 */
+/***/ function(module, exports) {
+
+	var Team = function(name){
+	  this.name = name
+	  this.players = [],
+	  this.points = [],
+	  this.games = []
+	  this.penalties = 0
+	}
+	
+	Team.prototype = {
+	  totalPoints: function(){
+	    var total = 0;
+	    this.points.forEach(function(point){
+	      total += point.value;
+	    })
+	    return total - this.penalties;
+	  },
+	
+	  addPoints: function(newPoint){
+	    this.points.push(newPoint)
+	  },
+	
+	  addPlayer: function(player){
+	    this.players.push(player);
+	  },
+	
+	  removePlayer: function(player){
+	    this.players.forEach(function(teamPlayer, index){
+	      if(teamPlayer === player){
+	        this.players.splice(index,1)
+	      };
+	    }.bind(this))
+	  },
+	
+	  addPenalty: function(penalty){
+	    this.penalties += penalty
+	  }, 
+	
+	  getEndGame: function(){
+	
+	  }
+	
+	}
+	
+	module.exports = Team;
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	var Objective = function(params, map){
@@ -516,55 +584,6 @@
 	}
 	
 	module.exports = Objective;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	var Team = function(name){
-	  this.name = name
-	  this.players = [],
-	  this.points = [],
-	  this.games = []
-	  this.penalties = 0
-	}
-	
-	Team.prototype = {
-	  totalPoints: function(){
-	    var total = 0;
-	    this.points.forEach(function(point){
-	      total += point.value;
-	    })
-	    return total - this.penalties;
-	  },
-	
-	  addPoints: function(newPoint){
-	    this.points.push(newPoint)
-	  },
-	
-	  addPlayer: function(player){
-	    this.players.push(player);
-	  },
-	
-	  removePlayer: function(player){
-	    this.players.forEach(function(teamPlayer, index){
-	      if(teamPlayer === player){
-	        this.players.splice(index,1)
-	      };
-	    }.bind(this))
-	  },
-	
-	  addPenalty: function(penalty){
-	    this.penalties += penalty
-	  }, 
-	
-	  getEndGame: function(){
-	
-	  }
-	
-	}
-	
-	module.exports = Team;
 
 /***/ }
 /******/ ]);

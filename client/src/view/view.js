@@ -8,6 +8,8 @@ var state = {
 
 var View = function(game){
   this.game = game;
+  this.readyForNext = true;
+  this.ran = false;
 }
 
 View.prototype = {
@@ -36,17 +38,31 @@ View.prototype = {
   mapBindClick: function(){
     google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
       if(this.game.state === "create"){
-        this.populateCreate(event);
         state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
-        this.game.map.addInfoWindow(state.latLng)
-        this.game.map.addPath()
+        if(this.ran){
+          this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
+          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+          this.game.map.markers.pop()
+          this.game.map.circles.pop()
+        }
+        this.ran = true;
+        this.game.map.addInfoWindow(state.latLng);
         this.game.map.drawCircle(state.latLng, state.tolerance)
+        console.log(this.game.map.markers)
+        console.log(state.latLng)
+
+
+        if (this.readyForNext){
+        this.readyForNext = false;
+        this.populateCreate(event);}
       }else{
         this.populatePlay(event);
         this.game.currentObj.checkFound(event.latLng);
       }
     }.bind(this))
   },
+
+
    populateCreate: function(event){
      var info = document.getElementById('info');
      info.innerHTML = "<h1>Create</h1>"
@@ -63,6 +79,7 @@ View.prototype = {
      var input1 = document.createElement('input');
      input1.type = "text";
      input1.name = "question";
+     input1.required = true;
      input1.placeholder = "Question";
 
      var input2 = document.createElement('input');
@@ -83,6 +100,7 @@ View.prototype = {
      var input5 = document.createElement('input');
      input5.type = "text";
      input5.name = "foundMessage";
+     input5.required = true;
      input5.placeholder = "'found goal' message";
 
      var input6 = document.createElement('input');
@@ -124,7 +142,8 @@ View.prototype = {
      state.foundMessage = event.srcElement[4].value
      var capturedState = state
      this.game.createObjective(capturedState)
-
+     this.game.map.addPath();
+     this.ran = false
    },
 
 
