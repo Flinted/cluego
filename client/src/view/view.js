@@ -20,7 +20,6 @@ View.prototype = {
     create.addEventListener('click',function(){
       this.game.changeToCreate();
         this.switchCreate();
-      
     }.bind(this))
     var play = document.getElementById('play');
     play.addEventListener('click',function(){
@@ -28,10 +27,10 @@ View.prototype = {
         this.switchPlay();
       this.game.changeToPlay();
     }.bind(this))
-    var toggle = document.getElementById('toggle');
-    toggle.addEventListener('click',function(){
-      this.game.map.toggleMarkers();
-    }.bind(this))
+    // var toggle = document.getElementById('toggle');
+    // toggle.addEventListener('click',function(){
+    //   this.game.map.toggleMarkers();
+    // }.bind(this))
   },
   
   // looks for clicks on map
