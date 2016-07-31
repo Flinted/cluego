@@ -1,69 +1,101 @@
 body {
-  background-color: wheat; 
+ background-color: wheat; 
+ padding: 0;
+ margin: 0;
+ border: 0;
 }
 
 #nav{
-  width: 100%;
-  height: 60px;
-  background-color: tomato;
-  margin: 0px;
+ position: fixed;
+ top: 0px;
+ width: 100%;
+ height: 60px;
+ background-color: tomato;
+ padding: 5px;
+ margin: 0px;
+ border: 0px;
+ z-index: 5 ;
 }
 
 #nav h1{
-  display:inline;
+ display:inline;
 }
 
 #nav button{
-  float: right;
+ float: right;
 }
 
 #map{
-  margin-top: 2%;
-  float:left;
-  width: 80%;
-  height: 600px;
-  background-color: tomato;
+ margin-top: 60px;
+ z-index: 1;
+ /*float:left;*/
+ width: 100%;
+ /*height: 100%;*/
+ height: 700px;
 }
 
-#info{
-  margin-top: 2%;
-  float:right;
-  width: 18%;
-  height: 600px;
-  background-color: tomato;
-  padding: 10px;
+#wrapper{
+ position: relative;
+
+}
+
+#playArea{
+ position: absolute;
+ border-radius: 3px; 
+ margin-top: 600px;
+ /*float:right;*/
+ color: #fff;
+ width: 100%;
+ height: 300px;
+ z-index: 2;
+ background: rgba(0, 0, 0, .7);
+ padding: 10px;
+}
+
+#createArea{
+ position: absolute;
+ border-radius: 3px; 
+ margin-top: 100px;
+ margin-left: 100px;
+ /*float:right;*/
+ color: #fff;
+ width: 200px;
+ height: 300px;
+ z-index: 2;
+ background: rgba(0, 0, 0, .7);
+ padding: 10px;
 }
 
 .compass {
-  position: relative;
-  width: 130px;
-  height: 130px;
-  margin: 10px auto;
-  background: #222;
-  padding: 10px;
-  border-radius: 20px;
-  border: 5px solid #444;
-  overflow: hidden;
+ position: relative;
+ width: 130px;
+ height: 130px;
+ margin: 10px auto;
+ background: #222;
+ padding: 10px;
+ border-radius: 20px;
+ border: 5px solid #444;
+ overflow: hidden;
 }
 
 .compass .disc {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 200;
-  background: url('http://dev.rvltn.eu/compass/compass.svg');
-  width: 130px;
-  height: 130px;
-  background-size: 100%;
+ position: absolute;
+ top: 10px;
+ left: 10px;
+ z-index: 3;
+ background: url('http://dev.rvltn.eu/compass/compass.svg');
+ width: 130px;
+ height: 130px;
+ background-size: 100%;
 }
 
 .compass .arrow {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background: url('http://dev.rvltn.eu/compass/arrow.svg');
-  width: 130px;
-  height: 130px;
-  background-size: 100%;
+ position: absolute;
+ top: 10px;
+ left: 10px;
+ z-index: 4;
+ background: url('http://dev.rvltn.eu/compass/arrow.svg');
+ width: 130px;
+ height: 130px;
+ background-size: 100%;
 }

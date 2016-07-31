@@ -3,7 +3,7 @@ var Map = function(latLng, zoom){
     center: latLng,
     zoom: zoom,
     zoomControlOptions: {
-      position: google.maps.ControlPosition.BOTTOM_CENTER
+      position: google.maps.ControlPosition.TOP_RIGHT 
     }
   });
 
