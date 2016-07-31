@@ -85,8 +85,8 @@
 	var Ajax = __webpack_require__(2);
 	var Map = __webpack_require__(3);
 	var View = __webpack_require__(4);
-	var Team = __webpack_require__(6);
-	var Objective = __webpack_require__(5)
+	var Team = __webpack_require__(5);
+	var Objective = __webpack_require__(6)
 	
 	
 	var Game = function(){
@@ -424,6 +424,55 @@
 /* 5 */
 /***/ function(module, exports) {
 
+	var Team = function(name){
+	  this.name = name
+	  this.players = [],
+	  this.points = [],
+	  this.games = []
+	  this.penalties = 0
+	}
+	
+	Team.prototype = {
+	  totalPoints: function(){
+	    var total = 0;
+	    this.points.forEach(function(point){
+	      total += point.value;
+	    })
+	    return total - this.penalties;
+	  },
+	
+	  addPoints: function(newPoint){
+	    this.points.push(newPoint)
+	  },
+	
+	  addPlayer: function(player){
+	    this.players.push(player);
+	  },
+	
+	  removePlayer: function(player){
+	    this.players.forEach(function(teamPlayer, index){
+	      if(teamPlayer === player){
+	        this.players.splice(index,1)
+	      };
+	    }.bind(this))
+	  },
+	
+	  addPenalty: function(penalty){
+	    this.penalties += penalty
+	  }, 
+	
+	  getEndGame: function(){
+	
+	  }
+	
+	}
+	
+	module.exports = Team;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
 	var Objective = function(params, map){
 	  this.clue = params.clue;
 	  this.hints =  params.hints;
@@ -497,55 +546,6 @@
 	}
 	
 	module.exports = Objective;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	var Team = function(name){
-	  this.name = name
-	  this.players = [],
-	  this.points = [],
-	  this.games = []
-	  this.penalties = 0
-	}
-	
-	Team.prototype = {
-	  totalPoints: function(){
-	    var total = 0;
-	    this.points.forEach(function(point){
-	      total += point.value;
-	    })
-	    return total - this.penalties;
-	  },
-	
-	  addPoints: function(newPoint){
-	    this.points.push(newPoint)
-	  },
-	
-	  addPlayer: function(player){
-	    this.players.push(player);
-	  },
-	
-	  removePlayer: function(player){
-	    this.players.forEach(function(teamPlayer, index){
-	      if(teamPlayer === player){
-	        this.players.splice(index,1)
-	      };
-	    }.bind(this))
-	  },
-	
-	  addPenalty: function(penalty){
-	    this.penalties += penalty
-	  }, 
-	
-	  getEndGame: function(){
-	
-	  }
-	
-	}
-	
-	module.exports = Team;
 
 /***/ }
 /******/ ]);
