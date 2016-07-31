@@ -1,12 +1,15 @@
 var state = {
- clue: "First Clue",
- hints: ["this", "that", "th'other"],
- tolerance: 0,
- foundMessage: "well done!"
+ clue: "",
+ hints: [],
+ tolerance: 100,
+ foundMessage: "",
+ latLng: ''
 }
 
 var View = function(game){
   this.game = game;
+  this.readyForNext = true;
+  this.ran = false;
 }
 
 View.prototype = {
@@ -35,16 +38,32 @@ View.prototype = {
   mapBindClick: function(){
     google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
       if(this.game.state === "create"){
-        this.populateCreate(event);
-        state.latlng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+        if(this.ran){
+          this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
+          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+          this.game.map.markers.pop()
+          this.game.map.circles.pop()
+        }
+        this.ran = true;
+        this.game.map.addInfoWindow(state.latLng);
+        this.game.map.drawCircle(state.latLng, state.tolerance)
+        console.log(this.game.map.markers)
+        console.log(state.latLng)
+
+
+        if (this.readyForNext){
+        this.readyForNext = false;
+        this.populateCreate(event);}
       }else{
         this.populatePlay(event);
         this.game.currentObj.checkFound(event.latLng);
       }
     }.bind(this))
   },
-   populateCreate: function(event){
 
+
+   populateCreate: function(event){
      var info = document.getElementById('info');
      info.innerHTML = "<h1>Create</h1>"
 
@@ -60,6 +79,7 @@ View.prototype = {
      var input1 = document.createElement('input');
      input1.type = "text";
      input1.name = "question";
+     input1.required = true;
      input1.placeholder = "Question";
 
      var input2 = document.createElement('input');
@@ -80,7 +100,17 @@ View.prototype = {
      var input5 = document.createElement('input');
      input5.type = "text";
      input5.name = "foundMessage";
+     input5.required = true;
      input5.placeholder = "'found goal' message";
+
+     var input6 = document.createElement('input');
+     input6.type = "number";
+     input6.name = "setTolerance";
+     input6.value = state.tolerance;
+     input6.addEventListener('change', function(event){
+       state.tolerance = Number(event.target.value)
+       this.game.map.drawCircle(state.latLng, state.tolerance)
+     }.bind(this))
 
      var button = document.createElement('input');
      button.type = "submit";
@@ -91,6 +121,7 @@ View.prototype = {
      form.appendChild(input3);
      form.appendChild(input4);
      form.appendChild(input5);
+     form.appendChild(input6);
      form.appendChild(button);
      info.appendChild(form);
      info.appendChild(p);
@@ -105,12 +136,14 @@ View.prototype = {
 
    handleSubmit: function(event){
      state.clue = event.srcElement[0].value
-     state.hints.push(event.srcElement[1].value)
-     state.hints.push(event.srcElement[2].value)
-     state.hints.push(event.srcElement[3].value)
+     state.hints=[event.srcElement[1].value,
+                  event.srcElement[2].value, 
+                  event.srcElement[3].value]
      state.foundMessage = event.srcElement[4].value
-     capturedState = state
-     // console.log("your a state", capturedState)
+     var capturedState = state
+     this.game.createObjective(capturedState)
+     this.game.map.addPath();
+     this.ran = false
    },
 
 

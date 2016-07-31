@@ -56,22 +56,25 @@
 	  state.game = new Game();
 	  state.view = new View(state.game);
 	  state.view.initialise();
-	  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
-	  state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
-	  state.game.map.addPath();
-	  state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
-	  state.game.createObjective({
-	      clue: "Clue1",
-	      hints: ['hint1', 'hint2', 'hint3'],
-	      latLng: {lat: 51.4700, lng: -0.4543},
-	      tolerance: 50,
-	      foundMessage: "Well Done"
-	    })
+	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
+	  // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
+	  // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
+	  // state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
+	  // state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
+	  // state.game.map.addPath();
+	  // state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
+	  // state.game.createObjective({
+	  //     clue: "Clue1",
+	  //     hints: ['hint1', 'hint2', 'hint3'],
+	  //     latLng: {lat: 51.4700, lng: -0.4543},
+	  //     tolerance: 50,
+	  //     foundMessage: "Well Done"
+	  //   })
 	  state.game.addTeam("testTeam")
-	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
-	  state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
+	  // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
 	  
 	}
 	
@@ -224,7 +227,7 @@
 	    },
 	
 	  // connects all markers in the array
-	  addPath: function(markers){
+	  addPath: function(){
 	    var markerPath = [];
 	    this.markers.forEach(function(marker){
 	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
@@ -234,7 +237,7 @@
 	      path: markerPath,
 	      geodesic: true,
 	      strokeColor: 'black',
-	      strokeOpacity: 0.4,
+	      strokeOpacity: 0.2,
 	      strokeWeight: 6
 	    });
 	    this.path.setMap(this.googleMap)
@@ -248,6 +251,8 @@
 	      strokeWeight: 2,
 	      fillColor: 'wheat',
 	      fillOpacity: 0.35,
+	      geodesic: false,
+	      clickable: false,
 	      map: this.googleMap,
 	      center: latLng,
 	      radius: tolerance
@@ -278,14 +283,17 @@
 /***/ function(module, exports) {
 
 	var state = {
-	 clue: "First Clue",
-	 hints: ["this", "that", "th'other"],
-	 tolerance: 0,
-	 foundMessage: "well done!"
+	 clue: "",
+	 hints: [],
+	 tolerance: 100,
+	 foundMessage: "",
+	 latLng: ''
 	}
 	
 	var View = function(game){
 	  this.game = game;
+	  this.readyForNext = true;
+	  this.ran = false;
 	}
 	
 	View.prototype = {
@@ -314,16 +322,32 @@
 	  mapBindClick: function(){
 	    google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
 	      if(this.game.state === "create"){
-	        this.populateCreate(event);
-	        state.latlng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+	        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+	        if(this.ran){
+	          this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
+	          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	          this.game.map.markers.pop()
+	          this.game.map.circles.pop()
+	        }
+	        this.ran = true;
+	        this.game.map.addInfoWindow(state.latLng);
+	        this.game.map.drawCircle(state.latLng, state.tolerance)
+	        console.log(this.game.map.markers)
+	        console.log(state.latLng)
+	
+	
+	        if (this.readyForNext){
+	        this.readyForNext = false;
+	        this.populateCreate(event);}
 	      }else{
 	        this.populatePlay(event);
 	        this.game.currentObj.checkFound(event.latLng);
 	      }
 	    }.bind(this))
 	  },
-	   populateCreate: function(event){
 	
+	
+	   populateCreate: function(event){
 	     var info = document.getElementById('info');
 	     info.innerHTML = "<h1>Create</h1>"
 	
@@ -339,6 +363,7 @@
 	     var input1 = document.createElement('input');
 	     input1.type = "text";
 	     input1.name = "question";
+	     input1.required = true;
 	     input1.placeholder = "Question";
 	
 	     var input2 = document.createElement('input');
@@ -359,7 +384,17 @@
 	     var input5 = document.createElement('input');
 	     input5.type = "text";
 	     input5.name = "foundMessage";
+	     input5.required = true;
 	     input5.placeholder = "'found goal' message";
+	
+	     var input6 = document.createElement('input');
+	     input6.type = "number";
+	     input6.name = "setTolerance";
+	     input6.value = state.tolerance;
+	     input6.addEventListener('change', function(event){
+	       state.tolerance = Number(event.target.value)
+	       this.game.map.drawCircle(state.latLng, state.tolerance)
+	     }.bind(this))
 	
 	     var button = document.createElement('input');
 	     button.type = "submit";
@@ -370,6 +405,7 @@
 	     form.appendChild(input3);
 	     form.appendChild(input4);
 	     form.appendChild(input5);
+	     form.appendChild(input6);
 	     form.appendChild(button);
 	     info.appendChild(form);
 	     info.appendChild(p);
@@ -384,12 +420,14 @@
 	
 	   handleSubmit: function(event){
 	     state.clue = event.srcElement[0].value
-	     state.hints.push(event.srcElement[1].value)
-	     state.hints.push(event.srcElement[2].value)
-	     state.hints.push(event.srcElement[3].value)
+	     state.hints=[event.srcElement[1].value,
+	                  event.srcElement[2].value, 
+	                  event.srcElement[3].value]
 	     state.foundMessage = event.srcElement[4].value
-	     capturedState = state
-	     // console.log("your a state", capturedState)
+	     var capturedState = state
+	     this.game.createObjective(capturedState)
+	     this.game.map.addPath();
+	     this.ran = false
 	   },
 	
 	
