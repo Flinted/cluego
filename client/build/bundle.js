@@ -58,6 +58,9 @@
 	  state.view.initialise();
 	  state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
 	  state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
+	  state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
+	  state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
+	  state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
 	  state.game.map.addPath();
 	  state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
 	  state.game.createObjective({
@@ -278,10 +281,11 @@
 /***/ function(module, exports) {
 
 	var state = {
-	 clue: "First Clue",
-	 hints: ["this", "that", "th'other"],
+	 clue: "",
+	 hints: [],
 	 tolerance: 0,
-	 foundMessage: "well done!"
+	 foundMessage: "",
+	 latLng: ''
 	}
 	
 	var View = function(game){
@@ -315,7 +319,7 @@
 	    google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
 	      if(this.game.state === "create"){
 	        this.populateCreate(event);
-	        state.latlng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+	        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
 	      }else{
 	        this.populatePlay(event);
 	        this.game.currentObj.checkFound(event.latLng);
@@ -323,7 +327,6 @@
 	    }.bind(this))
 	  },
 	   populateCreate: function(event){
-	
 	     var info = document.getElementById('info');
 	     info.innerHTML = "<h1>Create</h1>"
 	
@@ -384,12 +387,16 @@
 	
 	   handleSubmit: function(event){
 	     state.clue = event.srcElement[0].value
-	     state.hints.push(event.srcElement[1].value)
-	     state.hints.push(event.srcElement[2].value)
-	     state.hints.push(event.srcElement[3].value)
+	     state.hints=[event.srcElement[1].value,
+	                  event.srcElement[2].value, 
+	                  event.srcElement[3].value]
 	     state.foundMessage = event.srcElement[4].value
-	     capturedState = state
-	     // console.log("your a state", capturedState)
+	     var capturedState = state
+	     this.game.createObjective(capturedState)
+	     console.log(this.game.objectives)
+	     console.log(this.game.currentObj)
+	     console.log(state.latLng)
+	     console.log("your a state", capturedState)
 	   },
 	
 	

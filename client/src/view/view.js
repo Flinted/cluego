@@ -1,8 +1,9 @@
 var state = {
- clue: "First Clue",
- hints: ["this", "that", "th'other"],
+ clue: "",
+ hints: [],
  tolerance: 0,
- foundMessage: "well done!"
+ foundMessage: "",
+ latLng: ''
 }
 
 var View = function(game){
@@ -36,7 +37,7 @@ View.prototype = {
     google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
       if(this.game.state === "create"){
         this.populateCreate(event);
-        state.latlng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
       }else{
         this.populatePlay(event);
         this.game.currentObj.checkFound(event.latLng);
@@ -44,7 +45,6 @@ View.prototype = {
     }.bind(this))
   },
    populateCreate: function(event){
-
      var info = document.getElementById('info');
      info.innerHTML = "<h1>Create</h1>"
 
@@ -105,12 +105,16 @@ View.prototype = {
 
    handleSubmit: function(event){
      state.clue = event.srcElement[0].value
-     state.hints.push(event.srcElement[1].value)
-     state.hints.push(event.srcElement[2].value)
-     state.hints.push(event.srcElement[3].value)
+     state.hints=[event.srcElement[1].value,
+                  event.srcElement[2].value, 
+                  event.srcElement[3].value]
      state.foundMessage = event.srcElement[4].value
-     capturedState = state
-     // console.log("your a state", capturedState)
+     var capturedState = state
+     this.game.createObjective(capturedState)
+     console.log(this.game.objectives)
+     console.log(this.game.currentObj)
+     console.log(state.latLng)
+     console.log("your a state", capturedState)
    },
 
 
