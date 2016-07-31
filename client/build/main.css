@@ -5,6 +5,12 @@ body {
  border: 0;
 }
 
+#fixed{
+position: fixed;
+height: 700px;
+width: 100%;
+}
+
 #nav{
  position: fixed;
  top: 0px;
@@ -77,40 +83,36 @@ body {
 }
 
 .compass {
+ display: inline-block;
  position: relative;
- width: 130px;
- height: 130px;
- margin: 10px auto;
+ width: 65px;
+ height: 65px;
+ margin: 5px auto;
  background: #222;
- padding: 10px;
- border-radius: 20px;
- border: 5px solid #444;
+ padding: 5px;
+ border-radius: 50%;
+ border: 2px solid #444;
  overflow: hidden;
 }
 
 .compass .disc {
  position: absolute;
- top: 10px;
- left: 10px;
+ top: 5px;
+ left: 5px;
  z-index: 3;
  background: url('http://dev.rvltn.eu/compass/compass.svg');
- width: 130px;
- height: 130px;
+ width: 65px;
+ height: 65px;
  background-size: 100%;
 }
 
 .compass .arrow {
  position: absolute;
- top: 10px;
- left: 10px;
+ top: 5px;
+ left: 5px;
  z-index: 4;
  background: url('http://dev.rvltn.eu/compass/arrow.svg');
- width: 130px;
- height: 130px;
+ width: 65px;
+ height: 65px;
  background-size: 100%;
-}
-
-
-#thing{
-  
 }

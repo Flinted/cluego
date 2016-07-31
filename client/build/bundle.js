@@ -57,21 +57,21 @@
 	  state.view = new View(state.game);
 	  state.view.initialise();
 	  state.game.map.initialise()
-	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543})
+	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543}, "hello")
 	  // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
 	  // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
 	  // state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
 	  // state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
 	  // state.game.map.addPath();
 	  // state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
-	  // state.game.createObjective({
-	  //     clue: "Clue1",
-	  //     hints: ['hint1', 'hint2', 'hint3'],
-	  //     latLng: {lat: 51.4700, lng: -0.4543},
-	  //     tolerance: 50,
-	  //     foundMessage: "Well Done"
-	  //   })
-	  state.game.addTeam("testTeam")
+	  state.game.createObjective({
+	      clue: "Clue1",
+	      hints: ['hint1', 'hint2', 'hint3'],
+	      latLng: {lat: 51.4700, lng: -0.4543},
+	      tolerance: 50,
+	      foundMessage: "Well Done"
+	    })
+	  // state.game.addTeam("testTeam")
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
@@ -235,8 +235,10 @@
 	  this.googleMap = new google.maps.Map(document.getElementById('map'), {
 	    center: latLng,
 	    zoom: zoom,
+	    minZoom: 2,
+	    mapTypeControl: false,
 	    zoomControlOptions: {
-	      position: google.maps.ControlPosition.TOP_RIGHT 
+	      position: google.maps.ControlPosition.RIGHT_CENTER 
 	    }
 	  });
 	
@@ -252,6 +254,7 @@
 	  initialise: function(){
 	    this.googleMap.setOptions({styles: styles})
 	  },
+	
 	  // returns marker and adds to map
 	  addMarker: function(latLng){
 	    var marker = new google.maps.Marker({
@@ -378,15 +381,12 @@
 	        this.switchPlay();
 	      this.game.changeToPlay();
 	    }.bind(this))
-	    // var toggle = document.getElementById('toggle');
-	    // toggle.addEventListener('click',function(){
-	    //   this.game.map.toggleMarkers();
-	    // }.bind(this))
 	  },
 	  
 	  // looks for clicks on map
 	  mapBindClick: function(){
 	    google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
+	      this.game.map.googleMap.panTo(event.latLng)
 	      if(this.game.state === "create"){
 	        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
 	        if(this.ran){
@@ -455,11 +455,15 @@
 	     input5.required = true;
 	     input5.placeholder = "'found goal' message";
 	     var input6 = document.createElement('input');
-	     input6.type = "number";
+	     input6.type = "range";
+	     input6.min = 50;
+	     input6.max = 500000;
 	     input6.name = "setTolerance";
 	     input6.value = state.tolerance;
 	     input6.addEventListener('change', function(event){
 	       state.tolerance = Number(event.target.value)
+	       this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	       this.game.map.circles.pop()
 	       this.game.map.drawCircle(state.latLng, state.tolerance)
 	     }.bind(this))
 	   var button = document.createElement('input');
@@ -481,6 +485,7 @@
 	      this.handleSubmit(event)
 	    }.bind(this))
 	   },
+	
 	   handleSubmit: function(event){
 	     state.clue = event.srcElement[0].value
 	     state.hints=[event.srcElement[1].value,
@@ -492,6 +497,7 @@
 	     this.game.map.addPath();
 	     this.ran = false
 	   },
+	
 	   populatePlay: function(){
 	     var play = document.getElementById('playArea');
 	     play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"

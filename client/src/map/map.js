@@ -65,8 +65,10 @@ var Map = function(latLng, zoom){
   this.googleMap = new google.maps.Map(document.getElementById('map'), {
     center: latLng,
     zoom: zoom,
+    minZoom: 2,
+    mapTypeControl: false,
     zoomControlOptions: {
-      position: google.maps.ControlPosition.TOP_RIGHT 
+      position: google.maps.ControlPosition.RIGHT_CENTER 
     }
   });
 
@@ -82,6 +84,7 @@ Map.prototype = {
   initialise: function(){
     this.googleMap.setOptions({styles: styles})
   },
+
   // returns marker and adds to map
   addMarker: function(latLng){
     var marker = new google.maps.Marker({
