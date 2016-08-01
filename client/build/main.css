@@ -1,17 +1,22 @@
 body {
+
   background-color: wheat; 
   padding: 0;
   margin: 0;
   border: 0;
   overflow:hidden;
 }
+#logo{
+  font-family: 'Bowlby One', arial bold;
+}
 
 .team{
   width: 40px;
   height:40px;
-  border: 3px solid black;
+  border-radius: 100%;
   display: inline-block;
-  margin: 2px;
+  margin: 15px;
+
 }
 
 #nav{
@@ -64,7 +69,9 @@ body {
 }
 
 
-
+/*==============================
+DIV areas
+==============================*/
 
 /*
 #playArea{
@@ -110,7 +117,9 @@ padding: 10px;
 #temp h1{
   color: white;
 }
-
+/*==============================
+  compass
+==============================*/
 .compass {
   display: inline-block;
   position: relative;
@@ -147,10 +156,10 @@ padding: 10px;
 }
 
 /*==============================
-slider
+  slider
 ==============================*/
 
-.stats {
+/*.stats {
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   left: 0;
@@ -158,11 +167,11 @@ slider
   bottom: 0;
   transition: top 1.5s ease-in-out;
   z-index: 50;
-}
+}*/
 
 .playArea {
   padding: 5px 0 0 10px;
-  background-color: rgba(50, 50, 0, .7);
+  background-color: rgba(0, 0, 0, 1);
   position: absolute;
   left: 0;
   right: 0;
@@ -173,7 +182,7 @@ slider
 
 
 /*==============================
-fade in
+  fade in
 ==============================*/
 
 @keyframes fadeIn { from { opacity:0; opacity: 1\9; /* IE9 only */ } to { opacity:1; } }
