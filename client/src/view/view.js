@@ -28,6 +28,7 @@ View.prototype = {
     }.bind(this))
     var play = document.getElementById('play');
     play.addEventListener('click',function(){
+      this.game.map.hideMarkers();
       this.selectTeam();
       this.populatePlay()
       // this.switchPlay();

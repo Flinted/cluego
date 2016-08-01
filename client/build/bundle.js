@@ -248,7 +248,8 @@
 	  })
 	  this.markers = [];
 	  this.circles = [];
-	  this.path = ''
+	  this.path = '';
+	  this.foundMarkers = [];
 	}
 	
 	Map.prototype = {
@@ -295,6 +296,16 @@
 	        circle.setVisible(setter);
 	      }
 	      this.path.setVisible(setter);
+	    },
+	
+	    hideMarkers: function(){
+	      for(marker of this.markers){
+	        marker.setVisible(false);
+	      }
+	      for(circle of this.circles){
+	        circle.setVisible(false);
+	      }
+	      this.path.setVisible(false);
 	    },
 	
 	  // connects all markers in the array
@@ -383,6 +394,7 @@
 	    }.bind(this))
 	    var play = document.getElementById('play');
 	    play.addEventListener('click',function(){
+	      this.game.map.hideMarkers();
 	      this.selectTeam();
 	      this.populatePlay()
 	      // this.switchPlay();

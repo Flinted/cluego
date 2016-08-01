@@ -77,7 +77,8 @@ var Map = function(latLng, zoom){
   })
   this.markers = [];
   this.circles = [];
-  this.path = ''
+  this.path = '';
+  this.foundMarkers = [];
 }
 
 Map.prototype = {
@@ -124,6 +125,16 @@ Map.prototype = {
         circle.setVisible(setter);
       }
       this.path.setVisible(setter);
+    },
+
+    hideMarkers: function(){
+      for(marker of this.markers){
+        marker.setVisible(false);
+      }
+      for(circle of this.circles){
+        circle.setVisible(false);
+      }
+      this.path.setVisible(false);
     },
 
   // connects all markers in the array
