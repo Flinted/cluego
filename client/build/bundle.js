@@ -430,6 +430,13 @@
 	    play.addEventListener('click',function(){
 	        this.goPlay()
 	    }.bind(this))
+	    var slide = document.getElementById('slideButton');
+	     slide.addEventListener('click', function(){
+	       var stats = document.getElementById('playArea')
+	       if (stats.style.top != "650px"){
+	         stats.style.top = "650px"
+	       }else{ stats.style.top = "400px"}
+	     })
 	  },
 	  
 	  goPlay: function(){
@@ -523,7 +530,6 @@
 	
 	      color.addEventListener('click', function(){
 	        this.setVisible("play")
-	        // this.switchPlay();
 	      }.bind(this))
 	
 	      temp.appendChild(color);
@@ -641,8 +647,15 @@
 	     },
 	
 	     populatePlay: function(){
-	       var play = document.getElementById('playArea');
-	       play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + this.game.currentObj.clue + "<br>"
+	       var play = document.getElementById('textField');
+	       play.innerHTML="";
+	       // var p = document.createElement('p')
+	       // var p2 = document.createElement('p')
+	       var head = document.createElement('h1')
+	       // head.innerText= "PLAY!"
+	       head.innerText = "Here is your first clue: " + this.game.currentObj.clue 
+	       play.appendChild(head) 
+	       // play.appendChild(p) 
 	       var button = document.createElement('button');
 	       button.innerHTML = "Get a Hint"
 	       play.appendChild(button);
