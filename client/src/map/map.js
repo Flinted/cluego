@@ -79,6 +79,7 @@ var Map = function(latLng, zoom){
   this.circles = [];
   this.path = '';
   this.foundMarkers = [];
+  this.foundWindows = [];
 }
 
 Map.prototype = {
@@ -99,6 +100,19 @@ Map.prototype = {
     })
     return marker;   
   }, 
+
+  addFoundWindow: function(latLng, content){
+    var marker = this.addMarker(latLng);
+    this.foundMarkers.push(marker);
+    marker.addListener('click', function(event){
+      this.infoWindow.close();
+      var infoWindow = new google.maps.InfoWindow({
+        content: content
+      })
+      this.foundWindows.push(infoWindow);
+      infoWindow.open( this.map, marker ); 
+    }.bind(this))
+  },
 
   // creates marker and info window
   addInfoWindow: function(latLng, content){

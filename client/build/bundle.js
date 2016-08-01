@@ -76,7 +76,9 @@
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
-	  
+	  // state.game.ajax.go("GET", "/games")
+	  // state.game.ajax.response
+	
 	}
 	
 	var main = function(){
@@ -250,6 +252,7 @@
 	  this.circles = [];
 	  this.path = '';
 	  this.foundMarkers = [];
+	  this.foundWindows = [];
 	}
 	
 	Map.prototype = {
@@ -270,6 +273,19 @@
 	    })
 	    return marker;   
 	  }, 
+	
+	  addFoundWindow: function(latLng, content){
+	    var marker = this.addMarker(latLng);
+	    this.foundMarkers.push(marker);
+	    marker.addListener('click', function(event){
+	      this.infoWindow.close();
+	      var infoWindow = new google.maps.InfoWindow({
+	        content: content
+	      })
+	      this.foundWindows.push(infoWindow);
+	      infoWindow.open( this.map, marker ); 
+	    }.bind(this))
+	  },
 	
 	  // creates marker and info window
 	  addInfoWindow: function(latLng, content){
@@ -397,7 +413,6 @@
 	      this.game.map.hideMarkers();
 	      this.selectTeam();
 	      this.populatePlay()
-	      // this.switchPlay();
 	      this.game.changeToPlay();
 	    }.bind(this))
 	  },
@@ -417,14 +432,15 @@
 	        }
 	        this.ran = true;
 	        this.game.map.addInfoWindow(state.latLng);
-	        this.game.map.drawCircle(state.latLng, state.tolerance)
+	        this.game.map.drawCircle(state.latLng, state.tolerance);
 	        
 	        if (this.readyForNext){
 	        this.readyForNext = false;
 	        this.populateCreate(event);}
 	      }else{
-	        // this.populatePlay(event);
 	        if(this.game.currentObj.checkFound(event.latLng)){
+	          this.game.map.addFoundWindow(this.game.currentObj.latLng, "FOUND ME!")
+	          this.popFound();
 	          if(this.game.updateCurrent()){
 	            this.endGame()
 	          }else{
@@ -471,9 +487,13 @@
 	    }
 	  },
 	
+	  popFound: function(){
+	
+	  },
+	
 	  endGame:function(){
-	    var play = document.getElementById('playArea');
-	    play.innerHTML = "<h1>GAME OVER</h1>"
+	    var temp = document.getElementById('temp');
+	    temp.innerHTML = "<h1 color='white'>GAME OVER</h1>"
 	  },
 	
 	  switchCreate: function(){

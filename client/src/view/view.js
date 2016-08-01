@@ -31,7 +31,6 @@ View.prototype = {
       this.game.map.hideMarkers();
       this.selectTeam();
       this.populatePlay()
-      // this.switchPlay();
       this.game.changeToPlay();
     }.bind(this))
   },
@@ -51,14 +50,15 @@ View.prototype = {
         }
         this.ran = true;
         this.game.map.addInfoWindow(state.latLng);
-        this.game.map.drawCircle(state.latLng, state.tolerance)
+        this.game.map.drawCircle(state.latLng, state.tolerance);
         
         if (this.readyForNext){
         this.readyForNext = false;
         this.populateCreate(event);}
       }else{
-        // this.populatePlay(event);
         if(this.game.currentObj.checkFound(event.latLng)){
+          this.game.map.addFoundWindow(this.game.currentObj.latLng, "FOUND ME!")
+          this.popFound();
           if(this.game.updateCurrent()){
             this.endGame()
           }else{
@@ -105,9 +105,13 @@ View.prototype = {
     }
   },
 
+  popFound: function(){
+
+  },
+
   endGame:function(){
-    var play = document.getElementById('playArea');
-    play.innerHTML = "<h1>GAME OVER</h1>"
+    var temp = document.getElementById('temp');
+    temp.innerHTML = "<h1 color='white'>GAME OVER</h1>"
   },
 
   switchCreate: function(){
