@@ -12,20 +12,29 @@ window.onload= function(){
   state.game.addTeam("testTeam")
   state.view.initialise();
   state.game.map.initialise()
-  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543}, "hello")
-  // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
-  // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
-  // state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
-  // state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
-  // state.game.map.addPath();
-  // state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
-  // state.game.createObjective({
-  //     clue: "Clue1",
-  //     hints: ['hint1', 'hint2', 'hint3'],
-  //     latLng: {lat: 51.4700, lng: -0.4543},
-  //     tolerance: 50,
-  //     foundMessage: "Well Done"
-  //   })
+  state.game.createObjective({
+      clue: "This is where a king might live?",
+      hints: ["You will hear from it at 1pm", "You can see it from all around Edinburgh", "at the top of the Royal Mile!"],
+      latLng: {lat: 55.9486, lng: -3.1999},
+      tolerance: 500,
+      foundMessage: "Well Done, it was Edinburgh Castle"
+    })
+
+  state.game.createObjective({
+      clue: "This is where a king might rest?",
+      hints: ["It's near a very old pub...", "Not far from Duddingston", "Take a seat"],
+      latLng: {lat: 55.9441, lng: -3.1618},
+      tolerance: 500,
+      foundMessage: "Well Done, it was Arthurs Seat"
+    })
+
+  state.game.createObjective({
+      clue: "Go Forth!",
+      hints: ["Over the water", "Choo Choo", "Big Red"],
+      latLng: {lat: 56.0006, lng: -3.3884},
+      tolerance: 500,
+      foundMessage: "Well Done, it was the Forth Rail Bridge"
+    })
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  

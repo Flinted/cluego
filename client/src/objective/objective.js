@@ -32,7 +32,7 @@ Objective.prototype = {
   giveHint: function(latLng, team){
     team.addPenalty(2);
     this.hintCount +=1;
-    if(this.hintCount >= this.hints.length){
+    if(this.hintCount > this.hints.length){
       this.directionHint(latLng);
     }else{
       return this.hints[this.hintCount-1];

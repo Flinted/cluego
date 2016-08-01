@@ -99,6 +99,10 @@ body {
  background: rgba(0, 0, 0, .7);
 }
 
+#temp h1{
+  color: white;
+}
+
 .compass {
  display: inline-block;
  position: relative;

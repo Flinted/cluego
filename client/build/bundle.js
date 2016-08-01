@@ -58,20 +58,29 @@
 	  state.game.addTeam("testTeam")
 	  state.view.initialise();
 	  state.game.map.initialise()
-	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543}, "hello")
-	  // state.game.map.addInfoWindow({lat:51.7700,lng:-0.4543})
-	  // state.game.map.addInfoWindow({lat:31.7700,lng:-0.3543})
-	  // state.game.map.addInfoWindow({lat:51.7700,lng:-23.4543})
-	  // state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
-	  // state.game.map.addPath();
-	  // state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
-	  // state.game.createObjective({
-	  //     clue: "Clue1",
-	  //     hints: ['hint1', 'hint2', 'hint3'],
-	  //     latLng: {lat: 51.4700, lng: -0.4543},
-	  //     tolerance: 50,
-	  //     foundMessage: "Well Done"
-	  //   })
+	  state.game.createObjective({
+	      clue: "This is where a king might live?",
+	      hints: ["You will hear from it at 1pm", "You can see it from all around Edinburgh", "at the top of the Royal Mile!"],
+	      latLng: {lat: 55.9486, lng: -3.1999},
+	      tolerance: 500,
+	      foundMessage: "Well Done, it was Edinburgh Castle"
+	    })
+	
+	  state.game.createObjective({
+	      clue: "This is where a king might rest?",
+	      hints: ["It's near a very old pub...", "Not far from Duddingston", "Take a seat"],
+	      latLng: {lat: 55.9441, lng: -3.1618},
+	      tolerance: 500,
+	      foundMessage: "Well Done, it was Arthurs Seat"
+	    })
+	
+	  state.game.createObjective({
+	      clue: "Go Forth!",
+	      hints: ["Over the water", "Choo Choo", "Big Red"],
+	      latLng: {lat: 56.0006, lng: -3.3884},
+	      tolerance: 500,
+	      foundMessage: "Well Done, it was the Forth Rail Bridge"
+	    })
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
@@ -97,7 +106,7 @@
 	
 	var Game = function(){
 	  this.ajax = new Ajax();
-	  this.map = new Map({lat:51.4700,lng:-0.4543}, 10);
+	  this.map = new Map({lat:55.9486,lng:-3.1888}, 10);
 	  this.objectives = [];
 	  this.teams = [];
 	  this.currentObj = 0;
@@ -231,9 +240,6 @@
 	  }
 	]
 	
-	
-	
-	
 	var Map = function(latLng, zoom){
 	  this.googleMap = new google.maps.Map(document.getElementById('map'), {
 	    center: latLng,
@@ -277,6 +283,13 @@
 	  addFoundWindow: function(latLng, content){
 	    var marker = this.addMarker(latLng);
 	    this.foundMarkers.push(marker);
+	    var infoWindow = new google.maps.InfoWindow({
+	      content: content
+	    })
+	    this.foundWindows.push(infoWindow);
+	    this.foundWindows[this.foundWindows.length-1].open( this.map, marker ); 
+	
+	    infoWindow.open( this.map, marker ); 
 	    marker.addListener('click', function(event){
 	      this.infoWindow.close();
 	      var infoWindow = new google.maps.InfoWindow({
@@ -285,6 +298,7 @@
 	      this.foundWindows.push(infoWindow);
 	      infoWindow.open( this.map, marker ); 
 	    }.bind(this))
+	
 	  },
 	
 	  // creates marker and info window
@@ -315,13 +329,16 @@
 	    },
 	
 	    hideMarkers: function(){
+	      console.log(this.path)
+	
 	      for(marker of this.markers){
 	        marker.setVisible(false);
 	      }
 	      for(circle of this.circles){
 	        circle.setVisible(false);
 	      }
-	      this.path.setVisible(false);
+	    if(this.path){this.path.setVisible(false);}
+	    
 	    },
 	
 	  // connects all markers in the array
@@ -331,6 +348,8 @@
 	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
 	      markerPath.push(latLng);
 	    })
+	    if(this.path){this.path.setVisible(false);}
+	
 	    this.path = new google.maps.Polyline({
 	      path: markerPath,
 	      geodesic: true,
@@ -406,7 +425,7 @@
 	    var create = document.getElementById('create');
 	    create.addEventListener('click',function(){
 	      this.game.changeToCreate();
-	        this.switchCreate();
+	      this.switchCreate();
 	    }.bind(this))
 	    var play = document.getElementById('play');
 	    play.addEventListener('click',function(){
@@ -425,31 +444,36 @@
 	
 	      if(this.game.state === "create"){
 	        if(this.ran){
-	          this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
-	          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-	          this.game.map.markers.pop()
-	          this.game.map.circles.pop()
+	          this.resetMarkers();
 	        }
 	        this.ran = true;
 	        this.game.map.addInfoWindow(state.latLng);
 	        this.game.map.drawCircle(state.latLng, state.tolerance);
 	        
 	        if (this.readyForNext){
-	        this.readyForNext = false;
-	        this.populateCreate(event);}
-	      }else{
-	        if(this.game.currentObj.checkFound(event.latLng)){
-	          this.game.map.addFoundWindow(this.game.currentObj.latLng, "FOUND ME!")
-	          this.popFound();
-	          if(this.game.updateCurrent()){
-	            this.endGame()
-	          }else{
-	            this.populatePlay(event)
+	          this.readyForNext = false;
+	          this.populateCreate(event);}
+	        }else{
+	          if(this.game.currentObj.checkFound(event.latLng)){
+	            this.game.map.addFoundWindow(this.game.currentObj.latLng, this.game.currentObj.clue + " " + this.game.currentObj.foundMessage)
+	            this.popFound();
+	            if(this.game.updateCurrent()){
+	              this.endGame()
+	            }else{
+	              this.populatePlay(event)
+	            }
 	          }
 	        }
-	      }
-	    }.bind(this))
+	      }.bind(this))
 	  },
+	
+	  resetMarkers: function(){
+	    this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
+	    this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	    this.game.map.markers.pop()
+	    this.game.map.circles.pop()
+	  },
+	
 	  selectTeam: function(){
 	    var temp = document.getElementById('temp');
 	    var input1 = document.createElement('input');
@@ -480,126 +504,136 @@
 	      color.style.backgroundColor = colors[i];
 	
 	      color.addEventListener('click', function(){
-	      this.switchPlay();
+	        temp.style.display = 'none';
+	        this.switchPlay();
 	      }.bind(this))
 	
 	      temp.appendChild(color);
+	      temp.style.display = 'block'
 	    }
 	  },
 	
 	  popFound: function(){
-	
+	    var temp = document.getElementById('temp');
+	    temp.style.display= 'block';
+	    temp.innerHTML = "<h1>Well Done!<br>" + this.game.currentObj.clue + "<br>You found it <br>" + this.game.currentObj.foundMessage + "</h1>";
+	    setTimeout(function(){
+	      temp.style.display= 'none'
+	    },2500)
 	  },
 	
 	  endGame:function(){
 	    var temp = document.getElementById('temp');
-	    temp.innerHTML = "<h1 color='white'>GAME OVER</h1>"
+	    temp.innerHTML = "<h1>GAME OVER</h1>"
+	    temp.style.display = 'block';
+	
 	  },
 	
 	  switchCreate: function(){
 	    var create = document.getElementById('createArea');
 	    var play = document.getElementById('playArea');
 	    if (create.style.display === 'none'){
-	    create.style.display = 'block';
-	    play.style.display = 'none';}
+	      create.style.display = 'block';
+	      play.style.display = 'none';}
 	    },
 	
-	  switchPlay: function(){
-	    var create = document.getElementById('createArea');
-	    var play = document.getElementById('playArea');
-	    if (play.style.display === 'none'){
-	    create.style.display = 'none';
-	    play.style.display = 'block';}
-	    },
+	    switchPlay: function(){
+	      var create = document.getElementById('createArea');
+	      var play = document.getElementById('playArea');
+	      if (play.style.display === 'none'){
+	        create.style.display = 'none';
+	        play.style.display = 'block';}
+	      },
 	
-	   populateCreate: function(event){
-	     var create = document.getElementById('createArea');
-	     create.innerHTML = "<h1>Create</h1>"   
-	     var button2 = document.createElement('button');
-	     button2.innerText = "Game Complete!"
-	     var form = document.createElement('form');
-	     form.id = "objective";
-	     var input1 = document.createElement('input');
-	     input1.type = "text";
-	     input1.name = "question";
-	     input1.required = true;
-	     input1.placeholder = "Question";
-	     var input2 = document.createElement('input');
-	     input2.type = "text";
-	     input2.name = "hint1";
-	     input2.placeholder = "Hint 1";
-	     var input3 = document.createElement('input');
-	     input3.type = "text";
-	     input3.name = "hint2";
-	     input3.placeholder = "Hint 2";
-	     var input4 = document.createElement('input');
-	     input4.type = "text";
-	     input4.name = "hint3";
-	     input4.placeholder = "Hint 3";
-	     var input5 = document.createElement('input');
-	     input5.type = "text";
-	     input5.name = "foundMessage";
-	     input5.required = true;
-	     input5.placeholder = "'found goal' message";
-	     var input6 = document.createElement('input');
-	     input6.type = "range";
-	     input6.min = 50;
-	     input6.max = 500000;
-	     input6.name = "setTolerance";
-	     input6.value = state.tolerance;
-	     input6.addEventListener('change', function(event){
-	       state.tolerance = Number(event.target.value)
-	       this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-	       this.game.map.circles.pop()
-	       this.game.map.drawCircle(state.latLng, state.tolerance)
-	     }.bind(this))
-	   var button = document.createElement('input');
-	   button.type = "submit";
-	   button.name = "enter";
+	      populateCreate: function(event){
+	       var create = document.getElementById('createArea');
+	       create.innerHTML = "<h1>Create</h1>"   
+	       var button2 = document.createElement('button');
+	       button2.innerText = "Game Complete!"
+	       var form = document.createElement('form');
+	       form.id = "objective";
+	       var input1 = document.createElement('input');
+	       input1.type = "text";
+	       input1.name = "question";
+	       input1.required = true;
+	       input1.placeholder = "Question";
+	       var input2 = document.createElement('input');
+	       input2.type = "text";
+	       input2.name = "hint1";
+	       input2.placeholder = "Hint 1";
+	       var input3 = document.createElement('input');
+	       input3.type = "text";
+	       input3.name = "hint2";
+	       input3.placeholder = "Hint 2";
+	       var input4 = document.createElement('input');
+	       input4.type = "text";
+	       input4.name = "hint3";
+	       input4.placeholder = "Hint 3";
+	       var input5 = document.createElement('input');
+	       input5.type = "text";
+	       input5.name = "foundMessage";
+	       input5.required = true;
+	       input5.placeholder = "'found goal' message";
+	       var input6 = document.createElement('input');
+	       input6.type = "range";
+	       input6.min = 50;
+	       input6.max = 500000;
+	       input6.name = "setTolerance";
+	       input6.value = state.tolerance;
+	       input6.addEventListener('change', function(event){
+	         state.tolerance = Number(event.target.value)
+	         this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	         this.game.map.circles.pop()
+	         this.game.map.drawCircle(state.latLng, state.tolerance)
+	       }.bind(this))
+	       var button = document.createElement('input');
+	       button.type = "submit";
+	       button.name = "enter";
 	
-	     form.appendChild(input1);
-	     form.appendChild(input2);
-	     form.appendChild(input3);
-	     form.appendChild(input4);
-	     form.appendChild(input5);
-	     form.appendChild(input6);
-	     form.appendChild(document.createElement('br'))
-	     form.appendChild(button);
-	     create.appendChild(form);
-	     create.appendChild(button2)  
+	       form.appendChild(input1);
+	       form.appendChild(input2);
+	       form.appendChild(input3);
+	       form.appendChild(input4);
+	       form.appendChild(input5);
+	       form.appendChild(input6);
+	       form.appendChild(document.createElement('br'))
+	       form.appendChild(button);
+	       create.appendChild(form);
+	       create.appendChild(button2)  
 	
-	     var objective = document.getElementById( 'objective' );
-	     objective.addEventListener('submit', function(event){
-	      event.preventDefault()
-	      this.handleSubmit(event)
-	    }.bind(this))
-	 
-	   },
+	       var objective = document.getElementById( 'objective' );
+	       objective.addEventListener('submit', function(event){
+	        event.preventDefault()
+	        this.handleSubmit(event)
+	      }.bind(this))
 	
-	   handleSubmit: function(event){
-	     state.clue = event.srcElement[0].value
-	     state.hints=[event.srcElement[1].value,
-	                  event.srcElement[2].value, 
-	                  event.srcElement[3].value]
-	     state.foundMessage = event.srcElement[4].value
-	     var capturedState = state
-	     this.game.createObjective(capturedState)
-	     this.game.map.addPath();
-	     this.ran = false
-	   },
+	     },
 	
-	   populatePlay: function(){
-	     var play = document.getElementById('playArea');
-	     play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + this.game.currentObj.clue + "<br>"
-	     var button = document.createElement('button');
-	     button.innerHTML = "Get a Hint"
-	     play.appendChild(button);
-	     button.addEventListener('click', function(event){
-	     var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
-	   }.bind(this))
-	  }
-	}
-	  module.exports = View;
+	     handleSubmit: function(event){
+	       state.clue = event.srcElement[0].value
+	       state.hints=[event.srcElement[1].value,
+	       event.srcElement[2].value, 
+	       event.srcElement[3].value]
+	       state.foundMessage = event.srcElement[4].value
+	       var capturedState = state
+	       this.game.createObjective(capturedState)
+	       this.game.map.addPath();
+	       this.ran = false
+	     },
+	
+	     populatePlay: function(){
+	       var play = document.getElementById('playArea');
+	       play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + this.game.currentObj.clue + "<br>"
+	       var button = document.createElement('button');
+	       button.innerHTML = "Get a Hint"
+	       play.appendChild(button);
+	       button.addEventListener('click', function(event){
+	         var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
+	         console.log(hint)
+	       }.bind(this))
+	     }
+	   }
+	   module.exports = View;
 
 /***/ },
 /* 5 */
@@ -688,7 +722,7 @@
 	  giveHint: function(latLng, team){
 	    team.addPenalty(2);
 	    this.hintCount +=1;
-	    if(this.hintCount >= this.hints.length){
+	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
 	    }else{
 	      return this.hints[this.hintCount-1];

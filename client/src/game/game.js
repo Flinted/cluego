@@ -7,7 +7,7 @@ var Objective = require('../objective/objective.js')
 
 var Game = function(){
   this.ajax = new Ajax();
-  this.map = new Map({lat:51.4700,lng:-0.4543}, 10);
+  this.map = new Map({lat:55.9486,lng:-3.1888}, 10);
   this.objectives = [];
   this.teams = [];
   this.currentObj = 0;

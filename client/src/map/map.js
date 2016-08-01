@@ -58,9 +58,6 @@
   }
 ]
 
-
-
-
 var Map = function(latLng, zoom){
   this.googleMap = new google.maps.Map(document.getElementById('map'), {
     center: latLng,
@@ -104,6 +101,13 @@ Map.prototype = {
   addFoundWindow: function(latLng, content){
     var marker = this.addMarker(latLng);
     this.foundMarkers.push(marker);
+    var infoWindow = new google.maps.InfoWindow({
+      content: content
+    })
+    this.foundWindows.push(infoWindow);
+    this.foundWindows[this.foundWindows.length-1].open( this.map, marker ); 
+
+    infoWindow.open( this.map, marker ); 
     marker.addListener('click', function(event){
       this.infoWindow.close();
       var infoWindow = new google.maps.InfoWindow({
@@ -112,6 +116,7 @@ Map.prototype = {
       this.foundWindows.push(infoWindow);
       infoWindow.open( this.map, marker ); 
     }.bind(this))
+
   },
 
   // creates marker and info window
@@ -142,13 +147,16 @@ Map.prototype = {
     },
 
     hideMarkers: function(){
+      console.log(this.path)
+
       for(marker of this.markers){
         marker.setVisible(false);
       }
       for(circle of this.circles){
         circle.setVisible(false);
       }
-      this.path.setVisible(false);
+    if(this.path){this.path.setVisible(false);}
+    
     },
 
   // connects all markers in the array
@@ -158,6 +166,8 @@ Map.prototype = {
       var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
       markerPath.push(latLng);
     })
+    if(this.path){this.path.setVisible(false);}
+
     this.path = new google.maps.Polyline({
       path: markerPath,
       geodesic: true,
