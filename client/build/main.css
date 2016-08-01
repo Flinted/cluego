@@ -209,25 +209,25 @@ padding: 10px;
   padding: 10px;
 }
 
-#tempParent{
+#temp{
   position: absolute;
   margin-left: 700px;
   margin-top: 100px;
-  width: 300px;
-  height: 300px;
-  transform: rotate(45deg);
-  z-index: 2;
-  background: rgba(252, 190, 50, 1);
-  box-shadow: 11px 10px 8px -9px rgba(0,0,0,0.68);
-}
-
-#temp{
-  transform: rotate(-45deg);
-  /*font-family: 'Bowlby One', cursive;*/
+  width: 400px;
+  height: 400px;
   font-size: 1.2rem;
   text-align: center;
-  /*border-radius: 50%;*/
+  border-radius: 50%;
+  z-index: 2;
+  background: rgba(252, 190, 50, 1);
+  /*box-shadow: 11px 10px 8px -9px rgba(0,0,0,0.68);*/
 }
+
+/*#temp{
+  transform: rotate(-45deg);
+  font-family: 'Bowlby One', cursive;
+  
+}*/
 
 .team{
   width: 40px;
