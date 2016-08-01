@@ -109,12 +109,12 @@ View.prototype = {
     input1.required = true;
     input1.placeholder = "Enter Player Name";
     temp.innerHTML=''
-    temp.appendChild(document.createElement('br'));
-    temp.appendChild(document.createElement('br'));
-    temp.appendChild(document.createElement('br'));
-    temp.appendChild(document.createElement('br'));
-    temp.appendChild(document.createElement('br'));
-    temp.appendChild(document.createElement('br'));
+    // temp.appendChild(document.createElement('br'));
+    // temp.appendChild(document.createElement('br'));
+    // temp.appendChild(document.createElement('br'));
+    // temp.appendChild(document.createElement('br'));
+    // temp.appendChild(document.createElement('br'));
+    // temp.appendChild(document.createElement('br'));
     temp.appendChild(header);
     temp.appendChild(input1);
     var p = document.createElement('p');
@@ -178,28 +178,34 @@ View.prototype = {
        form.id = "objective";
        var input1 = document.createElement('input');
        input1.type = "text";
+       input1.id = "formInput"
        input1.name = "question";
        input1.required = true;
        input1.placeholder = "Question";
        var input2 = document.createElement('input');
        input2.type = "text";
+       input2.id = "formInput"
        input2.name = "hint1";
        input2.placeholder = "Hint 1";
        var input3 = document.createElement('input');
        input3.type = "text";
+       input3.id = "formInput"
        input3.name = "hint2";
        input3.placeholder = "Hint 2";
        var input4 = document.createElement('input');
        input4.type = "text";
+       input4.id = "formInput"
        input4.name = "hint3";
        input4.placeholder = "Hint 3";
        var input5 = document.createElement('input');
        input5.type = "text";
+       input5.id = "formInput"
        input5.name = "foundMessage";
        input5.required = true;
        input5.placeholder = "'found goal' message";
        var input6 = document.createElement('input');
        input6.type = "range";
+       input6.id = "formslider"
        input6.min = 50;
        input6.max = 500000;
        input6.name = "setTolerance";
@@ -212,6 +218,7 @@ View.prototype = {
        }.bind(this))
        var button = document.createElement('input');
        button.type = "submit";
+       button.id = "formButton"
        button.name = "enter";
 
        form.appendChild(input1);
