@@ -64,13 +64,13 @@
 	  // state.game.map.addInfoWindow({lat:75.7700,lng:-15.4543})
 	  // state.game.map.addPath();
 	  // state.game.map.drawCircle({lat:51.4700,lng:-0.4543}, 80)
-	  state.game.createObjective({
-	      clue: "Clue1",
-	      hints: ['hint1', 'hint2', 'hint3'],
-	      latLng: {lat: 51.4700, lng: -0.4543},
-	      tolerance: 50,
-	      foundMessage: "Well Done"
-	    })
+	  // state.game.createObjective({
+	  //     clue: "Clue1",
+	  //     hints: ['hint1', 'hint2', 'hint3'],
+	  //     latLng: {lat: 51.4700, lng: -0.4543},
+	  //     tolerance: 50,
+	  //     foundMessage: "Well Done"
+	  //   })
 	  // state.game.addTeam("testTeam")
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
