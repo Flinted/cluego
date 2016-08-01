@@ -23,18 +23,35 @@ View.prototype = {
   setButtons: function(){
     var create = document.getElementById('create');
     create.addEventListener('click',function(){
-      this.game.changeToCreate();
-      this.switchCreate();
+      this.goCreate()
     }.bind(this))
     var play = document.getElementById('play');
     play.addEventListener('click',function(){
-      this.game.map.hideMarkers();
-      this.selectTeam();
-      this.populatePlay()
-      this.game.changeToPlay();
+        this.goPlay()
     }.bind(this))
   },
   
+  goPlay: function(){
+    this.game.map.hideMarkers();
+    this.selectTeam();
+    this.populatePlay()
+    this.game.changeToPlay();
+  },
+
+  goCreate: function(){
+    this.game.changeToCreate();
+    this.setVisible("create")
+  },
+
+  setVisible: function(area){
+    var temp = document.getElementById('temp');
+    var create = document.getElementById('createArea');
+    var play = document.getElementById('playArea');
+    if(area === "temp"){temp.style.display = "block"}else{temp.style.display='none'}
+    if(area === "create"){create.style.display = "block"}else{create.style.display='none'}
+    if(area === "play"){play.style.display = "block"}else{play.style.display='none'}
+  },
+
   // looks for clicks on map
   mapBindClick: function(){
     google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
@@ -77,13 +94,14 @@ View.prototype = {
     var temp = document.getElementById('temp');
     var input1 = document.createElement('input');
     var header = document.createElement('h1');
+    this.setVisible("temp")
     
     header.innerHTML = "Please enter Player Name"
     input1.type = "text";
     input1.name = "name";
     input1.required = true;
     input1.placeholder = "Enter Player Name";
-    
+    temp.innerHTML=''
     temp.appendChild(document.createElement('br'));
     temp.appendChild(document.createElement('br'));
     temp.appendChild(document.createElement('br'));
@@ -103,8 +121,8 @@ View.prototype = {
       color.style.backgroundColor = colors[i];
 
       color.addEventListener('click', function(){
-        temp.style.display = 'none';
-        this.switchPlay();
+        this.setVisible("play")
+        // this.switchPlay();
       }.bind(this))
 
       temp.appendChild(color);
@@ -128,23 +146,24 @@ View.prototype = {
 
   },
 
-  switchCreate: function(){
-    var create = document.getElementById('createArea');
-    var play = document.getElementById('playArea');
-    if (create.style.display === 'none'){
-      create.style.display = 'block';
-      play.style.display = 'none';}
-    },
+  // switchCreate: function(){
+  //   var create = document.getElementById('createArea');
+  //   var play = document.getElementById('playArea');
+  //   if (create.style.display === 'none'){
+  //     create.style.display = 'block';
+  //     play.style.display = 'none';}
+  //   },
 
-    switchPlay: function(){
-      var create = document.getElementById('createArea');
-      var play = document.getElementById('playArea');
-      if (play.style.display === 'none'){
-        create.style.display = 'none';
-        play.style.display = 'block';}
-      },
+  //   switchPlay: function(){
+  //     var create = document.getElementById('createArea');
+  //     var play = document.getElementById('playArea');
+  //     if (play.style.display === 'none'){
+  //       create.style.display = 'none';
+  //       play.style.display = 'block';}
+  //     },
 
       populateCreate: function(event){
+        this.setVisible("create")
        var create = document.getElementById('createArea');
        create.innerHTML = "<h1>Create</h1>"   
        var button2 = document.createElement('button');
