@@ -414,7 +414,16 @@
 	      this.selectTeam();
 	      this.populatePlay()
 	      this.game.changeToPlay();
+	
 	    }.bind(this))
+	  var slide = document.getElementById('slideButton');
+	  slide.addEventListener('click', function(){
+	    var stats = document.getElementById('slidey')
+	    console.log("CLICK")
+	    if (stats.style.top != "680px"){
+	      stats.style.top = "680px"
+	    }else{ stats.style.top = "400px"}
+	  })
 	  },
 	  
 	  // looks for clicks on map
