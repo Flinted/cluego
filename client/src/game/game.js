@@ -29,13 +29,14 @@ Game.prototype = {
     },
 
     updateCurrent: function(){
-      if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
+      if(this.currentObj === this.objectives[this.objectives.length-1]){return true}
 
-        this.objectives.forEach(function(objective, index){
-          if(objective === currentObj){
-            currentObj = objectives[index+1];
-            return} 
-          })
+        for (var i = this.objectives.length - 1; i >= 0; i--) {
+          if(this.objectives[i] === this.currentObj){
+            this.currentObj = this.objectives[i+1];
+            break
+          }
+        }
     },
 
     changeToPlay: function(){

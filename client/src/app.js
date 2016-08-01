@@ -9,6 +9,7 @@ var state = {
 window.onload= function(){
   state.game = new Game();
   state.view = new View(state.game);
+  state.game.addTeam("testTeam")
   state.view.initialise();
   state.game.map.initialise()
   // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543}, "hello")
@@ -25,7 +26,6 @@ window.onload= function(){
   //     tolerance: 50,
   //     foundMessage: "Well Done"
   //   })
-  // state.game.addTeam("testTeam")
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  

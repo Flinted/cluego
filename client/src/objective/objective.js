@@ -20,9 +20,11 @@ Objective.prototype = {
   // checks if given coords fall within this.
   checkFound: function(latLng, team){
     if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
-      console.log('FOUND!');
+      console.log('FOUND!')
+      return true
     } else {
-      console.log('NOTHING HERE!');
+      console.log('NOTHING')
+      return false
     }
   },
 
@@ -30,7 +32,7 @@ Objective.prototype = {
   giveHint: function(latLng, team){
     team.addPenalty(2);
     this.hintCount +=1;
-    if(this.hintCount > this.hints.length){
+    if(this.hintCount >= this.hints.length){
       this.directionHint(latLng);
     }else{
       return this.hints[this.hintCount-1];
@@ -46,8 +48,8 @@ Objective.prototype = {
       position:  this.latLng
     })
     var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
-
-    var compassDisc = document.getElementById("compassDiscImg");
+    console.log(this.latLng, latLng, bearing)
+    var compassDisc = document.getElementById("arrow");
     compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
   },
 

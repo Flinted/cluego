@@ -55,6 +55,7 @@
 	window.onload= function(){
 	  state.game = new Game();
 	  state.view = new View(state.game);
+	  state.game.addTeam("testTeam")
 	  state.view.initialise();
 	  state.game.map.initialise()
 	  // state.game.map.addInfoWindow({lat:51.4700,lng:-0.4543}, "hello")
@@ -71,7 +72,6 @@
 	  //     tolerance: 50,
 	  //     foundMessage: "Well Done"
 	  //   })
-	  // state.game.addTeam("testTeam")
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
@@ -117,13 +117,14 @@
 	    },
 	
 	    updateCurrent: function(){
-	      if(currentObj === this.objectives[this.objectives.length-1]){return "GAME ENDED"}
+	      if(this.currentObj === this.objectives[this.objectives.length-1]){return true}
 	
-	        this.objectives.forEach(function(objective, index){
-	          if(objective === currentObj){
-	            currentObj = objectives[index+1];
-	            return} 
-	          })
+	        for (var i = this.objectives.length - 1; i >= 0; i--) {
+	          if(this.objectives[i] === this.currentObj){
+	            this.currentObj = this.objectives[i+1];
+	            break
+	          }
+	        }
 	    },
 	
 	    changeToPlay: function(){
@@ -357,18 +358,23 @@
 	 hints: [],
 	 tolerance: 100,
 	 foundMessage: "",
-	 latLng: ''
+	 latLng: '',
+	 currTeam: ''
 	}
+	
 	var View = function(game){
 	  this.game = game;
 	  this.readyForNext = true;
 	  this.ran = false;
 	}
+	
 	View.prototype = {
 	  initialise: function(){
 	    this.mapBindClick();
 	    this.setButtons();
+	    state.currTeam = this.game.teams[0]
 	  },
+	
 	  setButtons: function(){
 	    var create = document.getElementById('create');
 	    create.addEventListener('click',function(){
@@ -377,8 +383,9 @@
 	    }.bind(this))
 	    var play = document.getElementById('play');
 	    play.addEventListener('click',function(){
+	      this.selectTeam();
 	      this.populatePlay()
-	        this.switchPlay();
+	      // this.switchPlay();
 	      this.game.changeToPlay();
 	    }.bind(this))
 	  },
@@ -387,8 +394,9 @@
 	  mapBindClick: function(){
 	    google.maps.event.addListener( this.game.map.googleMap, 'click', function(event){
 	      this.game.map.googleMap.panTo(event.latLng)
+	      state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
+	
 	      if(this.game.state === "create"){
-	        state.latLng = {lat: event.latLng.lat(), lng: event.latLng.lng()}
 	        if(this.ran){
 	          this.game.map.markers[this.game.map.markers.length-1].setVisible(false)
 	          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
@@ -403,11 +411,59 @@
 	        this.readyForNext = false;
 	        this.populateCreate(event);}
 	      }else{
-	        this.populatePlay(event);
-	        this.game.currentObj.checkFound(event.latLng);
+	        // this.populatePlay(event);
+	        if(this.game.currentObj.checkFound(event.latLng)){
+	          if(this.game.updateCurrent()){
+	            this.endGame()
+	          }else{
+	            this.populatePlay(event)
+	          }
+	        }
 	      }
 	    }.bind(this))
 	  },
+	  selectTeam: function(){
+	    var temp = document.getElementById('temp');
+	    var input1 = document.createElement('input');
+	    var header = document.createElement('h1');
+	    
+	    header.innerHTML = "Please enter Player Name"
+	    input1.type = "text";
+	    input1.name = "name";
+	    input1.required = true;
+	    input1.placeholder = "Enter Player Name";
+	    
+	    temp.appendChild(document.createElement('br'));
+	    temp.appendChild(document.createElement('br'));
+	    temp.appendChild(document.createElement('br'));
+	    temp.appendChild(document.createElement('br'));
+	    temp.appendChild(document.createElement('br'));
+	    temp.appendChild(document.createElement('br'));
+	    temp.appendChild(header);
+	    temp.appendChild(input1);
+	    var p = document.createElement('p');
+	    p.innerText = "Please Select a Team"
+	    temp.appendChild(p)
+	    temp.appendChild(document.createElement('br'));
+	    var colors = ["red","blue","green","orange", "white"]
+	    for (var i = 4; i >= 0; i--) {
+	      var color = document.createElement('div')
+	      color.className = "team";
+	      color.style.backgroundColor = colors[i];
+	
+	      color.addEventListener('click', function(){
+	      this.switchPlay();
+	      }.bind(this))
+	
+	      temp.appendChild(color);
+	    }
+	  },
+	
+	  endGame:function(){
+	    var play = document.getElementById('playArea');
+	    play.innerHTML = "<h1>GAME OVER</h1>"
+	  },
+	
 	  switchCreate: function(){
 	    var create = document.getElementById('createArea');
 	    var play = document.getElementById('playArea');
@@ -415,6 +471,7 @@
 	    create.style.display = 'block';
 	    play.style.display = 'none';}
 	    },
+	
 	  switchPlay: function(){
 	    var create = document.getElementById('createArea');
 	    var play = document.getElementById('playArea');
@@ -422,14 +479,12 @@
 	    create.style.display = 'none';
 	    play.style.display = 'block';}
 	    },
+	
 	   populateCreate: function(event){
 	     var create = document.getElementById('createArea');
-	     create.innerHTML = "<h1>Create</h1>"  
-	     var p = document.createElement('p');
-	     p.innerHTML = "latitude:" + event.latLng.lat()
-	     var p2 = document.createElement('p');
-	     p2.innerHTML = "longitude:" + event.latLng.lng();
-	     
+	     create.innerHTML = "<h1>Create</h1>"   
+	     var button2 = document.createElement('button');
+	     button2.innerText = "Game Complete!"
 	     var form = document.createElement('form');
 	     form.id = "objective";
 	     var input1 = document.createElement('input');
@@ -469,21 +524,24 @@
 	   var button = document.createElement('input');
 	   button.type = "submit";
 	   button.name = "enter";
+	
 	     form.appendChild(input1);
 	     form.appendChild(input2);
 	     form.appendChild(input3);
 	     form.appendChild(input4);
 	     form.appendChild(input5);
 	     form.appendChild(input6);
+	     form.appendChild(document.createElement('br'))
 	     form.appendChild(button);
 	     create.appendChild(form);
-	     create.appendChild(p);
-	     create.appendChild(p2);
+	     create.appendChild(button2)  
+	
 	     var objective = document.getElementById( 'objective' );
 	     objective.addEventListener('submit', function(event){
 	      event.preventDefault()
 	      this.handleSubmit(event)
 	    }.bind(this))
+	 
 	   },
 	
 	   handleSubmit: function(event){
@@ -500,17 +558,13 @@
 	
 	   populatePlay: function(){
 	     var play = document.getElementById('playArea');
-	     play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + state.clue + "<br>"
+	     play.innerHTML = "<h1>Play</h1><br>Here is your first clue: <br>" + this.game.currentObj.clue + "<br>"
 	     var button = document.createElement('button');
 	     button.innerHTML = "Get a Hint"
-	     button.addEventListener('click', function(event){
-	     // var = i
-	       for (i = 0; i < state.hints.length; i++){
-	       play.innerHTML += state.hints[i]
-	     }
-	    
 	     play.appendChild(button);
-	   })
+	     button.addEventListener('click', function(event){
+	     var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
+	   }.bind(this))
 	  }
 	}
 	  module.exports = View;
@@ -590,9 +644,11 @@
 	  // checks if given coords fall within this.
 	  checkFound: function(latLng, team){
 	    if (google.maps.geometry.spherical.computeDistanceBetween(latLng, this.circle.getCenter()) <= this.circle.getRadius()) {
-	      console.log('FOUND!');
+	      console.log('FOUND!')
+	      return true
 	    } else {
-	      console.log('NOTHING HERE!');
+	      console.log('NOTHING')
+	      return false
 	    }
 	  },
 	
@@ -600,7 +656,7 @@
 	  giveHint: function(latLng, team){
 	    team.addPenalty(2);
 	    this.hintCount +=1;
-	    if(this.hintCount > this.hints.length){
+	    if(this.hintCount >= this.hints.length){
 	      this.directionHint(latLng);
 	    }else{
 	      return this.hints[this.hintCount-1];
@@ -616,8 +672,8 @@
 	      position:  this.latLng
 	    })
 	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
-	
-	    var compassDisc = document.getElementById("compassDiscImg");
+	    console.log(this.latLng, latLng, bearing)
+	    var compassDisc = document.getElementById("arrow");
 	    compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
 	  },
 	
