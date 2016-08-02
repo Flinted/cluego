@@ -5,6 +5,8 @@ var MongoClient = require('mongodb').MongoClient;
 var bodyParser = require('body-parser');
 var ObjectID = mongodb.ObjectID;
 var path = require('path');
+var CircularJSON = require ('circular-json');
+
 
 app.use(bodyParser.json());
 app.use(express.static('client/build'));

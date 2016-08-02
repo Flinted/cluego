@@ -168,26 +168,40 @@
 	
 	Ajax.prototype = {
 	  go: function(type, route, data){
-	    var request = new XMLHttpRequest();
-	    request.open(type,route);
-	    request.setRequestHeader('Content-Type', 'application/json');
-	    request.onload = function(){
-	      if (request.status === 200){
-	        if(request.responseText){
-	      var jsonString = request.responseText;
-	      // var trimString = jsonString.substring(1,jsonString.length-1)
+	    return new Promise(function(resolve, reject) {
 	
-	      this.response = CircularJSON.parse(jsonString);
-	      console.log(this.response)
+	      var request = new XMLHttpRequest();
+	      request.open(type,route);
+	      request.setRequestHeader('Content-Type', 'application/json');
+	      request.onload = function(){
+	        if (request.status === 200){
+	          if(request.responseText){
+	            var jsonString = request.responseText;
+	            if(jsonString[0] === "["){
+	              this.response = [];
+	              jsonString = jsonString.substring(1,jsonString.length-1)
+	              // jsonString.forEach(function(game){
+	                this.response.push(CircularJSON.parse(jsonString))
+	              // }.bind(this))
+	              console.log(this.response)
 	
-	    }
-	    }
-	    }.bind(this)
-	    request.send(CircularJSON.stringify(data) || null);
+	            }else{
+	                console.log(jsonString)
+	
+	             this.response= CircularJSON.parse(jsonString);
+	           }
+	           resolve(this.response)
+	         }
+	       }
+	     }.bind(this)
+	     request.send(CircularJSON.stringify(data) || null);
+	  })//end of promise
 	  }
 	
 	}
 	module.exports = Ajax;
+	
+
 
 /***/ },
 /* 3 */
@@ -723,12 +737,6 @@
 	    input1.required = true;
 	    input1.placeholder = "Enter Player Name";
 	    temp.innerHTML=''
-	    // temp.appendChild(document.createElement('br'));
-	    // temp.appendChild(document.createElement('br'));
-	    // temp.appendChild(document.createElement('br'));
-	    // temp.appendChild(document.createElement('br'));
-	    // temp.appendChild(document.createElement('br'));
-	    // temp.appendChild(document.createElement('br'));
 	    temp.appendChild(header);
 	    temp.appendChild(input1);
 	    var p = document.createElement('p');
@@ -740,15 +748,44 @@
 	      var color = document.createElement('div')
 	      color.className = "team";
 	      color.style.backgroundColor = colors[i];
-	
 	      color.addEventListener('click', function(){
 	        state.player = input1.value || "Player"
-	        this.populatePlay()
-	        this.setVisible("play")
+	        this.selectGame()
 	      }.bind(this))
 	      temp.appendChild(color);
 	      temp.style.display = 'block'
 	    }
+	  },
+	
+	  selectGame: function(){
+	    var temp = document.getElementById('temp');
+	    var header = document.createElement('h1');
+	    this.setVisible("temp")
+	    header.innerHTML = "Please Select a Game"
+	    temp.innerHTML=''
+	    temp.appendChild(header);
+	
+	    //add a then.
+	    this.game.ajax.go("GET","/games").then(function(response){
+	      this.games = response;
+	      console.log(response)
+	      this.populateGames()
+	    }.bind(this))
+	
+	    },
+	  populateGames: function(){
+	    console.log(this.games)
+	      // var color = document.createElement('div')
+	      // color.className = "team";
+	      // color.style.backgroundColor = "blue";
+	      // color.addEventListener('click', function(){
+	      //   var play = document.getElementById('playArea');
+	      //   play.style.top = "650px"
+	      //   this.populatePlay()
+	      //   this.setVisible("play")
+	      // }.bind(this))
+	      // temp.appendChild(color);
+	      temp.style.display = 'block'
 	  },
 	
 	  popFound: function(){
@@ -761,12 +798,10 @@
 	  },
 	
 	  endGame:function(){
-	    var temp = document.getElementById('temp');
-	    temp.innerHTML = "<h1>GAME OVER</h1>"
-	    temp.style.display = 'block';
-	
+	    var create = document.getElementById('createArea');
+	    create.innerHTML = "<h1>Congratulations!</h1>"
+	    this.setVisible("create")
 	  },
-	
 	
 	  populateCreate: function(event){
 	    this.setVisible("create")
@@ -850,23 +885,18 @@
 	 },
 	
 	 populatePlay: function(){
-	  this.populatePoints()
-	
-	  var play = document.getElementById('textField');
-	  play.innerHTML="";
-	       // var p = document.createElement('p')
-	       // var p2 = document.createElement('p')
+	      this.populatePoints()
+	      var play = document.getElementById('textField');
+	      play.innerHTML="";
 	       var head = document.createElement('h1')
-	       // head.innerText= "PLAY!"
 	       head.innerText = "Hey " + state.player + ", here is the clue: " + this.game.currentObj.clue 
 	       play.appendChild(head) 
-	       // play.appendChild(p) 
 	       var button = document.createElement('button');
 	       button.innerHTML = "Get a Hint"
 	       play.appendChild(button);
 	       button.addEventListener('click', function(event){
 	         this.showHint()
-	         this.populatePlay()
+	         this.populatePoints()
 	       }.bind(this))
 	     },
 	
@@ -898,62 +928,6 @@
 	
 	  }
 	  module.exports = View;
-	
-	
-	   // <<<<<<< HEAD
-	         // populateCreate: function(event){
-	   //         this.setVisible("create")
-	   //        var create = document.getElementById('createArea');
-	   //        create.innerHTML = "<h1>Create</h1>"   
-	   //        var button2 = document.createElement('button');
-	   //        button2.innerText = "Game Complete!"
-	   //        var form = document.createElement('form');
-	   //        form.id = "objective";
-	   //        var input1 = document.createElement('input');
-	   //        input1.type = "text";
-	   //        input1.id = "formInput"
-	   //        input1.name = "question";
-	   //        input1.required = true;
-	   //        input1.placeholder = "Question";
-	   //        var input2 = document.createElement('input');
-	   //        input2.type = "text";
-	   //        input2.id = "formInput"
-	   //        input2.name = "hint1";
-	   //        input2.placeholder = "Hint 1";
-	   //        var input3 = document.createElement('input');
-	   //        input3.type = "text";
-	   //        input3.id = "formInput"
-	   //        input3.name = "hint2";
-	   //        input3.placeholder = "Hint 2";
-	   //        var input4 = document.createElement('input');
-	   //        input4.type = "text";
-	   //        input4.id = "formInput"
-	   //        input4.name = "hint3";
-	   //        input4.placeholder = "Hint 3";
-	   //        var input5 = document.createElement('input');
-	   //        input5.type = "text";
-	   //        input5.id = "formInput"
-	   //        input5.name = "foundMessage";
-	   //        input5.required = true;
-	   //        input5.placeholder = "'found goal' message";
-	   //        var input6 = document.createElement('input');
-	   //        input6.type = "range";
-	   //        input6.id = "formslider"
-	   //        input6.min = 50;
-	   //        input6.max = 500000;
-	   //        input6.name = "setTolerance";
-	   //        input6.value = state.tolerance;
-	   //        input6.addEventListener('change', function(event){
-	   //          state.tolerance = Number(event.target.value)
-	   //          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-	   //          this.game.map.circles.pop()
-	   //          this.game.map.drawCircle(state.latLng, state.tolerance)
-	   //        }.bind(this))
-	   //        var button = document.createElement('input');
-	   //        button.type = "submit";
-	   //        button.id = "formButton"
-	   //        button.name = "enter";
-	   // =======
 
 /***/ },
 /* 6 */
