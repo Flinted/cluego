@@ -27,14 +27,14 @@ window.onload= function(){
     clue: "This is where a king might rest?",
     hints: ["It's near a very old pub...", "Not far from Duddingston", "Take a seat"],
     latLng: {lat: 55.9441, lng: -3.1618},
-    tolerance: 500,
+    tolerance: 5000,
     foundMessage: "Well Done, it was Arthurs Seat"
   })
   state.game.createObjective({
     clue: "Go Forth!",
     hints: ["Over the water", "Choo Choo", "Big Red"],
     latLng: {lat: 56.0006, lng: -3.3884},
-    tolerance: 500,
+    tolerance: 5000,
     foundMessage: "Well Done, it was the Forth Rail Bridge"
   })
   main();

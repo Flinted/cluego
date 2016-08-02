@@ -73,14 +73,14 @@
 	    clue: "This is where a king might rest?",
 	    hints: ["It's near a very old pub...", "Not far from Duddingston", "Take a seat"],
 	    latLng: {lat: 55.9441, lng: -3.1618},
-	    tolerance: 500,
+	    tolerance: 5000,
 	    foundMessage: "Well Done, it was Arthurs Seat"
 	  })
 	  state.game.createObjective({
 	    clue: "Go Forth!",
 	    hints: ["Over the water", "Choo Choo", "Big Red"],
 	    latLng: {lat: 56.0006, lng: -3.3884},
-	    tolerance: 500,
+	    tolerance: 5000,
 	    foundMessage: "Well Done, it was the Forth Rail Bridge"
 	  })
 	  main();
@@ -103,6 +103,7 @@
 	var View = __webpack_require__(2);
 	var Team = __webpack_require__(6);
 	var Objective = __webpack_require__(7)
+	var CircularJSON = __webpack_require__ (3);
 	
 	
 	var Game = function(){
@@ -128,9 +129,36 @@
 	      this.teams.push(team);
 	    },
 	
-	    save: function(){
-	      localStorage.setItem('game', JSON.stringify(this.game));
+	    rankTeams: function(){
+	      var ranked = []
+	      this.teams.forEach(function(team){
+	        console.log(team)
+	        var result = {name: team.name, points: team.totalPoints(), score: team.score(), penalties: team.penalties}
+	        ranked.push(result)
+	      })
+	
+	        ranked.sort(function(a, b) {
+	          var x = b["points"]; 
+	          var y = a["points"];
+	          return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+	        });
+	      return ranked
 	    },
+	
+	    save: function(){
+	      var savePromise = new Promise(function(resolve,reject){
+	        var save = CircularJSON.stringify(this)
+	        if(save){
+	        resolve(save)
+	        }
+	      }.bind(this));
+	
+	      savePromise.then(function(resolve){
+	        this.ajax.go("POST", "/games", resolve)
+	      }.bind(this)) 
+	         
+	    },
+	
 	
 	    updateCurrent: function(){
 	      if(this.currentObj === this.objectives[this.objectives.length-1]){return true}
@@ -311,28 +339,37 @@
 	    header.innerHTML = "Please Select a Game"
 	    temp.innerHTML=''
 	    temp.appendChild(header);
-	
-	    //add a then.
-	    // this.game.ajax.go("GET","/games").then(function(response){
-	    //   this.games = response;
-	    //   console.log(response)
+	    // add a then.
+	    this.game.ajax.go("GET","/games").then(function(response){
+	      this.games = response;
 	      this.populateGames()
-	    // }.bind(this))
+	    }.bind(this))
 	
 	    },
+	
 	  populateGames: function(){
-	    console.log(this.games)
-	      var color = document.createElement('div')
-	      color.className = "team";
-	      color.style.backgroundColor = "blue";
-	      color.addEventListener('click', function(){
-	        var play = document.getElementById('playArea');
-	        play.style.top = "650px"
-	        this.populatePlay()
-	        this.setVisible("play")
+	    var temp = document.getElementById('temp');
+	    
+	    for (var i = 0; i <= this.games.length-1; i++) {     
+	      var game = document.createElement('div')
+	      game.className = "team";
+	      game.innerText = "Hello";
+	      game.id = i;
+	
+	      game.addEventListener('click', function(event){
+	       this.reinstateGame(event.target.id)
 	      }.bind(this))
-	      temp.appendChild(color);
-	      temp.style.display = 'block'
+	      temp.appendChild(game);
+	      }
+	  },
+	
+	  reinstateGame: function(index){
+	    console.log(this.games[index]._id)
+	    this.game.ajax.go("GET","/games/"+this.games[index]._id)
+	    var play = document.getElementById('playArea');
+	    play.style.top = "650px"
+	    this.populatePlay()
+	    this.setVisible("play")
 	  },
 	
 	  popFound: function(){
@@ -348,6 +385,13 @@
 	    var create = document.getElementById('createArea');
 	    create.innerHTML = "<h1>Congratulations!</h1>"
 	    this.setVisible("create")
+	    var results = this.game.rankTeams()
+	    var count = 0
+	    results.forEach(function(team){
+	      var result = document.createElement('p')
+	      result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
+	      create.appendChild(result) 
+	    })
 	  },
 	
 	  populateCreate: function(event){
@@ -385,8 +429,8 @@
 	    input5.placeholder = "'found goal' message";
 	    var input6 = document.createElement('input');
 	    input6.type = "range";
-	    input6.min = 50;
-	    input6.max = 500000;
+	    input6.min = 1250;
+	    input6.max = 28000;
 	    input6.name = "setTolerance";
 	    input6.id = "tolerance";
 	    input6.value = state.tolerance;
@@ -420,63 +464,95 @@
 	  },
 	
 	  detectZoom: function(){
-	    google.maps.event.addListener( this.game.map.googleMap, 'zoom_changed', function(){
-	    var tolerance = document.getElementById('tolerance');
-	     if(tolerance){
-	      var min = 0
-	      var max = 0
-	      console.log(this.game.map.googleMap.getZoom())
-	      switch (this.game.map.googleMap.getZoom()){
-	      case 1:
-	      case 2:
-	      case 3:
-	      case 4:
-	      case 5:
-	      min = 300000
-	      max = 1500000
-	      break;
-	      case 6:
-	      case 7:
-	      case 8:
-	      min = 25000
-	      max = 1350000
-	      break;
-	      case 9:
-	      case 10:
-	      case 11:
-	      case 12:
-	      min = 1250
-	      max = 675000
-	      break;
-	      case 13:
-	      case 14:
-	      min = 150
-	      max = 1500
-	      break;
-	      case 15:
-	      case 16:
-	      min = 50
-	      max = 300
-	      break;
-	      case 17:
-	      case 18:
-	      min = 10
-	      max = 70
-	      break;
-	      case 19:
-	      case 20:
-	      min = 2
-	      max = 25
-	      break;
-	      default:
-	      
-	      break; 
-	    }
-	    tolerance.min = min
-	    tolerance.max = max
-	    }
-	  }.bind(this))
-	  },
+	     google.maps.event.addListener( this.game.map.googleMap, 'zoom_changed', function(){
+	     var tolerance = document.getElementById('tolerance');
+	      if(tolerance){
+	       var min = 0
+	       var max = 0
+	       console.log(this.game.map.googleMap.getZoom())
+	       switch (this.game.map.googleMap.getZoom()){
+	       case 1:
+	       case 2:
+	       case 3:
+	       min = 300000
+	       max = 2500000
+	       break;
+	       case 4:
+	       min = 80000
+	       max = 1500000
+	       break;
+	       case 5:
+	       min = 40000
+	       max = 700000
+	       break;
+	       case 6:
+	       min = 20000
+	       max = 400000
+	       break;
+	       case 7:
+	       min = 7500
+	       max = 190000
+	       break;
+	       case 8:
+	       min = 6000
+	       max = 100000
+	       break;
+	       case 9:
+	       min = 2000
+	       max = 50000
+	       break;
+	       case 10:
+	       min = 1250
+	       max = 28000
+	       break;
+	       case 11:
+	       min = 600
+	       max = 15000
+	       break;
+	       case 12:
+	       min = 300
+	       max = 8000
+	       break;
+	       case 13:
+	       min = 150
+	       max = 4000
+	       break;
+	       case 14:
+	       min = 70
+	       max = 1900
+	       break;
+	       case 15:
+	       min = 30
+	       max = 1000
+	       break;
+	       case 16:
+	       min = 15
+	       max = 500
+	       break;
+	       case 17:
+	       min = 10
+	       max = 230
+	       break;
+	       case 18:
+	       min = 5
+	       max = 130
+	       break;
+	       case 19:
+	       min = 2
+	       max = 60
+	       break;
+	       case 20:
+	       min = 1
+	       max = 25
+	       break;
+	       default:
+	       break; 
+	     }
+	     tolerance.min = min
+	     tolerance.max = max
+	     }
+	   }.bind(this))
+	   },
 	
 	
 	  handleSubmit: function(event){
@@ -731,48 +807,6 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// var CircularJSON = require ('circular-json');
-	
-	// var Ajax = function(){
-	//   this.response = ''
-	// }
-	
-	// Ajax.prototype = {
-	//   go: function(type, route, data){
-	//     return new Promise(function(resolve, reject) {
-	
-	//       var request = new XMLHttpRequest();
-	//       request.open(type,route);
-	//       request.setRequestHeader('Content-Type', 'application/json');
-	//       request.onload = function(){
-	//         if (request.status === 200){
-	//           if(request.responseText){
-	//             var jsonString = request.responseText;
-	//             if(jsonString[0] === "["){
-	//               this.response = [];
-	//               jsonString = jsonString.substring(1,jsonString.length-1)
-	//               var split = jsonString.split('{ "_id"')
-	//               split.forEach(function(game){
-	//                 this.response.push(game)
-	//                 console.log(this.response)
-	//               }.bind(this))
-	//             }
-	//             }else{
-	//                 console.log(jsonString)
-	
-	//              this.response= CircularJSON.parse(jsonString);
-	//            }
-	//            resolve(this.response)
-	//          }
-	       
-	//      }.bind(this)
-	//      request.send(CircularJSON.stringify(data) || null);
-	//   })//end of promise
-	//   }
-	
-	// }
-	// module.exports = Ajax;
-	
 	
 	var CircularJSON = __webpack_require__ (3);
 	
@@ -791,24 +825,13 @@
 	        if (request.status === 200){
 	          if(request.responseText){
 	            var jsonString = request.responseText;
-	            if(jsonString[0] === "["){
-	              this.response = [];
-	              jsonString = jsonString.substring(1,jsonString.length-1)
-	              // jsonString.forEach(function(game){
-	                this.response.push(CircularJSON.parse(jsonString))
-	              // }.bind(this))
-	              console.log(this.response)
-	
-	            }else{
-	                console.log(jsonString)
-	
-	             this.response= CircularJSON.parse(jsonString);
-	           }
+	            this.response = CircularJSON.parse(jsonString)
+	             }
 	           resolve(this.response)
 	         }
-	       }
 	     }.bind(this)
-	     request.send(CircularJSON.stringify(data) || null);
+	     console.log(data)
+	     request.send(data || null);
 	  })//end of promise
 	  }
 	
