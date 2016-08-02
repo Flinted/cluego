@@ -183,6 +183,7 @@ padding: 10px;
     color: white;
   }
 
+
 /*==============================
   compass
   ==============================*/
@@ -212,6 +213,7 @@ padding: 10px;
     height: 110px;
     background-size: 100%;
   }
+
 
   .compass .arrow {
     float: left;
@@ -277,3 +279,5 @@ padding: 10px;
     border: 1px solid #333;
     background: #999;
   }
+
+

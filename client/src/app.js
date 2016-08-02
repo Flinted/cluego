@@ -1,5 +1,6 @@
 var Game = require('./game/game.js');
 var View = require('./view/view.js');
+var CircularJSON = require ('circular-json');
 
 var state = {
   view: '',
@@ -35,12 +36,16 @@ window.onload= function(){
       tolerance: 500,
       foundMessage: "Well Done, it was the Forth Rail Bridge"
     })
+
+  localStorage.setItem('GAME', CircularJSON.stringify(state.game));
+  var gamer = localStorage.getItem('GAME');
+  console.log(CircularJSON.parse(gamer))
+
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
-  // state.game.ajax.go("GET", "/games")
-  // state.game.ajax.response
+  state.game.ajax.go("GET", "/games/579fa56272b212408d172ef5")
 
 }
 
