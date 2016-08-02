@@ -8,13 +8,51 @@ body {
 }
 
 /*==============================
+choose create or play circle
+==============================*/
+
+#line {
+  height: 25px;
+  width: 35vw;
+  margin-top: 9%;
+  border-top: 2px dotted white;
+}
+
+#create {
+  margin-top: 10%;
+}
+
+#play{
+  margin-top: 3%;
+}
+
+#play, #create{
+  height: 30%;
+  width: 12vw;
+  background-color: rgba(0,0,0,0);
+  border-radius: 100%;
+  border: 1px solid white;
+  
+}
+
+button:hover{
+  background-color: grey;
+  color: white;
+  /*border: 2px solid black;*/
+}
+
+
+/*==============================
 navigation areas
 ==============================*/
 
 
 #logo{
   font-family: 'Bowlby One', arial bold;
-  font-size: 5vw;
+  font-size: 3rem;
+  pointer-events : none;
+
+  padding: 0 0 0 10vw;
 }
 
 #nav{
@@ -33,25 +71,6 @@ navigation areas
 
 #nav h1{
   display:inline;
-}
-
-#nav button{
-  float: left;
-}
-
-button{
-  height: 50px;
-  margin-top: 5px;
-  margin-right: 15px;
-  background-color: rgba(0,0,0,0);
-  border: 1px solid white;
-  width: 120px;
-}
-
-#nav button:hover{
-  background-color: grey;
-  color: white;
-  /*border: 2px solid black;*/
 }
 
 #map{
@@ -73,10 +92,12 @@ button{
   FORM
 ==============================*/
 
+#slideButton{
+  top: 45px;
+}
 
 #objective{
   font-family: 'Helvetica Neue',Helvetica,sans-serif;
-  /*text-decoration: none;*/
   vertical-align: middle;
   padding: 10px;
   width: 250px;
@@ -101,10 +122,6 @@ button{
   color: black;
 }
 
-#objective input:focus {
-  /*color: #cccccc;*/
-}
-
 #tolerance {
   -webkit-appearance: none;
   width: 160px;
@@ -121,6 +138,23 @@ button{
   display: block;
   margin: auto;
   margin-bottom: 30px;
+}
+
+input::-webkit-slider-thumb {
+ -webkit-appearance: none;
+ width: 15px;
+ height: 15px;
+ background: #3C3530;
+ border-radius: 100%;
+ position: relative;
+}
+
+
+button {
+  height: 32px;
+  width: 250px;
+  background-color: rgba(0,0,0,0);
+  border: 1px solid white; 
 }
 
 /*==============================
@@ -149,7 +183,6 @@ DIV areas
   height: 100%;
   z-index: 2;
   background: #F16B6F;
-  /*background: rgba(254, 67, 101, .9);*/
   padding: 50px 10px 10px 10px;
 }
 
@@ -163,18 +196,20 @@ DIV areas
   width: 69%;
 }
 
+#tempParent{
+  min-width: 100%;
+}
+
 #temp{
   position: absolute;
+  top: 20%;
   margin-left: 30%;
-  margin-top: 130px;
   width: 40%;
   height: 40vw;
   font-size: 5vw;
   border-radius: 50%;
   z-index: 2;
-  background: grey;
-  
-
+  background: #e97f02;
 }
 
 /*#temp{
