@@ -93,7 +93,12 @@ navigation areas
 ==============================*/
 
 #slideButton{
-  top: 45px;
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background: #fcbe32;
+  border: none;
+
 }
 
 #objective{
@@ -179,7 +184,7 @@ DIV areas
   margin: 0;
   border: 0;
   color: #fff;
-  width: 300px;
+  width: 330px;
   height: 100%;
   z-index: 2;
   background: #F16B6F;
@@ -209,7 +214,7 @@ DIV areas
   font-size: 5vw;
   border-radius: 50%;
   z-index: 2;
-  background: #e97f02;
+  background: #a79c8e;
 }
 
 /*#temp{
@@ -299,7 +304,7 @@ z-index: 50;
 
 .playArea {
   padding: 5px 0 0 10px;
-  background: #41D3BD;
+  background: #fcbe32;
   position: absolute;
   left: 0;
   right: 0;
@@ -334,3 +339,9 @@ fade in
   border: 1px solid #333;
   background: #999;
 }
+
+:focus {
+  outline-color: transparent;
+  outline-style: none;
+}
+

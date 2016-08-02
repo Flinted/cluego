@@ -58,8 +58,8 @@ View.prototype = {
     var slide = document.getElementById('slideButton');
     slide.addEventListener('click', function(){
      var stats = document.getElementById('playArea')
-     if (stats.style.top != "650px"){
-       stats.style.top = "650px"
+     if (stats.style.top != "660px"){
+       stats.style.top = "660px"
      }else{ stats.style.top = "435px"}
    })
   },
@@ -202,7 +202,7 @@ View.prototype = {
     console.log(this.games[index]._id)
     this.game.ajax.go("GET","/games/"+this.games[index]._id)
     var play = document.getElementById('playArea');
-    play.style.top = "650px"
+    play.style.top = "660px"
     this.populatePlay()
     this.setVisible("play")
   },
