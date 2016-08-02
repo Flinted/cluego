@@ -96,14 +96,14 @@ navigation areas
   border: 3px solid rgba(0,0,0,0);
 }
 
-/*#objective input:focus {
- background: #423d3e;
+#objective input:focus {
+ /*background: #423d3e;*/
  color: #cccccc;
-}*/
+}
 
 
 
-/*input {
+#tolerance {
   -webkit-appearance: none;
   width: 160px;
   height: 20px;
@@ -118,7 +118,8 @@ navigation areas
   display: block;
   margin: auto;
   margin-bottom: 30px;
-}*/
+}
+
 
 
 
