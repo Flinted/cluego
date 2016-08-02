@@ -91,8 +91,7 @@
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
-	  // state.game.ajax.go("GET", "/games/579fa56272b212408d172ef5")
-	  // console.log(state.game.ajax.response)
+	  state.game.ajax.go("GET", "/games/579fa56272b212408d172ef5")
 	
 	}
 	
@@ -180,8 +179,10 @@
 	      if (request.status === 200){
 	        if(request.responseText){
 	      var jsonString = request.responseText;
-	      console.log(jsonString)
-	      this.response = CircularJSON.parse(jsonString);
+	      var trimString = jsonString.substring(1,jsonString.length-1)
+	
+	      this.response = CircularJSON.parse(trimString);
+	      console.log(this.response)
 	
 	    }
 	    }

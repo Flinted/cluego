@@ -13,8 +13,10 @@ Ajax.prototype = {
       if (request.status === 200){
         if(request.responseText){
       var jsonString = request.responseText;
-      console.log(jsonString)
-      this.response = CircularJSON.parse(jsonString);
+      var trimString = jsonString.substring(1,jsonString.length-1)
+
+      this.response = CircularJSON.parse(trimString);
+      console.log(this.response)
 
     }
     }
