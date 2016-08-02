@@ -45,7 +45,7 @@ window.onload= function(){
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
   // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
-  state.game.ajax.go("GET", "/games/579fa56272b212408d172ef5")
+  // state.game.ajax.go("GET", "/games/579fa56272b212408d172ef5")
 
 }
 
