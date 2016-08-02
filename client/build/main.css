@@ -28,7 +28,7 @@ navigation areas
   margin: 0px;
   border: 0px;
   z-index: 5 ;
-  border-top: 20px solid #3C3530;
+  border-top: 25px solid #3C3530;
 }
 
 #nav h1{
@@ -166,7 +166,7 @@ DIV areas
 #temp{
   position: absolute;
   margin-left: 30%;
-  margin-top: 100px;
+  margin-top: 130px;
   width: 40%;
   height: 40vw;
   font-size: 5vw;
@@ -216,6 +216,7 @@ compass
   border-radius: 50%;
   /*border: 0.1em solid darkred;*/
   overflow: hidden;
+  border: 2px solid #3C3530;
 }
 
 .compass .disc {
