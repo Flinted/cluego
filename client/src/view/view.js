@@ -4,7 +4,8 @@ var state = {
  tolerance: 100,
  foundMessage: "",
  latLng: '',
- currTeam: ''
+ currTeam: '',
+ player: ''
 }
 
 var View = function(game){
@@ -18,6 +19,7 @@ View.prototype = {
     this.mapBindClick();
     this.setButtons();
     state.currTeam = this.game.teams[0]
+    this.detectZoom();
   },
 
   setButtons: function(){
@@ -78,8 +80,10 @@ View.prototype = {
           this.populateCreate(event);}
         }else{
           if(this.game.currentObj.checkFound(event.latLng)){
-            this.game.map.addFoundWindow(this.game.currentObj.latLng, this.game.currentObj.clue + " " + this.game.currentObj.foundMessage)
-            this.popFound();
+            this.game.currentObj.addFound(state.currTeam)
+            var content = this.generateContent();
+            this.game.map.addFoundWindow(this.game.currentObj.latLng, content)
+            // this.popFound();
             if(this.game.updateCurrent()){
               this.endGame()
             }else{
@@ -88,6 +92,15 @@ View.prototype = {
           }
         }
       }.bind(this))
+  },
+
+  generateContent: function(){
+    var content = "<h3>"+ this.game.currentObj.clue + "</h3>" + this.game.currentObj.foundMessage + "<br>"
+    this.game.currentObj.found.forEach(function(team){
+      var teamInfo = "<br> " + team.name + " Points: " + team.totalPoints()
+      content += teamInfo
+    }.bind(this))
+    return content
   },
 
   resetMarkers: function(){
@@ -109,12 +122,6 @@ View.prototype = {
     input1.required = true;
     input1.placeholder = "Enter Player Name";
     temp.innerHTML=''
-    // temp.appendChild(document.createElement('br'));
-    // temp.appendChild(document.createElement('br'));
-    // temp.appendChild(document.createElement('br'));
-    // temp.appendChild(document.createElement('br'));
-    // temp.appendChild(document.createElement('br'));
-    // temp.appendChild(document.createElement('br'));
     temp.appendChild(header);
     temp.appendChild(input1);
     var p = document.createElement('p');
@@ -126,14 +133,44 @@ View.prototype = {
       var color = document.createElement('div')
       color.className = "team";
       color.style.backgroundColor = colors[i];
-
       color.addEventListener('click', function(){
-        this.setVisible("play")
+        state.player = input1.value || "Player"
+        this.selectGame()
       }.bind(this))
-
       temp.appendChild(color);
       temp.style.display = 'block'
     }
+  },
+
+  selectGame: function(){
+    var temp = document.getElementById('temp');
+    var header = document.createElement('h1');
+    this.setVisible("temp")
+    header.innerHTML = "Please Select a Game"
+    temp.innerHTML=''
+    temp.appendChild(header);
+
+    //add a then.
+    // this.game.ajax.go("GET","/games").then(function(response){
+    //   this.games = response;
+    //   console.log(response)
+      this.populateGames()
+    // }.bind(this))
+
+    },
+  populateGames: function(){
+    console.log(this.games)
+      var color = document.createElement('div')
+      color.className = "team";
+      color.style.backgroundColor = "blue";
+      color.addEventListener('click', function(){
+        var play = document.getElementById('playArea');
+        play.style.top = "650px"
+        this.populatePlay()
+        this.setVisible("play")
+      }.bind(this))
+      temp.appendChild(color);
+      temp.style.display = 'block'
   },
 
   popFound: function(){
@@ -146,12 +183,10 @@ View.prototype = {
   },
 
   endGame:function(){
-    var temp = document.getElementById('temp');
-    temp.innerHTML = "<h1>GAME OVER</h1>"
-    temp.style.display = 'block';
-
+    var create = document.getElementById('createArea');
+    create.innerHTML = "<h1>Congratulations!</h1>"
+    this.setVisible("create")
   },
-
 
   populateCreate: function(event){
     this.setVisible("create")
@@ -191,6 +226,7 @@ View.prototype = {
     input6.min = 50;
     input6.max = 500000;
     input6.name = "setTolerance";
+    input6.id = "tolerance";
     input6.value = state.tolerance;
     input6.addEventListener('change', function(event){
      state.tolerance = Number(event.target.value)
@@ -221,6 +257,66 @@ View.prototype = {
 
   },
 
+  detectZoom: function(){
+    google.maps.event.addListener( this.game.map.googleMap, 'zoom_changed', function(){
+    var tolerance = document.getElementById('tolerance');
+     if(tolerance){
+      var min = 0
+      var max = 0
+      console.log(this.game.map.googleMap.getZoom())
+      switch (this.game.map.googleMap.getZoom()){
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      min = 300000
+      max = 1500000
+      break;
+      case 6:
+      case 7:
+      case 8:
+      min = 25000
+      max = 1350000
+      break;
+      case 9:
+      case 10:
+      case 11:
+      case 12:
+      min = 1250
+      max = 675000
+      break;
+      case 13:
+      case 14:
+      min = 150
+      max = 1500
+      break;
+      case 15:
+      case 16:
+      min = 50
+      max = 300
+      break;
+      case 17:
+      case 18:
+      min = 10
+      max = 70
+      break;
+      case 19:
+      case 20:
+      min = 2
+      max = 25
+      break;
+      default:
+      
+      break; 
+    }
+    tolerance.min = min
+    tolerance.max = max
+    }
+  }.bind(this))
+  },
+
+
   handleSubmit: function(event){
    state.clue = event.srcElement[0].value
    state.hints=[event.srcElement[1].value,
@@ -235,78 +331,46 @@ View.prototype = {
  },
 
  populatePlay: function(){
-   var play = document.getElementById('textField');
-   play.innerHTML="";
-       // var p = document.createElement('p')
-       // var p2 = document.createElement('p')
+      this.populatePoints()
+      var play = document.getElementById('textField');
+      play.innerHTML="";
        var head = document.createElement('h1')
-       // head.innerText= "PLAY!"
-       head.innerText = "Here is your first clue: " + this.game.currentObj.clue 
+       head.innerText = "Hey " + state.player + ", here is the clue: " + this.game.currentObj.clue 
        play.appendChild(head) 
-       // play.appendChild(p) 
        var button = document.createElement('button');
        button.innerHTML = "Get a Hint"
        play.appendChild(button);
        button.addEventListener('click', function(event){
-         var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
-         console.log(hint)
+         this.showHint()
+         this.populatePoints()
        }.bind(this))
-     }
-   }
-   module.exports = View;
+     },
+
+     populatePoints: function(){
+      var points = document.getElementById('pointsArea');
+      var score = document.createElement('h3');
+      var pointInfo = document.createElement('p');
+      var penaltyInfo = document.createElement('p');
+      points.innerHTML = "";
+      score.innerText = "Score: " + state.currTeam.score();
+      pointInfo.innerText ="Points: " + state.currTeam.totalPoints();
+      penaltyInfo.innerText = "Penalties: " + state.currTeam.penalties;
+      points.appendChild(score);
+      points.appendChild(pointInfo);
+      points.appendChild(penaltyInfo);
+    },
+
+    showHint: function(){
+      var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
+      if (hint){
+        var play = document.getElementById('textField');
+        var p = document.createElement('p');
+        p.innerText = hint
+        play.appendChild(p)
+      }
+      
+    }
 
 
-   // <<<<<<< HEAD
-         // populateCreate: function(event){
-   //         this.setVisible("create")
-   //        var create = document.getElementById('createArea');
-   //        create.innerHTML = "<h1>Create</h1>"   
-   //        var button2 = document.createElement('button');
-   //        button2.innerText = "Game Complete!"
-   //        var form = document.createElement('form');
-   //        form.id = "objective";
-   //        var input1 = document.createElement('input');
-   //        input1.type = "text";
-   //        input1.id = "formInput"
-   //        input1.name = "question";
-   //        input1.required = true;
-   //        input1.placeholder = "Question";
-   //        var input2 = document.createElement('input');
-   //        input2.type = "text";
-   //        input2.id = "formInput"
-   //        input2.name = "hint1";
-   //        input2.placeholder = "Hint 1";
-   //        var input3 = document.createElement('input');
-   //        input3.type = "text";
-   //        input3.id = "formInput"
-   //        input3.name = "hint2";
-   //        input3.placeholder = "Hint 2";
-   //        var input4 = document.createElement('input');
-   //        input4.type = "text";
-   //        input4.id = "formInput"
-   //        input4.name = "hint3";
-   //        input4.placeholder = "Hint 3";
-   //        var input5 = document.createElement('input');
-   //        input5.type = "text";
-   //        input5.id = "formInput"
-   //        input5.name = "foundMessage";
-   //        input5.required = true;
-   //        input5.placeholder = "'found goal' message";
-   //        var input6 = document.createElement('input');
-   //        input6.type = "range";
-   //        input6.id = "formslider"
-   //        input6.min = 50;
-   //        input6.max = 500000;
-   //        input6.name = "setTolerance";
-   //        input6.value = state.tolerance;
-   //        input6.addEventListener('change', function(event){
-   //          state.tolerance = Number(event.target.value)
-   //          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-   //          this.game.map.circles.pop()
-   //          this.game.map.drawCircle(state.latLng, state.tolerance)
-   //        }.bind(this))
-   //        var button = document.createElement('input');
-   //        button.type = "submit";
-   //        button.id = "formButton"
-   //        button.name = "enter";
-   // =======
+  }
+  module.exports = View;

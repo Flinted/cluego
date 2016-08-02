@@ -10,9 +10,9 @@ var state = {
 window.onload= function(){
   state.game = new Game();
   state.view = new View(state.game);
-  state.game.addTeam("testTeam")
-  state.game.addTeam("testTeam2")
-  state.game.addTeam("testTeam3")
+  state.game.addTeam("Red Team")
+  state.game.addTeam("Blue Team")
+  state.game.addTeam("Green Team")
 
   state.view.initialise();
   state.game.map.initialise()
@@ -20,7 +20,7 @@ window.onload= function(){
     clue: "This is where a king might live?",
     hints: ["You will hear from it at 1pm", "You can see it from all around Edinburgh", "at the top of the Royal Mile!"],
     latLng: {lat: 55.9486, lng: -3.1999},
-    tolerance: 500,
+    tolerance: 5000,
     foundMessage: "Well Done, it was Edinburgh Castle"
   })
   state.game.createObjective({
