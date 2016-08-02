@@ -831,7 +831,6 @@
 	           resolve(this.response)
 	         }
 	     }.bind(this)
-	     console.log(data)
 	     request.send(data || null);
 	  })//end of promise
 	  }

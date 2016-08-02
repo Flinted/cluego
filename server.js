@@ -46,7 +46,6 @@ app.get('/games/:id', function(req, res) {
   app.post('/games', function(req, res) {
     MongoClient.connect( url, function( err, db ) {
      var collection = db.collection( 'games' );
-     console.log(req.body)
      collection.insert( req.body )
      res.status(200).end();
      db.close();
