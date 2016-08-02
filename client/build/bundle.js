@@ -45,7 +45,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(1);
-	var View = __webpack_require__(4);
+	var View = __webpack_require__(5);
+	var CircularJSON = __webpack_require__ (3);
 	
 	var state = {
 	  view: '',
@@ -81,12 +82,17 @@
 	      tolerance: 500,
 	      foundMessage: "Well Done, it was the Forth Rail Bridge"
 	    })
+	
+	  localStorage.setItem('GAME', CircularJSON.stringify(state.game));
+	  var gamer = localStorage.getItem('GAME');
+	  console.log(CircularJSON.parse(gamer))
+	
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: 51.4700, lng: -0.4543}, state.game.teams[0] )  
 	  // state.game.currentObj.giveHint({lat: -89.0700, lng: -120.4}, state.game.teams[0] )  
-	  // state.game.ajax.go("GET", "/games")
-	  // state.game.ajax.response
+	  // state.game.ajax.go("GET", "/games/579fa56272b212408d172ef5")
+	  // console.log(state.game.ajax.response)
 	
 	}
 	
@@ -98,10 +104,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Ajax = __webpack_require__(2);
-	var Map = __webpack_require__(3);
-	var View = __webpack_require__(4);
-	var Team = __webpack_require__(5);
-	var Objective = __webpack_require__(6)
+	var Map = __webpack_require__(4);
+	var View = __webpack_require__(5);
+	var Team = __webpack_require__(6);
+	var Objective = __webpack_require__(7)
 	
 	
 	var Game = function(){
@@ -125,6 +131,10 @@
 	    addTeam: function(name){
 	      var team = new Team(name);
 	      this.teams.push(team);
+	    },
+	
+	    save: function(){
+	      localStorage.setItem('game', JSON.stringify(this.game));
 	    },
 	
 	    updateCurrent: function(){
@@ -153,24 +163,30 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	var CircularJSON = __webpack_require__ (3);
+	
 	var Ajax = function(){
 	  this.response = ''
 	}
 	
 	Ajax.prototype = {
-	  go: function(type, route){
+	  go: function(type, route, data){
 	    var request = new XMLHttpRequest();
 	    request.open(type,route);
 	    request.setRequestHeader('Content-Type', 'application/json');
 	    request.onload = function(){
 	      if (request.status === 200){
+	        if(request.responseText){
 	      var jsonString = request.responseText;
-	      this.response = JSON.parse(jsonString);
+	      console.log(jsonString)
+	      this.response = CircularJSON.parse(jsonString);
+	
+	    }
 	    }
 	    }.bind(this)
-	    request.send(null);
+	    request.send(CircularJSON.stringify(data) || null);
 	  }
 	
 	}
@@ -178,6 +194,196 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	/*!
+	Copyright (C) 2013 by WebReflection
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+	
+	*/
+	var
+	  // should be a not so common char
+	  // possibly one JSON does not encode
+	  // possibly one encodeURIComponent does not encode
+	  // right now this char is '~' but this might change in the future
+	  specialChar = '~',
+	  safeSpecialChar = '\\x' + (
+	    '0' + specialChar.charCodeAt(0).toString(16)
+	  ).slice(-2),
+	  escapedSafeSpecialChar = '\\' + safeSpecialChar,
+	  specialCharRG = new RegExp(safeSpecialChar, 'g'),
+	  safeSpecialCharRG = new RegExp(escapedSafeSpecialChar, 'g'),
+	
+	  safeStartWithSpecialCharRG = new RegExp('(?:^|([^\\\\]))' + escapedSafeSpecialChar),
+	
+	  indexOf = [].indexOf || function(v){
+	    for(var i=this.length;i--&&this[i]!==v;);
+	    return i;
+	  },
+	  $String = String  // there's no way to drop warnings in JSHint
+	                    // about new String ... well, I need that here!
+	                    // faked, and happy linter!
+	;
+	
+	function generateReplacer(value, replacer, resolve) {
+	  var
+	    path = [],
+	    all  = [value],
+	    seen = [value],
+	    mapp = [resolve ? specialChar : '[Circular]'],
+	    last = value,
+	    lvl  = 1,
+	    i
+	  ;
+	  return function(key, value) {
+	    // the replacer has rights to decide
+	    // if a new object should be returned
+	    // or if there's some key to drop
+	    // let's call it here rather than "too late"
+	    if (replacer) value = replacer.call(this, key, value);
+	
+	    // did you know ? Safari passes keys as integers for arrays
+	    // which means if (key) when key === 0 won't pass the check
+	    if (key !== '') {
+	      if (last !== this) {
+	        i = lvl - indexOf.call(all, this) - 1;
+	        lvl -= i;
+	        all.splice(lvl, all.length);
+	        path.splice(lvl - 1, path.length);
+	        last = this;
+	      }
+	      // console.log(lvl, key, path);
+	      if (typeof value === 'object' && value) {
+	    	// if object isn't referring to parent object, add to the
+	        // object path stack. Otherwise it is already there.
+	        if (indexOf.call(all, value) < 0) {
+	          all.push(last = value);
+	        }
+	        lvl = all.length;
+	        i = indexOf.call(seen, value);
+	        if (i < 0) {
+	          i = seen.push(value) - 1;
+	          if (resolve) {
+	            // key cannot contain specialChar but could be not a string
+	            path.push(('' + key).replace(specialCharRG, safeSpecialChar));
+	            mapp[i] = specialChar + path.join(specialChar);
+	          } else {
+	            mapp[i] = mapp[0];
+	          }
+	        } else {
+	          value = mapp[i];
+	        }
+	      } else {
+	        if (typeof value === 'string' && resolve) {
+	          // ensure no special char involved on deserialization
+	          // in this case only first char is important
+	          // no need to replace all value (better performance)
+	          value = value .replace(safeSpecialChar, escapedSafeSpecialChar)
+	                        .replace(specialChar, safeSpecialChar);
+	        }
+	      }
+	    }
+	    return value;
+	  };
+	}
+	
+	function retrieveFromPath(current, keys) {
+	  for(var i = 0, length = keys.length; i < length; current = current[
+	    // keys should be normalized back here
+	    keys[i++].replace(safeSpecialCharRG, specialChar)
+	  ]);
+	  return current;
+	}
+	
+	function generateReviver(reviver) {
+	  return function(key, value) {
+	    var isString = typeof value === 'string';
+	    if (isString && value.charAt(0) === specialChar) {
+	      return new $String(value.slice(1));
+	    }
+	    if (key === '') value = regenerate(value, value, {});
+	    // again, only one needed, do not use the RegExp for this replacement
+	    // only keys need the RegExp
+	    if (isString) value = value .replace(safeStartWithSpecialCharRG, '$1' + specialChar)
+	                                .replace(escapedSafeSpecialChar, safeSpecialChar);
+	    return reviver ? reviver.call(this, key, value) : value;
+	  };
+	}
+	
+	function regenerateArray(root, current, retrieve) {
+	  for (var i = 0, length = current.length; i < length; i++) {
+	    current[i] = regenerate(root, current[i], retrieve);
+	  }
+	  return current;
+	}
+	
+	function regenerateObject(root, current, retrieve) {
+	  for (var key in current) {
+	    if (current.hasOwnProperty(key)) {
+	      current[key] = regenerate(root, current[key], retrieve);
+	    }
+	  }
+	  return current;
+	}
+	
+	function regenerate(root, current, retrieve) {
+	  return current instanceof Array ?
+	    // fast Array reconstruction
+	    regenerateArray(root, current, retrieve) :
+	    (
+	      current instanceof $String ?
+	        (
+	          // root is an empty string
+	          current.length ?
+	            (
+	              retrieve.hasOwnProperty(current) ?
+	                retrieve[current] :
+	                retrieve[current] = retrieveFromPath(
+	                  root, current.split(specialChar)
+	                )
+	            ) :
+	            root
+	        ) :
+	        (
+	          current instanceof Object ?
+	            // dedicated Object parser
+	            regenerateObject(root, current, retrieve) :
+	            // value as it is
+	            current
+	        )
+	    )
+	  ;
+	}
+	
+	function stringifyRecursion(value, replacer, space, doNotResolve) {
+	  return JSON.stringify(value, generateReplacer(value, replacer, !doNotResolve), space);
+	}
+	
+	function parseRecursion(text, reviver) {
+	  return JSON.parse(text, generateReviver(reviver));
+	}
+	this.stringify = stringifyRecursion;
+	this.parse = parseRecursion;
+
+/***/ },
+/* 4 */
 /***/ function(module, exports) {
 
 	  var styles = [
@@ -329,8 +535,6 @@
 	    },
 	
 	    hideMarkers: function(){
-	      console.log(this.path)
-	
 	      for(marker of this.markers){
 	        marker.setVisible(false);
 	      }
@@ -396,7 +600,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	var state = {
@@ -428,15 +632,15 @@
 	    }.bind(this))
 	    var play = document.getElementById('play');
 	    play.addEventListener('click',function(){
-	        this.goPlay()
+	      this.goPlay()
 	    }.bind(this))
 	    var slide = document.getElementById('slideButton');
-	     slide.addEventListener('click', function(){
-	       var stats = document.getElementById('playArea')
-	       if (stats.style.top != "650px"){
-	         stats.style.top = "650px"
-	       }else{ stats.style.top = "400px"}
-	     })
+	    slide.addEventListener('click', function(){
+	     var stats = document.getElementById('playArea')
+	     if (stats.style.top != "650px"){
+	       stats.style.top = "650px"
+	     }else{ stats.style.top = "435px"}
+	   })
 	  },
 	  
 	  goPlay: function(){
@@ -456,9 +660,9 @@
 	    var create = document.getElementById('createArea');
 	    var play = document.getElementById('playArea');
 	    if(area === "temp"){temp.style.display = "block"}else{temp.style.display='none'}
-	    if(area === "create"){create.style.display = "block"}else{create.style.display='none'}
-	    if(area === "play"){play.style.display = "block"}else{play.style.display='none'}
-	  },
+	      if(area === "create"){create.style.display = "block"}else{create.style.display='none'}
+	        if(area === "play"){play.style.display = "block"}else{play.style.display='none'}
+	      },
 	
 	  // looks for clicks on map
 	  mapBindClick: function(){
@@ -553,109 +757,91 @@
 	
 	  },
 	
-	  // switchCreate: function(){
-	  //   var create = document.getElementById('createArea');
-	  //   var play = document.getElementById('playArea');
-	  //   if (create.style.display === 'none'){
-	  //     create.style.display = 'block';
-	  //     play.style.display = 'none';}
-	  //   },
 	
-	  //   switchPlay: function(){
-	  //     var create = document.getElementById('createArea');
-	  //     var play = document.getElementById('playArea');
-	  //     if (play.style.display === 'none'){
-	  //       create.style.display = 'none';
-	  //       play.style.display = 'block';}
-	  //     },
+	  populateCreate: function(event){
+	    this.setVisible("create")
+	    var create = document.getElementById('createArea');
+	    create.innerHTML = "<h1>Create</h1>"   
+	    var button2 = document.createElement('button');
+	    button2.innerText = "Game Complete!"
+	    button2.addEventListener('click', function(){
+	      this.game.save()
+	    }.bind(this))
+	    var form = document.createElement('form');
+	    form.id = "objective";
+	    var input1 = document.createElement('input');
+	    input1.type = "text";
+	    input1.name = "question";
+	    input1.required = true;
+	    input1.placeholder = "Question";
+	    var input2 = document.createElement('input');
+	    input2.type = "text";
+	    input2.name = "hint1";
+	    input2.placeholder = "Hint 1";
+	    var input3 = document.createElement('input');
+	    input3.type = "text";
+	    input3.name = "hint2";
+	    input3.placeholder = "Hint 2";
+	    var input4 = document.createElement('input');
+	    input4.type = "text";
+	    input4.name = "hint3";
+	    input4.placeholder = "Hint 3";
+	    var input5 = document.createElement('input');
+	    input5.type = "text";
+	    input5.name = "foundMessage";
+	    input5.required = true;
+	    input5.placeholder = "'found goal' message";
+	    var input6 = document.createElement('input');
+	    input6.type = "range";
+	    input6.min = 50;
+	    input6.max = 500000;
+	    input6.name = "setTolerance";
+	    input6.value = state.tolerance;
+	    input6.addEventListener('change', function(event){
+	     state.tolerance = Number(event.target.value)
+	     this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	     this.game.map.circles.pop()
+	     this.game.map.drawCircle(state.latLng, state.tolerance)
+	   }.bind(this))
+	    var button = document.createElement('input');
+	    button.type = "submit";
+	    button.name = "enter";
 	
-	      populateCreate: function(event){
-	        this.setVisible("create")
-	       var create = document.getElementById('createArea');
-	       create.innerHTML = "<h1>Create</h1>"   
-	       var button2 = document.createElement('button');
-	       button2.innerText = "Game Complete!"
-	       var form = document.createElement('form');
-	       form.id = "objective";
-	       var input1 = document.createElement('input');
-	       input1.type = "text";
-	       input1.id = "formInput"
-	       input1.name = "question";
-	       input1.required = true;
-	       input1.placeholder = "Question";
-	       var input2 = document.createElement('input');
-	       input2.type = "text";
-	       input2.id = "formInput"
-	       input2.name = "hint1";
-	       input2.placeholder = "Hint 1";
-	       var input3 = document.createElement('input');
-	       input3.type = "text";
-	       input3.id = "formInput"
-	       input3.name = "hint2";
-	       input3.placeholder = "Hint 2";
-	       var input4 = document.createElement('input');
-	       input4.type = "text";
-	       input4.id = "formInput"
-	       input4.name = "hint3";
-	       input4.placeholder = "Hint 3";
-	       var input5 = document.createElement('input');
-	       input5.type = "text";
-	       input5.id = "formInput"
-	       input5.name = "foundMessage";
-	       input5.required = true;
-	       input5.placeholder = "'found goal' message";
-	       var input6 = document.createElement('input');
-	       input6.type = "range";
-	       input6.id = "formslider"
-	       input6.min = 50;
-	       input6.max = 500000;
-	       input6.name = "setTolerance";
-	       input6.value = state.tolerance;
-	       input6.addEventListener('change', function(event){
-	         state.tolerance = Number(event.target.value)
-	         this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-	         this.game.map.circles.pop()
-	         this.game.map.drawCircle(state.latLng, state.tolerance)
-	       }.bind(this))
-	       var button = document.createElement('input');
-	       button.type = "submit";
-	       button.id = "formButton"
-	       button.name = "enter";
+	    form.appendChild(input1);
+	    form.appendChild(input2);
+	    form.appendChild(input3);
+	    form.appendChild(input4);
+	    form.appendChild(input5);
+	    form.appendChild(input6);
+	    form.appendChild(document.createElement('br'))
+	    form.appendChild(button);
+	    create.appendChild(form);
+	    create.appendChild(button2)  
 	
-	       form.appendChild(input1);
-	       form.appendChild(input2);
-	       form.appendChild(input3);
-	       form.appendChild(input4);
-	       form.appendChild(input5);
-	       form.appendChild(input6);
-	       form.appendChild(document.createElement('br'))
-	       form.appendChild(button);
-	       create.appendChild(form);
-	       create.appendChild(button2)  
+	    var objective = document.getElementById( 'objective' );
+	    objective.addEventListener('submit', function(event){
+	      event.preventDefault();
+	      this.handleSubmit(event);
+	    }.bind(this))
 	
-	       var objective = document.getElementById( 'objective' );
-	       objective.addEventListener('submit', function(event){
-	        event.preventDefault()
-	        this.handleSubmit(event)
-	      }.bind(this))
+	  },
 	
-	     },
+	  handleSubmit: function(event){
+	   state.clue = event.srcElement[0].value
+	   state.hints=[event.srcElement[1].value,
+	   event.srcElement[2].value, 
+	   event.srcElement[3].value]
+	   state.foundMessage = event.srcElement[4].value
+	   var capturedState = state
+	   this.game.createObjective(capturedState)
+	   this.game.map.addPath();
+	   this.populateCreate();
+	   this.ran = false
+	 },
 	
-	     handleSubmit: function(event){
-	       state.clue = event.srcElement[0].value
-	       state.hints=[event.srcElement[1].value,
-	       event.srcElement[2].value, 
-	       event.srcElement[3].value]
-	       state.foundMessage = event.srcElement[4].value
-	       var capturedState = state
-	       this.game.createObjective(capturedState)
-	       this.game.map.addPath();
-	       this.ran = false
-	     },
-	
-	     populatePlay: function(){
-	       var play = document.getElementById('textField');
-	       play.innerHTML="";
+	 populatePlay: function(){
+	   var play = document.getElementById('textField');
+	   play.innerHTML="";
 	       // var p = document.createElement('p')
 	       // var p2 = document.createElement('p')
 	       var head = document.createElement('h1')
@@ -673,9 +859,65 @@
 	     }
 	   }
 	   module.exports = View;
+	
+	
+	   // <<<<<<< HEAD
+	         // populateCreate: function(event){
+	   //         this.setVisible("create")
+	   //        var create = document.getElementById('createArea');
+	   //        create.innerHTML = "<h1>Create</h1>"   
+	   //        var button2 = document.createElement('button');
+	   //        button2.innerText = "Game Complete!"
+	   //        var form = document.createElement('form');
+	   //        form.id = "objective";
+	   //        var input1 = document.createElement('input');
+	   //        input1.type = "text";
+	   //        input1.id = "formInput"
+	   //        input1.name = "question";
+	   //        input1.required = true;
+	   //        input1.placeholder = "Question";
+	   //        var input2 = document.createElement('input');
+	   //        input2.type = "text";
+	   //        input2.id = "formInput"
+	   //        input2.name = "hint1";
+	   //        input2.placeholder = "Hint 1";
+	   //        var input3 = document.createElement('input');
+	   //        input3.type = "text";
+	   //        input3.id = "formInput"
+	   //        input3.name = "hint2";
+	   //        input3.placeholder = "Hint 2";
+	   //        var input4 = document.createElement('input');
+	   //        input4.type = "text";
+	   //        input4.id = "formInput"
+	   //        input4.name = "hint3";
+	   //        input4.placeholder = "Hint 3";
+	   //        var input5 = document.createElement('input');
+	   //        input5.type = "text";
+	   //        input5.id = "formInput"
+	   //        input5.name = "foundMessage";
+	   //        input5.required = true;
+	   //        input5.placeholder = "'found goal' message";
+	   //        var input6 = document.createElement('input');
+	   //        input6.type = "range";
+	   //        input6.id = "formslider"
+	   //        input6.min = 50;
+	   //        input6.max = 500000;
+	   //        input6.name = "setTolerance";
+	   //        input6.value = state.tolerance;
+	   //        input6.addEventListener('change', function(event){
+	   //          state.tolerance = Number(event.target.value)
+	   //          this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	   //          this.game.map.circles.pop()
+	   //          this.game.map.drawCircle(state.latLng, state.tolerance)
+	   //        }.bind(this))
+	   //        var button = document.createElement('input');
+	   //        button.type = "submit";
+	   //        button.id = "formButton"
+	   //        button.name = "enter";
+	   // =======
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	var Team = function(name){
@@ -724,7 +966,7 @@
 	module.exports = Team;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var Objective = function(params, map){

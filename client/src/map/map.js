@@ -147,8 +147,6 @@ Map.prototype = {
     },
 
     hideMarkers: function(){
-      console.log(this.path)
-
       for(marker of this.markers){
         marker.setVisible(false);
       }
