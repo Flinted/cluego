@@ -56,9 +56,9 @@
 	window.onload= function(){
 	  state.game = new Game();
 	  state.view = new View(state.game);
-	  state.game.addTeam("testTeam")
-	  state.game.addTeam("testTeam2")
-	  state.game.addTeam("testTeam3")
+	  state.game.addTeam("Red Team")
+	  state.game.addTeam("Blue Team")
+	  state.game.addTeam("Green Team")
 	
 	  state.view.initialise();
 	  state.game.map.initialise()
@@ -66,7 +66,7 @@
 	    clue: "This is where a king might live?",
 	    hints: ["You will hear from it at 1pm", "You can see it from all around Edinburgh", "at the top of the Royal Mile!"],
 	    latLng: {lat: 55.9486, lng: -3.1999},
-	    tolerance: 500,
+	    tolerance: 5000,
 	    foundMessage: "Well Done, it was Edinburgh Castle"
 	  })
 	  state.game.createObjective({
@@ -606,7 +606,8 @@
 	 tolerance: 100,
 	 foundMessage: "",
 	 latLng: '',
-	 currTeam: ''
+	 currTeam: '',
+	 player: ''
 	}
 	
 	var View = function(game){
@@ -680,8 +681,10 @@
 	          this.populateCreate(event);}
 	        }else{
 	          if(this.game.currentObj.checkFound(event.latLng)){
-	            this.game.map.addFoundWindow(this.game.currentObj.latLng, this.game.currentObj.clue + " " + this.game.currentObj.foundMessage)
-	            this.popFound();
+	            this.game.currentObj.addFound(state.currTeam)
+	            var content = this.generateContent();
+	            this.game.map.addFoundWindow(this.game.currentObj.latLng, content)
+	            // this.popFound();
 	            if(this.game.updateCurrent()){
 	              this.endGame()
 	            }else{
@@ -690,6 +693,15 @@
 	          }
 	        }
 	      }.bind(this))
+	  },
+	
+	  generateContent: function(){
+	    var content = "<h3>"+ this.game.currentObj.clue + "</h3>" + this.game.currentObj.foundMessage + "<br>"
+	    this.game.currentObj.found.forEach(function(team){
+	      var teamInfo = "<br> " + team.name + " Points: " + team.totalPoints()
+	      content += teamInfo
+	    }.bind(this))
+	    return content
 	  },
 	
 	  resetMarkers: function(){
@@ -730,9 +742,10 @@
 	      color.style.backgroundColor = colors[i];
 	
 	      color.addEventListener('click', function(){
+	        state.player = input1.value || "Player"
+	        this.populatePlay()
 	        this.setVisible("play")
 	      }.bind(this))
-	
 	      temp.appendChild(color);
 	      temp.style.display = 'block'
 	    }
@@ -837,25 +850,54 @@
 	 },
 	
 	 populatePlay: function(){
-	   var play = document.getElementById('textField');
-	   play.innerHTML="";
+	  this.populatePoints()
+	
+	  var play = document.getElementById('textField');
+	  play.innerHTML="";
 	       // var p = document.createElement('p')
 	       // var p2 = document.createElement('p')
 	       var head = document.createElement('h1')
 	       // head.innerText= "PLAY!"
-	       head.innerText = "Here is your first clue: " + this.game.currentObj.clue 
+	       head.innerText = "Hey " + state.player + ", here is the clue: " + this.game.currentObj.clue 
 	       play.appendChild(head) 
 	       // play.appendChild(p) 
 	       var button = document.createElement('button');
 	       button.innerHTML = "Get a Hint"
 	       play.appendChild(button);
 	       button.addEventListener('click', function(event){
-	         var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
-	         console.log(hint)
+	         this.showHint()
+	         this.populatePlay()
 	       }.bind(this))
-	     }
-	   }
-	   module.exports = View;
+	     },
+	
+	     populatePoints: function(){
+	      var points = document.getElementById('pointsArea');
+	      var score = document.createElement('h3');
+	      var pointInfo = document.createElement('p');
+	      var penaltyInfo = document.createElement('p');
+	      points.innerHTML = "";
+	      score.innerText = "Score: " + state.currTeam.score();
+	      pointInfo.innerText ="Points: " + state.currTeam.totalPoints();
+	      penaltyInfo.innerText = "Penalties: " + state.currTeam.penalties;
+	      points.appendChild(score);
+	      points.appendChild(pointInfo);
+	      points.appendChild(penaltyInfo);
+	    },
+	
+	    showHint: function(){
+	      var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
+	      if (hint){
+	        var play = document.getElementById('textField');
+	        var p = document.createElement('p');
+	        p.innerText = hint
+	        play.appendChild(p)
+	      }
+	      
+	    }
+	
+	
+	  }
+	  module.exports = View;
 	
 	
 	   // <<<<<<< HEAD
@@ -931,7 +973,11 @@
 	    this.points.forEach(function(point){
 	      total += point.value;
 	    })
-	    return total - this.penalties;
+	    return total 
+	  },
+	
+	  score: function(){
+	    return this.totalPoints() - this.penalties;
 	  },
 	
 	  addPoints: function(newPoint){
@@ -998,7 +1044,7 @@
 	
 	  // returns next hint in the array or a directional hint if all used.  charges penalty for use
 	  giveHint: function(latLng, team){
-	    team.addPenalty(2);
+	    team.addPenalty(1);
 	    this.hintCount +=1;
 	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
@@ -1032,7 +1078,7 @@
 	  givePoints: function(team){
 	    this.found.forEach(function(foundTeam, index){
 	      if(foundTeam.name === team.name){
-	        this.points = 5 - index;
+	        this.points = 10 - (index * 2);
 	        if(this.points < 0){ this.points = 0}
 	      }
 	  }.bind(this))

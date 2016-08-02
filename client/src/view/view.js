@@ -4,7 +4,8 @@ var state = {
  tolerance: 100,
  foundMessage: "",
  latLng: '',
- currTeam: ''
+ currTeam: '',
+ player: ''
 }
 
 var View = function(game){
@@ -78,8 +79,10 @@ View.prototype = {
           this.populateCreate(event);}
         }else{
           if(this.game.currentObj.checkFound(event.latLng)){
-            this.game.map.addFoundWindow(this.game.currentObj.latLng, this.game.currentObj.clue + " " + this.game.currentObj.foundMessage)
-            this.popFound();
+            this.game.currentObj.addFound(state.currTeam)
+            var content = this.generateContent();
+            this.game.map.addFoundWindow(this.game.currentObj.latLng, content)
+            // this.popFound();
             if(this.game.updateCurrent()){
               this.endGame()
             }else{
@@ -88,6 +91,15 @@ View.prototype = {
           }
         }
       }.bind(this))
+  },
+
+  generateContent: function(){
+    var content = "<h3>"+ this.game.currentObj.clue + "</h3>" + this.game.currentObj.foundMessage + "<br>"
+    this.game.currentObj.found.forEach(function(team){
+      var teamInfo = "<br> " + team.name + " Points: " + team.totalPoints()
+      content += teamInfo
+    }.bind(this))
+    return content
   },
 
   resetMarkers: function(){
@@ -128,9 +140,10 @@ View.prototype = {
       color.style.backgroundColor = colors[i];
 
       color.addEventListener('click', function(){
+        state.player = input1.value || "Player"
+        this.populatePlay()
         this.setVisible("play")
       }.bind(this))
-
       temp.appendChild(color);
       temp.style.display = 'block'
     }
@@ -235,25 +248,54 @@ View.prototype = {
  },
 
  populatePlay: function(){
-   var play = document.getElementById('textField');
-   play.innerHTML="";
+  this.populatePoints()
+
+  var play = document.getElementById('textField');
+  play.innerHTML="";
        // var p = document.createElement('p')
        // var p2 = document.createElement('p')
        var head = document.createElement('h1')
        // head.innerText= "PLAY!"
-       head.innerText = "Here is your first clue: " + this.game.currentObj.clue 
+       head.innerText = "Hey " + state.player + ", here is the clue: " + this.game.currentObj.clue 
        play.appendChild(head) 
        // play.appendChild(p) 
        var button = document.createElement('button');
        button.innerHTML = "Get a Hint"
        play.appendChild(button);
        button.addEventListener('click', function(event){
-         var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
-         console.log(hint)
+         this.showHint()
+         this.populatePlay()
        }.bind(this))
-     }
-   }
-   module.exports = View;
+     },
+
+     populatePoints: function(){
+      var points = document.getElementById('pointsArea');
+      var score = document.createElement('h3');
+      var pointInfo = document.createElement('p');
+      var penaltyInfo = document.createElement('p');
+      points.innerHTML = "";
+      score.innerText = "Score: " + state.currTeam.score();
+      pointInfo.innerText ="Points: " + state.currTeam.totalPoints();
+      penaltyInfo.innerText = "Penalties: " + state.currTeam.penalties;
+      points.appendChild(score);
+      points.appendChild(pointInfo);
+      points.appendChild(penaltyInfo);
+    },
+
+    showHint: function(){
+      var hint = this.game.currentObj.giveHint(state.latLng, state.currTeam )
+      if (hint){
+        var play = document.getElementById('textField');
+        var p = document.createElement('p');
+        p.innerText = hint
+        play.appendChild(p)
+      }
+      
+    }
+
+
+  }
+  module.exports = View;
 
 
    // <<<<<<< HEAD
