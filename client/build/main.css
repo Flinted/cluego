@@ -67,6 +67,9 @@ navigation areas
   position: relative;
 }
 
+
+/*form*/
+
 #objective{
   background: #a39c96;
   background: linear-gradient(top, #f0f0f0, #a39c96);
@@ -78,7 +81,7 @@ navigation areas
   width:250px;
 }
 
-#objective input{
+/*#objective input{
   color:#3c3c3c;
   font-family: Helvetica, Arial, sans-serif;
   font-weight:500;
@@ -91,12 +94,32 @@ navigation areas
   width:100%;
   box-sizing: border-box;
   border: 3px solid rgba(0,0,0,0);
-}
+}*/
 
-#objective input:focus {
+/*#objective input:focus {
  background: #423d3e;
  color: #cccccc;
-}
+}*/
+
+
+
+/*input {
+  -webkit-appearance: none;
+  width: 160px;
+  height: 20px;
+  margin: 10px 50px;
+  background: linear-gradient(to right, #16a085 0%, #16a085 100%);
+  background-size: 150px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  outline: none;
+  zoom: 130%;
+  display: block;
+  margin: auto;
+  margin-bottom: 30px;
+}*/
+
 
 
 /*==============================
@@ -203,7 +226,7 @@ padding: 10px;
   }
 
 /*==============================
-  slider
+  play area slid up
   ==============================*/
 
 /*.stats {
