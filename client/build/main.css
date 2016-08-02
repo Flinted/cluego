@@ -29,8 +29,6 @@ navigation areas
   border: 0px;
   z-index: 5 ;
   border-top: 20px solid #3C3530;
-  /*border-bottom: 3px solid black;*/
-  /*box-shadow: 4px 0px 15px black;*/
 }
 
 #nav h1{
@@ -164,6 +162,7 @@ DIV areas
   float:left;
   width: 69%;
 }
+
 #temp{
   position: absolute;
   margin-left: 30%;
@@ -171,11 +170,11 @@ DIV areas
   width: 40%;
   height: 40vw;
   font-size: 5vw;
-  text-align: center;
   border-radius: 50%;
   z-index: 2;
-  background: #AACD6E;
-  /*box-shadow: 11px 10px 8px -9px rgba(0,0,0,0.68);*/
+  background: grey;
+  
+
 }
 
 /*#temp{
