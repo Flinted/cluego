@@ -19,7 +19,7 @@ body {
  top: 0px;
  width: 100%;
  height: 60px;
- background-color: red;
+ background-color: orange;
  padding: 5px;
  margin: 0px;
  border: 0px;
@@ -105,6 +105,7 @@ body {
   color: white;
 }
 
+/*compass*/
 .compass {
  display: inline-block;
  position: relative;
@@ -140,6 +141,7 @@ body {
  background-size: 100%;
 }
 
+/*slider*/
 .stats {
  background-color: rgba(0, 0, 0, 0.7);
  position: absolute;
@@ -150,12 +152,11 @@ body {
  transition: top  1.5s ease-in-out;
  transition: top 1.5s ease-in-out;
  z-index: 50;
-
 }
 
 .playArea {
  padding: 5px 0 0 10px;
- background-color: rgba(50, 50, 0, .7);
+ background-color: rgba(250, 250, 250, .9);
  position: absolute;
  /*top: 630px;*/
  left: 0;

@@ -28,6 +28,10 @@ Game.prototype = {
       this.teams.push(team);
     },
 
+    save: function(){
+      localStorage.setItem('game', JSON.stringify(this.game));
+    },
+
     updateCurrent: function(){
       if(this.currentObj === this.objectives[this.objectives.length-1]){return true}
 
