@@ -12,7 +12,11 @@ Team.prototype = {
     this.points.forEach(function(point){
       total += point.value;
     })
-    return total - this.penalties;
+    return total 
+  },
+
+  score: function(){
+    return this.totalPoints() - this.penalties;
   },
 
   addPoints: function(newPoint){

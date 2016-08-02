@@ -30,7 +30,7 @@ Objective.prototype = {
 
   // returns next hint in the array or a directional hint if all used.  charges penalty for use
   giveHint: function(latLng, team){
-    team.addPenalty(2);
+    team.addPenalty(1);
     this.hintCount +=1;
     if(this.hintCount > this.hints.length){
       this.directionHint(latLng);
@@ -64,7 +64,7 @@ Objective.prototype = {
   givePoints: function(team){
     this.found.forEach(function(foundTeam, index){
       if(foundTeam.name === team.name){
-        this.points = 5 - index;
+        this.points = 10 - (index * 2);
         if(this.points < 0){ this.points = 0}
       }
   }.bind(this))

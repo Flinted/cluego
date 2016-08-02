@@ -3,6 +3,7 @@ var Map = require('../map/map.js');
 var View = require('../view/view.js');
 var Team = require('../team/team.js');
 var Objective = require('../objective/objective.js')
+var CircularJSON = require ('circular-json');
 
 
 var Game = function(){
@@ -27,6 +28,37 @@ Game.prototype = {
       var team = new Team(name);
       this.teams.push(team);
     },
+
+    rankTeams: function(){
+      var ranked = []
+      this.teams.forEach(function(team){
+        console.log(team)
+        var result = {name: team.name, points: team.totalPoints(), score: team.score(), penalties: team.penalties}
+        ranked.push(result)
+      })
+
+        ranked.sort(function(a, b) {
+          var x = b["points"]; 
+          var y = a["points"];
+          return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+      return ranked
+    },
+
+    save: function(){
+      var savePromise = new Promise(function(resolve,reject){
+        var save = CircularJSON.stringify(this)
+        if(save){
+        resolve(save)
+        }
+      }.bind(this));
+
+      savePromise.then(function(resolve){
+        this.ajax.go("POST", "/games", resolve)
+      }.bind(this)) 
+         
+    },
+
 
     updateCurrent: function(){
       if(this.currentObj === this.objectives[this.objectives.length-1]){return true}
