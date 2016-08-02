@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(1);
-	var View = __webpack_require__(5);
+	var View = __webpack_require__(2);
 	var CircularJSON = __webpack_require__ (3);
 	
 	var state = {
@@ -98,9 +98,9 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Ajax = __webpack_require__(2);
-	var Map = __webpack_require__(4);
-	var View = __webpack_require__(5);
+	var Ajax = __webpack_require__(4);
+	var Map = __webpack_require__(5);
+	var View = __webpack_require__(2);
 	var Team = __webpack_require__(6);
 	var Objective = __webpack_require__(7)
 	
@@ -158,504 +158,6 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// var CircularJSON = require ('circular-json');
-	
-	// var Ajax = function(){
-	//   this.response = ''
-	// }
-	
-	// Ajax.prototype = {
-	//   go: function(type, route, data){
-	//     return new Promise(function(resolve, reject) {
-	
-	//       var request = new XMLHttpRequest();
-	//       request.open(type,route);
-	//       request.setRequestHeader('Content-Type', 'application/json');
-	//       request.onload = function(){
-	//         if (request.status === 200){
-	//           if(request.responseText){
-	//             var jsonString = request.responseText;
-	//             if(jsonString[0] === "["){
-	//               this.response = [];
-	//               jsonString = jsonString.substring(1,jsonString.length-1)
-	//               var split = jsonString.split('{ "_id"')
-	//               split.forEach(function(game){
-	//                 this.response.push(game)
-	//                 console.log(this.response)
-	//               }.bind(this))
-	//             }
-	//             }else{
-	//                 console.log(jsonString)
-	
-	//              this.response= CircularJSON.parse(jsonString);
-	//            }
-	//            resolve(this.response)
-	//          }
-	       
-	//      }.bind(this)
-	//      request.send(CircularJSON.stringify(data) || null);
-	//   })//end of promise
-	//   }
-	
-	// }
-	// module.exports = Ajax;
-	
-	
-	var CircularJSON = __webpack_require__ (3);
-	
-	var Ajax = function(){
-	  this.response = ''
-	}
-	
-	Ajax.prototype = {
-	  go: function(type, route, data){
-	    return new Promise(function(resolve, reject) {
-	
-	      var request = new XMLHttpRequest();
-	      request.open(type,route);
-	      request.setRequestHeader('Content-Type', 'application/json');
-	      request.onload = function(){
-	        if (request.status === 200){
-	          if(request.responseText){
-	            var jsonString = request.responseText;
-	            if(jsonString[0] === "["){
-	              this.response = [];
-	              jsonString = jsonString.substring(1,jsonString.length-1)
-	              // jsonString.forEach(function(game){
-	                this.response.push(CircularJSON.parse(jsonString))
-	              // }.bind(this))
-	              console.log(this.response)
-	
-	            }else{
-	                console.log(jsonString)
-	
-	             this.response= CircularJSON.parse(jsonString);
-	           }
-	           resolve(this.response)
-	         }
-	       }
-	     }.bind(this)
-	     request.send(CircularJSON.stringify(data) || null);
-	  })//end of promise
-	  }
-	
-	}
-	module.exports = Ajax;
-	
-	
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	/*!
-	Copyright (C) 2013 by WebReflection
-	
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-	
-	The above copyright notice and this permission notice shall be included in
-	all copies or substantial portions of the Software.
-	
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-	THE SOFTWARE.
-	
-	*/
-	var
-	  // should be a not so common char
-	  // possibly one JSON does not encode
-	  // possibly one encodeURIComponent does not encode
-	  // right now this char is '~' but this might change in the future
-	  specialChar = '~',
-	  safeSpecialChar = '\\x' + (
-	    '0' + specialChar.charCodeAt(0).toString(16)
-	  ).slice(-2),
-	  escapedSafeSpecialChar = '\\' + safeSpecialChar,
-	  specialCharRG = new RegExp(safeSpecialChar, 'g'),
-	  safeSpecialCharRG = new RegExp(escapedSafeSpecialChar, 'g'),
-	
-	  safeStartWithSpecialCharRG = new RegExp('(?:^|([^\\\\]))' + escapedSafeSpecialChar),
-	
-	  indexOf = [].indexOf || function(v){
-	    for(var i=this.length;i--&&this[i]!==v;);
-	    return i;
-	  },
-	  $String = String  // there's no way to drop warnings in JSHint
-	                    // about new String ... well, I need that here!
-	                    // faked, and happy linter!
-	;
-	
-	function generateReplacer(value, replacer, resolve) {
-	  var
-	    path = [],
-	    all  = [value],
-	    seen = [value],
-	    mapp = [resolve ? specialChar : '[Circular]'],
-	    last = value,
-	    lvl  = 1,
-	    i
-	  ;
-	  return function(key, value) {
-	    // the replacer has rights to decide
-	    // if a new object should be returned
-	    // or if there's some key to drop
-	    // let's call it here rather than "too late"
-	    if (replacer) value = replacer.call(this, key, value);
-	
-	    // did you know ? Safari passes keys as integers for arrays
-	    // which means if (key) when key === 0 won't pass the check
-	    if (key !== '') {
-	      if (last !== this) {
-	        i = lvl - indexOf.call(all, this) - 1;
-	        lvl -= i;
-	        all.splice(lvl, all.length);
-	        path.splice(lvl - 1, path.length);
-	        last = this;
-	      }
-	      // console.log(lvl, key, path);
-	      if (typeof value === 'object' && value) {
-	    	// if object isn't referring to parent object, add to the
-	        // object path stack. Otherwise it is already there.
-	        if (indexOf.call(all, value) < 0) {
-	          all.push(last = value);
-	        }
-	        lvl = all.length;
-	        i = indexOf.call(seen, value);
-	        if (i < 0) {
-	          i = seen.push(value) - 1;
-	          if (resolve) {
-	            // key cannot contain specialChar but could be not a string
-	            path.push(('' + key).replace(specialCharRG, safeSpecialChar));
-	            mapp[i] = specialChar + path.join(specialChar);
-	          } else {
-	            mapp[i] = mapp[0];
-	          }
-	        } else {
-	          value = mapp[i];
-	        }
-	      } else {
-	        if (typeof value === 'string' && resolve) {
-	          // ensure no special char involved on deserialization
-	          // in this case only first char is important
-	          // no need to replace all value (better performance)
-	          value = value .replace(safeSpecialChar, escapedSafeSpecialChar)
-	                        .replace(specialChar, safeSpecialChar);
-	        }
-	      }
-	    }
-	    return value;
-	  };
-	}
-	
-	function retrieveFromPath(current, keys) {
-	  for(var i = 0, length = keys.length; i < length; current = current[
-	    // keys should be normalized back here
-	    keys[i++].replace(safeSpecialCharRG, specialChar)
-	  ]);
-	  return current;
-	}
-	
-	function generateReviver(reviver) {
-	  return function(key, value) {
-	    var isString = typeof value === 'string';
-	    if (isString && value.charAt(0) === specialChar) {
-	      return new $String(value.slice(1));
-	    }
-	    if (key === '') value = regenerate(value, value, {});
-	    // again, only one needed, do not use the RegExp for this replacement
-	    // only keys need the RegExp
-	    if (isString) value = value .replace(safeStartWithSpecialCharRG, '$1' + specialChar)
-	                                .replace(escapedSafeSpecialChar, safeSpecialChar);
-	    return reviver ? reviver.call(this, key, value) : value;
-	  };
-	}
-	
-	function regenerateArray(root, current, retrieve) {
-	  for (var i = 0, length = current.length; i < length; i++) {
-	    current[i] = regenerate(root, current[i], retrieve);
-	  }
-	  return current;
-	}
-	
-	function regenerateObject(root, current, retrieve) {
-	  for (var key in current) {
-	    if (current.hasOwnProperty(key)) {
-	      current[key] = regenerate(root, current[key], retrieve);
-	    }
-	  }
-	  return current;
-	}
-	
-	function regenerate(root, current, retrieve) {
-	  return current instanceof Array ?
-	    // fast Array reconstruction
-	    regenerateArray(root, current, retrieve) :
-	    (
-	      current instanceof $String ?
-	        (
-	          // root is an empty string
-	          current.length ?
-	            (
-	              retrieve.hasOwnProperty(current) ?
-	                retrieve[current] :
-	                retrieve[current] = retrieveFromPath(
-	                  root, current.split(specialChar)
-	                )
-	            ) :
-	            root
-	        ) :
-	        (
-	          current instanceof Object ?
-	            // dedicated Object parser
-	            regenerateObject(root, current, retrieve) :
-	            // value as it is
-	            current
-	        )
-	    )
-	  ;
-	}
-	
-	function stringifyRecursion(value, replacer, space, doNotResolve) {
-	  return JSON.stringify(value, generateReplacer(value, replacer, !doNotResolve), space);
-	}
-	
-	function parseRecursion(text, reviver) {
-	  return JSON.parse(text, generateReviver(reviver));
-	}
-	this.stringify = stringifyRecursion;
-	this.parse = parseRecursion;
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	  var styles = [
-	  {
-	    "featureType": "poi",
-	    "stylers": [
-	      { "visibility": "off" }
-	    ]
-	  },{
-	    "featureType": "road",
-	    "stylers": [
-	      { "visibility": "on" }
-	    ]
-	  },{
-	    "featureType": "water",
-	    "stylers": [
-	      { "color": "#80d4f6" }
-	    ]
-	  },{
-	    "featureType": "landscape.natural.terrain",
-	    "stylers": [
-	      { "visibility": "off" }
-	    ]
-	  },{
-	    "featureType": "road.highway",
-	    "elementType": "labels",
-	    "stylers": [
-	      { "visibility": "off" }
-	    ]
-	  },{
-	    "featureType": "landscape.natural",
-	    "elementType": "geometry.fill",
-	    "stylers": [
-	      { "visibility": "on" },
-	      { "saturation": 22 },
-	      { "gamma": 0.56 },
-	      { "lightness": 60 },
-	      { "color": "#a5d296" }
-	    ]
-	  },{
-	    "elementType": "labels.text.fill",
-	    "stylers": [
-	      { "weight": 2.1 },
-	      { "lightness": 100 },
-	      { "invert_lightness": true }
-	    ]
-	  },{
-	    "featureType": "landscape.man_made",
-	    "stylers": [
-	      { "color": "#8c9184" },
-	      { "lightness": 15 }
-	    ]
-	  },{
-	    "featureType": "administrative.country",
-	    "elementType": "labels.text",
-	    "stylers": [
-	      { "saturation": 100 },
-	      { "weight": 0.6 }
-	    ]
-	  }
-	]
-	
-	var Map = function(latLng, zoom){
-	  this.googleMap = new google.maps.Map(document.getElementById('map'), {
-	    center: latLng,
-	    zoom: zoom,
-	    minZoom: 2,
-	    mapTypeControl: false,
-	    zoomControlOptions: {
-	      position: google.maps.ControlPosition.RIGHT_CENTER 
-	    }
-	  });
-	
-	  this.infoWindow = new google.maps.InfoWindow({
-	    content: ""
-	  })
-	  this.markers = [];
-	  this.circles = [];
-	  this.path = '';
-	  this.foundMarkers = [];
-	  this.foundWindows = [];
-	}
-	
-	Map.prototype = {
-	  initialise: function(){
-	    this.googleMap.setOptions({styles: styles})
-	  },
-	
-	  // returns marker and adds to map
-	  addMarker: function(latLng){
-	    var marker = new google.maps.Marker({
-	      position:  latLng,
-	      map: this.googleMap,
-	      animation: google.maps.Animation.DROP,
-	      icon: {
-	        path: google.maps.SymbolPath.CIRCLE,
-	        scale: 5
-	      },
-	    })
-	    return marker;   
-	  }, 
-	
-	  addFoundWindow: function(latLng, content){
-	    var marker = this.addMarker(latLng);
-	    this.foundMarkers.push(marker);
-	    var infoWindow = new google.maps.InfoWindow({
-	      content: content
-	    })
-	    this.foundWindows.push(infoWindow);
-	    this.foundWindows[this.foundWindows.length-1].open( this.map, marker ); 
-	
-	    infoWindow.open( this.map, marker ); 
-	    marker.addListener('click', function(event){
-	      this.infoWindow.close();
-	      var infoWindow = new google.maps.InfoWindow({
-	        content: content
-	      })
-	      this.foundWindows.push(infoWindow);
-	      infoWindow.open( this.map, marker ); 
-	    }.bind(this))
-	
-	  },
-	
-	  // creates marker and info window
-	  addInfoWindow: function(latLng, content){
-	    var marker = this.addMarker(latLng);
-	    this.markers.push(marker);
-	    marker.addListener('click', function(event){
-	      this.infoWindow.close();
-	      var infoWindow = new google.maps.InfoWindow({
-	        content: content
-	      })
-	      this.infoWindow = infoWindow;
-	      infoWindow.open( this.map, marker ); 
-	    }.bind(this))
-	  },
-	  
-	  // changes markers, paths and circles to visible or hidden
-	  toggleMarkers: function(){
-	    if(this.markers[0].visible === false){var setter = true}else{var setter = false}
-	
-	      for(marker of this.markers){
-	        marker.setVisible(setter);
-	      }
-	      for(circle of this.circles){
-	        circle.setVisible(setter);
-	      }
-	      this.path.setVisible(setter);
-	    },
-	
-	    hideMarkers: function(){
-	      for(marker of this.markers){
-	        marker.setVisible(false);
-	      }
-	      for(circle of this.circles){
-	        circle.setVisible(false);
-	      }
-	    if(this.path){this.path.setVisible(false);}
-	    
-	    },
-	
-	  // connects all markers in the array
-	  addPath: function(){
-	    var markerPath = [];
-	    this.markers.forEach(function(marker){
-	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
-	      markerPath.push(latLng);
-	    })
-	    if(this.path){this.path.setVisible(false);}
-	
-	    this.path = new google.maps.Polyline({
-	      path: markerPath,
-	      geodesic: true,
-	      strokeColor: 'black',
-	      strokeOpacity: 0.2,
-	      strokeWeight: 6
-	    });
-	    this.path.setMap(this.googleMap);
-	  },
-	
-	  // shows circle around marker based on tolerance
-	  drawCircle: function(latLng, tolerance){ 
-	    var circle = new google.maps.Circle({
-	      strokeColor: 'black',
-	      strokeOpacity: 0.8,
-	      strokeWeight: 2,
-	      fillColor: 'wheat',
-	      fillOpacity: 0.35,
-	      geodesic: false,
-	      clickable: false,
-	      map: this.googleMap,
-	      center: latLng,
-	      radius: tolerance
-	    })
-	    this.circles.push(circle);
-	  },
-	
-	  addArrow: function(){
-	  // Create the polyline and add the symbol via the 'icons' property.
-	    var line = new google.maps.Polyline({
-	        path: [{lat: 22.291, lng: 153.027}, {lat: 18.291, lng: 153.027}],
-	        icons: [{
-	        icon: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-	        offset: '100%'
-	        }],
-	        map: this.googleMap
-	        });
-	      }
-	  }
-	
-	
-	
-	        module.exports = Map;
-
-
-/***/ },
-/* 5 */
 /***/ function(module, exports) {
 
 	var state = {
@@ -1034,6 +536,504 @@
 	
 	  }
 	  module.exports = View;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	/*!
+	Copyright (C) 2013 by WebReflection
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+	
+	*/
+	var
+	  // should be a not so common char
+	  // possibly one JSON does not encode
+	  // possibly one encodeURIComponent does not encode
+	  // right now this char is '~' but this might change in the future
+	  specialChar = '~',
+	  safeSpecialChar = '\\x' + (
+	    '0' + specialChar.charCodeAt(0).toString(16)
+	  ).slice(-2),
+	  escapedSafeSpecialChar = '\\' + safeSpecialChar,
+	  specialCharRG = new RegExp(safeSpecialChar, 'g'),
+	  safeSpecialCharRG = new RegExp(escapedSafeSpecialChar, 'g'),
+	
+	  safeStartWithSpecialCharRG = new RegExp('(?:^|([^\\\\]))' + escapedSafeSpecialChar),
+	
+	  indexOf = [].indexOf || function(v){
+	    for(var i=this.length;i--&&this[i]!==v;);
+	    return i;
+	  },
+	  $String = String  // there's no way to drop warnings in JSHint
+	                    // about new String ... well, I need that here!
+	                    // faked, and happy linter!
+	;
+	
+	function generateReplacer(value, replacer, resolve) {
+	  var
+	    path = [],
+	    all  = [value],
+	    seen = [value],
+	    mapp = [resolve ? specialChar : '[Circular]'],
+	    last = value,
+	    lvl  = 1,
+	    i
+	  ;
+	  return function(key, value) {
+	    // the replacer has rights to decide
+	    // if a new object should be returned
+	    // or if there's some key to drop
+	    // let's call it here rather than "too late"
+	    if (replacer) value = replacer.call(this, key, value);
+	
+	    // did you know ? Safari passes keys as integers for arrays
+	    // which means if (key) when key === 0 won't pass the check
+	    if (key !== '') {
+	      if (last !== this) {
+	        i = lvl - indexOf.call(all, this) - 1;
+	        lvl -= i;
+	        all.splice(lvl, all.length);
+	        path.splice(lvl - 1, path.length);
+	        last = this;
+	      }
+	      // console.log(lvl, key, path);
+	      if (typeof value === 'object' && value) {
+	    	// if object isn't referring to parent object, add to the
+	        // object path stack. Otherwise it is already there.
+	        if (indexOf.call(all, value) < 0) {
+	          all.push(last = value);
+	        }
+	        lvl = all.length;
+	        i = indexOf.call(seen, value);
+	        if (i < 0) {
+	          i = seen.push(value) - 1;
+	          if (resolve) {
+	            // key cannot contain specialChar but could be not a string
+	            path.push(('' + key).replace(specialCharRG, safeSpecialChar));
+	            mapp[i] = specialChar + path.join(specialChar);
+	          } else {
+	            mapp[i] = mapp[0];
+	          }
+	        } else {
+	          value = mapp[i];
+	        }
+	      } else {
+	        if (typeof value === 'string' && resolve) {
+	          // ensure no special char involved on deserialization
+	          // in this case only first char is important
+	          // no need to replace all value (better performance)
+	          value = value .replace(safeSpecialChar, escapedSafeSpecialChar)
+	                        .replace(specialChar, safeSpecialChar);
+	        }
+	      }
+	    }
+	    return value;
+	  };
+	}
+	
+	function retrieveFromPath(current, keys) {
+	  for(var i = 0, length = keys.length; i < length; current = current[
+	    // keys should be normalized back here
+	    keys[i++].replace(safeSpecialCharRG, specialChar)
+	  ]);
+	  return current;
+	}
+	
+	function generateReviver(reviver) {
+	  return function(key, value) {
+	    var isString = typeof value === 'string';
+	    if (isString && value.charAt(0) === specialChar) {
+	      return new $String(value.slice(1));
+	    }
+	    if (key === '') value = regenerate(value, value, {});
+	    // again, only one needed, do not use the RegExp for this replacement
+	    // only keys need the RegExp
+	    if (isString) value = value .replace(safeStartWithSpecialCharRG, '$1' + specialChar)
+	                                .replace(escapedSafeSpecialChar, safeSpecialChar);
+	    return reviver ? reviver.call(this, key, value) : value;
+	  };
+	}
+	
+	function regenerateArray(root, current, retrieve) {
+	  for (var i = 0, length = current.length; i < length; i++) {
+	    current[i] = regenerate(root, current[i], retrieve);
+	  }
+	  return current;
+	}
+	
+	function regenerateObject(root, current, retrieve) {
+	  for (var key in current) {
+	    if (current.hasOwnProperty(key)) {
+	      current[key] = regenerate(root, current[key], retrieve);
+	    }
+	  }
+	  return current;
+	}
+	
+	function regenerate(root, current, retrieve) {
+	  return current instanceof Array ?
+	    // fast Array reconstruction
+	    regenerateArray(root, current, retrieve) :
+	    (
+	      current instanceof $String ?
+	        (
+	          // root is an empty string
+	          current.length ?
+	            (
+	              retrieve.hasOwnProperty(current) ?
+	                retrieve[current] :
+	                retrieve[current] = retrieveFromPath(
+	                  root, current.split(specialChar)
+	                )
+	            ) :
+	            root
+	        ) :
+	        (
+	          current instanceof Object ?
+	            // dedicated Object parser
+	            regenerateObject(root, current, retrieve) :
+	            // value as it is
+	            current
+	        )
+	    )
+	  ;
+	}
+	
+	function stringifyRecursion(value, replacer, space, doNotResolve) {
+	  return JSON.stringify(value, generateReplacer(value, replacer, !doNotResolve), space);
+	}
+	
+	function parseRecursion(text, reviver) {
+	  return JSON.parse(text, generateReviver(reviver));
+	}
+	this.stringify = stringifyRecursion;
+	this.parse = parseRecursion;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// var CircularJSON = require ('circular-json');
+	
+	// var Ajax = function(){
+	//   this.response = ''
+	// }
+	
+	// Ajax.prototype = {
+	//   go: function(type, route, data){
+	//     return new Promise(function(resolve, reject) {
+	
+	//       var request = new XMLHttpRequest();
+	//       request.open(type,route);
+	//       request.setRequestHeader('Content-Type', 'application/json');
+	//       request.onload = function(){
+	//         if (request.status === 200){
+	//           if(request.responseText){
+	//             var jsonString = request.responseText;
+	//             if(jsonString[0] === "["){
+	//               this.response = [];
+	//               jsonString = jsonString.substring(1,jsonString.length-1)
+	//               var split = jsonString.split('{ "_id"')
+	//               split.forEach(function(game){
+	//                 this.response.push(game)
+	//                 console.log(this.response)
+	//               }.bind(this))
+	//             }
+	//             }else{
+	//                 console.log(jsonString)
+	
+	//              this.response= CircularJSON.parse(jsonString);
+	//            }
+	//            resolve(this.response)
+	//          }
+	       
+	//      }.bind(this)
+	//      request.send(CircularJSON.stringify(data) || null);
+	//   })//end of promise
+	//   }
+	
+	// }
+	// module.exports = Ajax;
+	
+	
+	var CircularJSON = __webpack_require__ (3);
+	
+	var Ajax = function(){
+	  this.response = ''
+	}
+	
+	Ajax.prototype = {
+	  go: function(type, route, data){
+	    return new Promise(function(resolve, reject) {
+	
+	      var request = new XMLHttpRequest();
+	      request.open(type,route);
+	      request.setRequestHeader('Content-Type', 'application/json');
+	      request.onload = function(){
+	        if (request.status === 200){
+	          if(request.responseText){
+	            var jsonString = request.responseText;
+	            if(jsonString[0] === "["){
+	              this.response = [];
+	              jsonString = jsonString.substring(1,jsonString.length-1)
+	              // jsonString.forEach(function(game){
+	                this.response.push(CircularJSON.parse(jsonString))
+	              // }.bind(this))
+	              console.log(this.response)
+	
+	            }else{
+	                console.log(jsonString)
+	
+	             this.response= CircularJSON.parse(jsonString);
+	           }
+	           resolve(this.response)
+	         }
+	       }
+	     }.bind(this)
+	     request.send(CircularJSON.stringify(data) || null);
+	  })//end of promise
+	  }
+	
+	}
+	module.exports = Ajax;
+	
+	
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	  var styles = [
+	  {
+	    "featureType": "poi",
+	    "stylers": [
+	      { "visibility": "off" }
+	    ]
+	  },{
+	    "featureType": "road",
+	    "stylers": [
+	      { "visibility": "on" }
+	    ]
+	  },{
+	    "featureType": "water",
+	    "stylers": [
+	      { "color": "#80d4f6" }
+	    ]
+	  },{
+	    "featureType": "landscape.natural.terrain",
+	    "stylers": [
+	      { "visibility": "off" }
+	    ]
+	  },{
+	    "featureType": "road.highway",
+	    "elementType": "labels",
+	    "stylers": [
+	      { "visibility": "off" }
+	    ]
+	  },{
+	    "featureType": "landscape.natural",
+	    "elementType": "geometry.fill",
+	    "stylers": [
+	      { "visibility": "on" },
+	      { "saturation": 22 },
+	      { "gamma": 0.56 },
+	      { "lightness": 60 },
+	      { "color": "#a5d296" }
+	    ]
+	  },{
+	    "elementType": "labels.text.fill",
+	    "stylers": [
+	      { "weight": 2.1 },
+	      { "lightness": 100 },
+	      { "invert_lightness": true }
+	    ]
+	  },{
+	    "featureType": "landscape.man_made",
+	    "stylers": [
+	      { "color": "#8c9184" },
+	      { "lightness": 15 }
+	    ]
+	  },{
+	    "featureType": "administrative.country",
+	    "elementType": "labels.text",
+	    "stylers": [
+	      { "saturation": 100 },
+	      { "weight": 0.6 }
+	    ]
+	  }
+	]
+	
+	var Map = function(latLng, zoom){
+	  this.googleMap = new google.maps.Map(document.getElementById('map'), {
+	    center: latLng,
+	    zoom: zoom,
+	    minZoom: 2,
+	    mapTypeControl: false,
+	    zoomControlOptions: {
+	      position: google.maps.ControlPosition.RIGHT_CENTER 
+	    }
+	  });
+	
+	  this.infoWindow = new google.maps.InfoWindow({
+	    content: ""
+	  })
+	  this.markers = [];
+	  this.circles = [];
+	  this.path = '';
+	  this.foundMarkers = [];
+	  this.foundWindows = [];
+	}
+	
+	Map.prototype = {
+	  initialise: function(){
+	    this.googleMap.setOptions({styles: styles})
+	  },
+	
+	  // returns marker and adds to map
+	  addMarker: function(latLng){
+	    var marker = new google.maps.Marker({
+	      position:  latLng,
+	      map: this.googleMap,
+	      animation: google.maps.Animation.DROP,
+	      icon: {
+	        path: google.maps.SymbolPath.CIRCLE,
+	        scale: 5
+	      },
+	    })
+	    return marker;   
+	  }, 
+	
+	  addFoundWindow: function(latLng, content){
+	    var marker = this.addMarker(latLng);
+	    this.foundMarkers.push(marker);
+	    var infoWindow = new google.maps.InfoWindow({
+	      content: content
+	    })
+	    this.foundWindows.push(infoWindow);
+	    this.foundWindows[this.foundWindows.length-1].open( this.map, marker ); 
+	
+	    infoWindow.open( this.map, marker ); 
+	    marker.addListener('click', function(event){
+	      this.infoWindow.close();
+	      var infoWindow = new google.maps.InfoWindow({
+	        content: content
+	      })
+	      this.foundWindows.push(infoWindow);
+	      infoWindow.open( this.map, marker ); 
+	    }.bind(this))
+	
+	  },
+	
+	  // creates marker and info window
+	  addInfoWindow: function(latLng, content){
+	    var marker = this.addMarker(latLng);
+	    this.markers.push(marker);
+	    marker.addListener('click', function(event){
+	      this.infoWindow.close();
+	      var infoWindow = new google.maps.InfoWindow({
+	        content: content
+	      })
+	      this.infoWindow = infoWindow;
+	      infoWindow.open( this.map, marker ); 
+	    }.bind(this))
+	  },
+	  
+	  // changes markers, paths and circles to visible or hidden
+	  toggleMarkers: function(){
+	    if(this.markers[0].visible === false){var setter = true}else{var setter = false}
+	
+	      for(marker of this.markers){
+	        marker.setVisible(setter);
+	      }
+	      for(circle of this.circles){
+	        circle.setVisible(setter);
+	      }
+	      this.path.setVisible(setter);
+	    },
+	
+	    hideMarkers: function(){
+	      for(marker of this.markers){
+	        marker.setVisible(false);
+	      }
+	      for(circle of this.circles){
+	        circle.setVisible(false);
+	      }
+	    if(this.path){this.path.setVisible(false);}
+	    
+	    },
+	
+	  // connects all markers in the array
+	  addPath: function(){
+	    var markerPath = [];
+	    this.markers.forEach(function(marker){
+	      var latLng = {lat: marker.position.lat(), lng: marker.position.lng()}
+	      markerPath.push(latLng);
+	    })
+	    if(this.path){this.path.setVisible(false);}
+	
+	    this.path = new google.maps.Polyline({
+	      path: markerPath,
+	      geodesic: true,
+	      strokeColor: 'black',
+	      strokeOpacity: 0.2,
+	      strokeWeight: 6
+	    });
+	    this.path.setMap(this.googleMap);
+	  },
+	
+	  // shows circle around marker based on tolerance
+	  drawCircle: function(latLng, tolerance){ 
+	    var circle = new google.maps.Circle({
+	      strokeColor: 'black',
+	      strokeOpacity: 0.8,
+	      strokeWeight: 2,
+	      fillColor: 'wheat',
+	      fillOpacity: 0.35,
+	      geodesic: false,
+	      clickable: false,
+	      map: this.googleMap,
+	      center: latLng,
+	      radius: tolerance
+	    })
+	    this.circles.push(circle);
+	  },
+	
+	  addArrow: function(){
+	  // Create the polyline and add the symbol via the 'icons' property.
+	    var line = new google.maps.Polyline({
+	        path: [{lat: 22.291, lng: 153.027}, {lat: 18.291, lng: 153.027}],
+	        icons: [{
+	        icon: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+	        offset: '100%'
+	        }],
+	        map: this.googleMap
+	        });
+	      }
+	  }
+	
+	
+	
+	        module.exports = Map;
+
 
 /***/ },
 /* 6 */
