@@ -13,9 +13,9 @@ Ajax.prototype = {
       if (request.status === 200){
         if(request.responseText){
       var jsonString = request.responseText;
-      var trimString = jsonString.substring(1,jsonString.length-1)
+      // var trimString = jsonString.substring(1,jsonString.length-1)
 
-      this.response = CircularJSON.parse(trimString);
+      this.response = CircularJSON.parse(jsonString);
       console.log(this.response)
 
     }
