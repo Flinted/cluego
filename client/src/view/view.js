@@ -91,7 +91,7 @@ View.prototype = {
      var stats = document.getElementById('playArea')
      if (stats.style.top != "660px"){
        stats.style.top = "660px"
-     }else{ stats.style.top = "435px"}
+     }else{ stats.style.top = "485px"}
    })
   },
   
@@ -174,7 +174,7 @@ View.prototype = {
     var header = document.createElement('h1');
     this.setVisible("temp")
     
-    header.innerHTML = "Please enter Player Name"
+    header.innerHTML = "<br>Please enter Player Name"
     input1.id = "nameForm"
     input1.type = "text";
     input1.name = "name";
@@ -184,17 +184,18 @@ View.prototype = {
     temp.appendChild(header);
     temp.appendChild(input1);
     var p = document.createElement('p');
-    p.innerText = "Please Select a Team"
+    p.innerHTML = "<br><br>Please Select a Team"
     temp.appendChild(p)
-    temp.appendChild(document.createElement('br'));
     var colors = ["DarkOrange","BlueViolet","ForestGreen","RoyalBlue", "Gold"]
     for (var i = 4; i >= 0; i--) {
       var color = document.createElement('div')
       color.className = "team";
       color.style.backgroundColor = colors[i];
-      color.addEventListener('click', function(){
+      color.id = colors[i]
+      color.addEventListener('click', function(event){
+        console.log(event.target.id)
         state.player = input1.value || "Player"
-        this.selectGame(color.style.backgroundColor)
+        this.selectGame(event.target.id)
       }.bind(this))
       temp.appendChild(color);
       temp.style.display = 'block'
@@ -202,6 +203,11 @@ View.prototype = {
   },
 
   selectGame: function(color){
+    this.game.teams.forEach(function(team){
+      if(color === team.name.split(' ')[0]){
+        state.currTeam = team
+      }
+    })
     var temp = document.getElementById('temp');
     var header = document.createElement('h1');
     var scroller = document.createElement('div');
@@ -527,14 +533,17 @@ View.prototype = {
       this.populatePoints()
       var play = document.getElementById('textField');
       play.innerHTML="";
-       var head = document.createElement('h1')
+       var head = document.createElement('h5')
        var question = document.createElement('h1')
-       head.innerHTML = "Hey " + state.player + ", here is your clue: "+ "<br>" +  this.game.currentObj.clue 
-       play.appendChild(head) 
+       head.innerHTML = "Hey " + state.player + ", here is your clue:"
+       question.innerHTML =  this.game.currentObj.clue
        var button = document.createElement('button');
-       button.innerHTML = "Get a Hint"
        play.appendChild(button);
-       
+       play.appendChild(head) 
+       play.appendChild(document.createElement("br"))
+       play.appendChild(question)
+
+       button.innerHTML = "Get a Hint"
        button.addEventListener('click', function(event){
          this.showHint()
          this.populatePoints()
@@ -560,7 +569,21 @@ View.prototype = {
       points.appendChild(pointInfo);
       points.appendChild(penaltyInfo);
       points.appendChild(document.createElement('br'))
+      this.getOthersPoints()
       points.appendChild(home);
+    },
+
+    getOthersPoints: function(){
+        var scoreDiv = document.getElementById('scoreDiv')
+        scoreDiv.innerHTML = ""
+
+      this.game.teams.forEach(function(team){
+        if(team != state.currTeam){
+        var scoreInfo = document.createElement('p');
+        scoreInfo.innerHTML= team.name + ": " + team.score() + " points."
+        scoreDiv.appendChild(scoreInfo)
+        };
+      }.bind(this))
     },
 
     showHint: function(){

@@ -24,6 +24,12 @@ h1{
 
 }
 
+h5{
+  margin-bottom:0;
+  padding:0;
+  border:0;
+  display: inline;
+}
 
 body {
   background-color: #FCBE32; 
@@ -196,7 +202,7 @@ DIV areas
   position: absolute;
   background:none;
   margin-left: 40%;
-  margin-top: 30%;
+  margin-top: 25%;
   text-align: center;
 
 }
@@ -397,8 +403,8 @@ temp circle
 }
 
 .team{
-  width: 35px;
-  height:35px;
+  width: 50px;
+  height:50px;
   border-radius: 100%;
   display: inline-block;
   margin: 10px;
@@ -451,11 +457,11 @@ compass
   float: right;
   display: inline-block;
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 144px;
+  height: 144px;
   margin: -1em 2em 0 1em;
   background: #222;
-  padding: 2px;
+  padding: 3px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid #3C3530;
@@ -468,8 +474,8 @@ compass
   left: 0;
   z-index: 3;
   background: url('http://dev.rvltn.eu/compass/compass.svg');
-  width: 105px;
-  height: 105px;
+  width: 150px;
+  height: 150px;
   background-size: 100%;
 }
 .compass .arrow {
@@ -479,8 +485,8 @@ compass
   left: 0;
   z-index: 4;
   background: url('http://dev.rvltn.eu/compass/arrow.svg');
-  width: 104px;
-  height: 104px;
+  width: 150px;
+  height: 150px;
   background-size: 100%;
   transition: all 3s;
   transition-timing: ease-in-out;
@@ -495,7 +501,7 @@ play area slid up
 ==============================*/
 
 .playArea {
-  padding: 15px 0 0 10px;
+  padding: 5px 0 0 10px;
   background: #fcbe32;
   position: absolute;
   left: 0;
@@ -516,22 +522,41 @@ play area slid up
   width: 150px;
 }
 
-#playArea p{
+#textField p{
   padding-left: 50px;
 }
 
 #playArea h1{
-  /*padding-top: 4px;*/
+  padding-top: 7px;
   padding-left: 20px;
+  margin-bottom: 15px;
   display: inline-block;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 }
 
+#scoreDiv{
+  width:85%;
+  height: 70px;
+  margin-top: 200px;
+}
+
+#scoreDiv p{
+  display: inline;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-right: 1px dotted white;
+  border-left: 1px dotted white;
+  font-size: 0.7ems;
+}
 
 #textField{
   float:left;
   width: 75%;
   display: inline-block;
+}
+
+#textField button{
+  margin-top: 15px;
 }
 
 .playArea button{
@@ -546,7 +571,7 @@ play area slid up
   text-align: right;
   float: right;
   width: 15%;
-  padding: 10px 40px 0 0;
+  padding: 25px 40px 0 0;
   font-size: 15px;
   display: inline-block;
 }
@@ -558,7 +583,7 @@ play area slid up
 
 #scroll {
   width: 80%;
-  height: 77px;
+  height: 97px;
   border: 1px solid white;
   overflow-y: scroll;
 }
