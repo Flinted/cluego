@@ -5,7 +5,7 @@ var LineChart = function(data,categories){
 
   var chart = new Highcharts.Chart({
     chart: {
-      type: "line",
+      type: "spline",
       renderTo: container,
       backgroundColor: 'rgba(255, 255, 255, 0.95)'
     },

@@ -42,7 +42,7 @@ View.prototype = {
     input.name = "gameName";
     input.id = "gameName"
     input.required = true;
-    input.placeholder = "enter game name";
+    input.placeholder = "Enter game name";
     var go = document.createElement('button');
     go.id = "gameName"
     go.addEventListener("click",function(){
@@ -206,11 +206,12 @@ View.prototype = {
 
   populateGames: function(){
     this.games = this.game.ajax.response
+    console.log(this.games)
     var temp = document.getElementById('temp');
     for (var i = 0; i <= this.games.length-1; i++) {     
       var game = document.createElement('div')
       game.className = "game";
-      game.innerHTML = "<p>"+ this.games[i].state.clues + " clues</p>";
+      game.innerHTML = "<p>"+ this.games[i].name + "<br>"+ this.games[i].state.length + " clues</p><br><p>The First Clue: " + this.games[i].state[0].clue + "</p>";
       game.id = this.games[i]._id;
       game.addEventListener('click', function(event){
        this.reinstateGame(event.target.id)
@@ -239,7 +240,6 @@ View.prototype = {
 
   generateGame: function(){
     this.gameState = this.game.ajax.response
-    console.log(this.gameState)
     this.gameState.state.forEach(function(state){
       this.game.createObjective(state)
     }.bind(this))
@@ -273,6 +273,8 @@ View.prototype = {
       var result = document.createElement('p')
       result.id = "endGameResults"
       result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
+      if(count === 0){result.id = "first"}
+      count = 1
       create.appendChild(result) 
     })
     var createButton = document.createElement('button');
@@ -287,7 +289,10 @@ View.prototype = {
 
   prepareChart: function(){
     var container = document.getElementById("lineChart");
-    container.style.display = "block"
+    if(container.style.display === "block"){
+      container.style.display = "none"
+    }else{container.style.display = "block"}
+    
     var data = []
     this.game.teams.forEach(function(team){
       var dataPoint = [];
