@@ -25,6 +25,30 @@ Game.prototype = {
       if(this.currentObj === 0){this.currentObj = objective};
     },
 
+    setZoom: function(){
+      var north = 0
+      var south = 0
+      var east = 0
+      var west = 0
+
+      this.objectives.forEach(function(objective){
+        var lat = objective.latLng.lat 
+        var lng = objective.latLng.lng 
+        if(!north){north = lat}
+        if(!south){south = lat}
+        if(!east ){east = lng}
+        if(!west ){west = lng}
+        console.log(lat, lng)
+        if(lat > north){north = lat + 0.2}
+        if(lat < south){south = lat - 0.2}
+        if(lng > east ){east = lng + 0.2}
+        if(lng < west ){west = lng - 0.2}
+      })
+      this.map.googleMap.fitBounds({north: north, south: south, east: east, west: west})  
+      var gameZoom = this.map.googleMap.getZoom()
+      this.map.googleMap.minZoom = gameZoom - 1
+    },
+
     // new up a team and add it to the teams array
     addTeam: function(name){
       var team = new Team(name);

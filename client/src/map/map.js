@@ -90,6 +90,7 @@ Map.prototype = {
       position:  latLng,
       map: this.googleMap,
       animation: google.maps.Animation.DROP,
+     
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: 5

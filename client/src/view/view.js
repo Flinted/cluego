@@ -1,5 +1,6 @@
 var LineChart = require("../lineChart.js")
 var CircularJSON = require("circular-json")
+var Game = require("../game/game.js")
 
 var state = {
  clue: "",
@@ -98,8 +99,10 @@ View.prototype = {
   },
 
   goCreate: function(){
+    // this.game = this.game.restart();
+    this.game.map.googleMap.minZoom = 2;
     this.game.changeToCreate();
-    this.setVisible("create")
+    this.setVisible("create");
   },
 
   setVisible: function(area){
@@ -234,7 +237,7 @@ View.prototype = {
 
     // promise.then(function(resolve){
     //   console.log("passed")
-      setTimeout(function(){this.generateGame()}.bind(this),100)
+      setTimeout(function(){this.generateGame()}.bind(this),300)
     // }.bind(this))
   },
 
@@ -243,6 +246,7 @@ View.prototype = {
     this.gameState.state.forEach(function(state){
       this.game.createObjective(state)
     }.bind(this))
+    this.game.setZoom();
     var play = document.getElementById('playArea');
     play.style.top = "660px"
     this.populatePlay()

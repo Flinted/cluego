@@ -8,7 +8,6 @@ change logo
 reformat end of game fields
 
 JS:
-set bounds when game is created (lock min zoom at this area)
 add other teams to pointsArea
 add "home" link as buttons are removed
 add buttons to end game for charting, new game and create game
