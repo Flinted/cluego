@@ -1,9 +1,9 @@
 #lineChart{
-  width: 70%;
+  width: 65%%;
   height: 70%;
   margin-top: 10%;
-  margin-left:25%;
-  float:right;
+  margin-left: 27%;
+  position: right;
   position: absolute;
   z-index: 8000;
 }
@@ -135,9 +135,10 @@ style="overflow: auto; cursor: default; clear: both; position: relative; border:
 
 input::-webkit-slider-thumb {
  -webkit-appearance: none;
+ background: url('https://d30y9cdsu7xlg0.cloudfront.net/noun-svg/109407.svg?Expires=1470223523&Signature=JaQC7yl4ss2Fm0m8~bTM4Px0jT9astO6ZvnZ7sgLFOrLh6m3q736P88esH~MOomExeXUqyQlRI-BmY1JwE2NlFf7dUe1ZfKp9JZQ~VCzj9KLMyb2t~-KoczzA4JgB-5ohoDP75hRs-~eDhARngAJ~DnYqmSV6~~9A2s1jBRAimc_&Key-Pair-Id=APKAI5ZVHAXN65CHVU2Q'); 
  width: 15px;
  height: 15px;
- background: #3C3530;
+ /*background: #3C3530;*/
  border-radius: 100%;
  position: relative;
 }
@@ -158,9 +159,15 @@ DIV areas
 choose create or play circle
 ==============================*/
 
+.game{
+  height: 75px;
+  width: 75px;
+  border: 1px solid white;
+}
+
 #line {
   height: 25px;
-  width: 35vw;
+  width: 35%;
   margin-top: 9%;
   border-top: 2px dotted white;
 }
@@ -220,7 +227,7 @@ create slider
   margin: 0;
   border: 0;
   color: #fff;
-  width: 330px;
+  width: 25%;
   height: 100%;
   z-index: 2;
   background: #F16B6F;
@@ -228,7 +235,7 @@ create slider
 }
 
 #createMessage{
-  
+
 }
 
 #endGameMessage{
