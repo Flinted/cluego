@@ -227,6 +227,14 @@ create slider
   padding: 50px 10px 10px 10px;
 }
 
+#createArea h1{
+  font-size: 1.2rem;
+}
+
+#createArea p{
+  font-size: 0.8rem;
+}
+
 /*#createArea p{*/
   /*padding:;*//*
   font-family: 'Special Elite';
@@ -239,7 +247,6 @@ create slider
   border-bottom: 1px solid white;
 }
 
-
 #endGameResults{
   font-size: 1rem;
   margin-top: 10px;
@@ -248,11 +255,20 @@ create slider
   border: 1px solid white;
 }
 
+#first{
+  font-size: 1rem;
+  color: black;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 15px 5px 15px 5px;
+  border: 2px dotted white;
+  background-color: #fcbe32;
+}
 
 #tolerText{
-
   font-size: 1rem;
 }
+
 /*==============================
 temp circle
 ==============================*/
@@ -292,7 +308,6 @@ temp circle
   margin-bottom: 30px;
   box-sizing: border-box;
 }
-
 
 .team{
   width: 35px;
