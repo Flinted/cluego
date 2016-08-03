@@ -1329,10 +1329,11 @@
 	  },
 	
 	  showPoints: function(pointsToShow){
-	    var points = getElementById('points');
+	    var points = document.getElementById('points');
+	    console.log(points)
 	    points.innerHTML= "<h1>"+ pointsToShow + " points!</h1>";
 	    points.style.display = "block";
-	    setTimeout(function(){points.style.display = 'none'},1000);
+	    setTimeout(function(){points.style.display = 'none'},2000);
 	  }
 	}
 	

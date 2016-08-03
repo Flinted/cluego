@@ -188,7 +188,16 @@ button {
 DIV areas
 ==============================*/
 
-
+#points{
+  width: 20%;
+  height: 60px;
+  z-index: 9000;
+  position: absolute;
+  background-color: #F16B6F ;
+  margin-left: 40%;
+  margin-top: 1%;
+  text-align: center;
+}
 /*==============================
 choose create or play circle
 ==============================*/
