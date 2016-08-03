@@ -39,8 +39,10 @@ Team.prototype = {
     this.penalties += penalty
   }, 
 
-  getEndGame: function(){
-
+  logGame: function(){
+    this.games.push({score:this.score, points: this.totalPoints, penalties: this.penalties});
+    this.points = [];
+    this.penalties = 0;
   }
 
 }

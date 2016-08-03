@@ -55,6 +55,21 @@ Game.prototype = {
       this.teams.push(team);
     },
 
+    restart: function(name){
+      this.objectives = [];
+      this.currentObj = 0;
+      this.state = "create";
+      this.map.markers=[];
+      this.map.circles =[];
+      this.map.path = '';
+      this.map.foundMarkers=[];
+      this.map.foundWindows=[];
+
+      this.teams.forEach(function(team){
+        team.logGame()
+      })
+    },
+
     rankTeams: function(){
       var ranked = []
       this.teams.forEach(function(team){

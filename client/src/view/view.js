@@ -99,7 +99,7 @@ View.prototype = {
   },
 
   goCreate: function(){
-    // this.game = this.game.restart();
+    this.game.restart();
     this.game.map.googleMap.minZoom = 2;
     this.game.changeToCreate();
     this.setVisible("create");

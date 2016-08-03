@@ -132,6 +132,21 @@
 	      this.teams.push(team);
 	    },
 	
+	    restart: function(name){
+	      this.objectives = [];
+	      this.currentObj = 0;
+	      this.state = "create";
+	      this.map.markers=[];
+	      this.map.circles =[];
+	      this.map.path = '';
+	      this.map.foundMarkers=[];
+	      this.map.foundWindows=[];
+	
+	      this.teams.forEach(function(team){
+	        team.logGame()
+	      })
+	    },
+	
 	    rankTeams: function(){
 	      var ranked = []
 	      this.teams.forEach(function(team){
@@ -479,6 +494,7 @@
 	    center: latLng,
 	    zoom: zoom,
 	    minZoom: 2,
+	    draggableCursor:'crosshair',
 	    mapTypeControl: false,
 	    zoomControlOptions: {
 	      position: google.maps.ControlPosition.RIGHT_CENTER 
@@ -733,7 +749,7 @@
 	  },
 	
 	  goCreate: function(){
-	    // this.game = this.game.restart();
+	    this.game.restart();
 	    this.game.map.googleMap.minZoom = 2;
 	    this.game.changeToCreate();
 	    this.setVisible("create");
@@ -1219,8 +1235,10 @@
 	    this.penalties += penalty
 	  }, 
 	
-	  getEndGame: function(){
-	
+	  logGame: function(){
+	    this.games.push({score:this.score, points: this.totalPoints, penalties: this.penalties});
+	    this.points = [];
+	    this.penalties = 0;
 	  }
 	
 	}
@@ -1266,12 +1284,14 @@
 	  // returns next hint in the array or a directional hint if all used.  charges penalty for use
 	  giveHint: function(latLng, team){
 	    team.addPenalty(1);
+	    this.showPoints(-1)
 	    this.hintCount +=1;
 	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
 	    }else{
 	      return this.hints[this.hintCount-1];
 	    }
+	
 	  },
 	
 	  // updates compass with bearing to next clue if not hints left
@@ -1283,7 +1303,7 @@
 	      position:  this.latLng
 	    })
 	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
-	    console.log(this.latLng, latLng, bearing)
+	    console.log(this.latLng, latLng, bearing);
 	    var compassDisc = document.getElementById("arrow");
 	    compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
 	  },
@@ -1291,7 +1311,7 @@
 	  // adds point with info to the given team
 	  addFound: function(team){
 	    this.found.push(team);
-	    var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)}
+	    var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)};
 	    team.addPoints(point);
 	  },
 	
@@ -1300,10 +1320,18 @@
 	    this.found.forEach(function(foundTeam, index){
 	      if(foundTeam.name === team.name){
 	        this.points = 10 - (index * 2);
-	        if(this.points < 0){ this.points = 0}
+	        if(this.points < 0){ this.points = 0};
 	      }
 	  }.bind(this))
+	    this.showPoints(this.points);
 	    return this.points;
+	  },
+	
+	  showPoints: function(pointsToShow){
+	    var points = getElementById('points');
+	    points.innerHTML= "<h1>"+ pointsToShow + " points!</h1>";
+	    points.style.display = "block";
+	    setTimeout(function(){points.style.display = 'none'},1000);
 	  }
 	}
 	
