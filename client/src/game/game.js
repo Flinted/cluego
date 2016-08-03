@@ -47,7 +47,7 @@ Game.prototype = {
 
     save: function(){
       var savePromise = new Promise(function(resolve,reject){
-        var save = CircularJSON.stringify(this)
+        var save = CircularJSON.stringify(this.objectives)
         if(save){
         resolve(save)
         }

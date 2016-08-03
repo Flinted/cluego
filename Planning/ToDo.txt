@@ -19,7 +19,11 @@ add buttons to end game for charting, new game and create game
 refactor
 
 
+<<<<<<< HEAD
 presentation
 
 
 
+=======
+presentation
+>>>>>>> chris

@@ -59,7 +59,6 @@
 	  state.game.addTeam("Red Team")
 	  state.game.addTeam("Blue Team")
 	  state.game.addTeam("Green Team")
-	
 	  state.view.initialise();
 	  state.game.map.initialise()
 	  state.game.createObjective({
@@ -148,7 +147,7 @@
 	
 	    save: function(){
 	      var savePromise = new Promise(function(resolve,reject){
-	        var save = CircularJSON.stringify(this)
+	        var save = CircularJSON.stringify(this.objectives)
 	        if(save){
 	        resolve(save)
 	        }
@@ -633,8 +632,10 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	var LineChart = __webpack_require__(8)
+	
 	var state = {
 	 clue: "",
 	 hints: [],
@@ -864,11 +865,31 @@
 	    this.setVisible("create")
 	    var results = this.game.rankTeams()
 	    var count = 0
+	    this.prepareChart();
 	    results.forEach(function(team){
 	      var result = document.createElement('p')
 	      result.id = "results"
 	      result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
 	      create.appendChild(result) 
+	    })
+	  },
+	
+	  prepareChart: function(){
+	    var data = []
+	    this.game.teams.forEach(function(team){
+	      var dataPoint = [];
+	      team.points.forEach(function(point){
+	        dataPoint.push(point.value)
+	      })
+	    var chartPoint = {name: team.name, color: team.name.split(" ")[0], data: dataPoint}
+	    data.push(chartPoint)
+	    })
+	
+	    var categories = []
+	    this.game.objectives.forEach(function(objective){
+	      categories.push(objective.clue)
+	
+	    new LineChart(data,categories)
 	    })
 	  },
 	
@@ -1224,6 +1245,105 @@
 	}
 	
 	module.exports = Objective;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	var LineChart = function(data,categories){
+	
+	  var container = document.getElementById("lineChart");
+	  container.style.display = "block"
+	
+	  var chart = new Highcharts.Chart({
+	    chart: {
+	      type: "line",
+	      renderTo: container,
+	      backgroundColor: 'rgba(255, 255, 255, 0.95)'
+	    },
+	    plotOptions: {
+	      series: {
+	            step: 'center' // or 'center' or 'right'
+	          }
+	        },
+	        title: {
+	          text: "ClueGo"
+	        },
+	        yAxis: {
+	          title: {
+	            text: 'Points'
+	          },
+	          minorGridLineWidth: 0,
+	          gridLineWidth: 0,
+	    plotBands: [{ // Light air
+	     from: 0.5,
+	     to: 2.5,
+	     color: 'rgba(68, 170, 213, 0.1)',
+	     label: {
+	       text: 'no points',
+	       style: {
+	         color: '#606060'
+	       }
+	     }
+	   },
+	   { // Light air
+	     from: 3.5,
+	     to: 4.5,
+	     color: 'rgba(68, 170, 213, 0.1)',
+	     label: {
+	       text: '4th to find',
+	       style: {
+	         color: '#606060'
+	       }
+	     }
+	   },
+	   { // Light air
+	     from: 5.5,
+	     to: 6.5,
+	     color: 'rgba(68, 170, 213, 0.1)',
+	     label: {
+	       text: '3rd to find',
+	       style: {
+	         color: '#606060'
+	       }
+	     }
+	   },
+	   { // Light air
+	    from: 7.5,
+	    to: 8.5,
+	    color: 'rgba(68, 170, 213, 0.1)',
+	    label: {
+	      text: '2nd to find',
+	      style: {
+	        color: '#606060'
+	      }
+	    }
+	  },
+	
+	    { // Light air
+	     from: 9.5,
+	     to: 10.5,
+	     color: 'rgba(68, 170, 213, 0.1)',
+	     label: {
+	       text: '1st to find!',
+	       style: {
+	         color: '#606060'
+	       }
+	     }
+	   }]
+	 },
+	 series: data,
+	
+	 xAxis: {
+	  categories: categories
+	}
+	
+	
+	})
+	
+	}
+	
+	module.exports = LineChart;
 
 /***/ }
 /******/ ]);

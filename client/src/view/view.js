@@ -1,3 +1,5 @@
+var LineChart = require("../lineChart.js")
+
 var state = {
  clue: "",
  hints: [],
@@ -227,11 +229,31 @@ View.prototype = {
     this.setVisible("create")
     var results = this.game.rankTeams()
     var count = 0
+    this.prepareChart();
     results.forEach(function(team){
       var result = document.createElement('p')
       result.id = "results"
       result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
       create.appendChild(result) 
+    })
+  },
+
+  prepareChart: function(){
+    var data = []
+    this.game.teams.forEach(function(team){
+      var dataPoint = [];
+      team.points.forEach(function(point){
+        dataPoint.push(point.value)
+      })
+    var chartPoint = {name: team.name, color: team.name.split(" ")[0], data: dataPoint}
+    data.push(chartPoint)
+    })
+
+    var categories = []
+    this.game.objectives.forEach(function(objective){
+      categories.push(objective.clue)
+
+    new LineChart(data,categories)
     })
   },
 
