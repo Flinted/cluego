@@ -34,7 +34,7 @@ app.get('/games/:id', function(req, res) {
   app.get('/games', function(req, res) {
     MongoClient.connect( url, function( err, db ) {
       var collection = db.collection( 'games' );
-      collection.find({},{_id:1}).toArray( function( err, docs ) {
+      collection.find({}).toArray( function( err, docs ) {
         res.json( docs );
         db.close();
       })

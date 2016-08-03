@@ -47,15 +47,15 @@ Game.prototype = {
       return ranked
     },
 
-    save: function(){
-      var objectiveStates = []
+    save: function(gameName){
+      var objectiveStates = {state: []}
       this.objectives.forEach(function(objective){
         var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
-        objectiveStates.push(state)
-      }) 
-      localStorage.setItem("game"+this.id, CircularJSON.stringify(objectiveStates))
-      this.id += 1;
-      return {id: "game"+(this.id-1), clues: this.objectives.length, first: this.currentObj}  
+        objectiveStates.state.push(state)
+      }.bind(this)) 
+      this.ajax.go("POST","/games", CircularJSON.stringify(objectiveStates))
+      // this.id += 1;
+      // return {id: "game"+(this.id-1), clues: this.objectives.length, first: this.currentObj}  
     },
 
 

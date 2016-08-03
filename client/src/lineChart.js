@@ -9,11 +9,6 @@ var LineChart = function(data,categories){
       renderTo: container,
       backgroundColor: 'rgba(255, 255, 255, 0.95)'
     },
-    plotOptions: {
-      series: {
-            step: 'center' // or 'center' or 'right'
-          }
-        },
         title: {
           text: "ClueGo"
         },

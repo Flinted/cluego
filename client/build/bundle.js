@@ -56,11 +56,11 @@
 	window.onload= function(){
 	  state.game = new Game();
 	  state.view = new View(state.game);
-	  state.game.addTeam("Red Team")
-	  state.game.addTeam("Blue Team")
-	  state.game.addTeam("Green Team")
-	  state.game.addTeam("White Team")
-	  state.game.addTeam("Orange Team")
+	  state.game.addTeam("DarkOrange Team")
+	  state.game.addTeam("BlueViolet Team")
+	  state.game.addTeam("ForestGreen Team")
+	  state.game.addTeam("RoyalBlue Team")
+	  state.game.addTeam("Gold Team")
 	  state.view.initialise();
 	  state.game.map.initialise()
 	  state.game.createObjective({
@@ -154,15 +154,15 @@
 	      return ranked
 	    },
 	
-	    save: function(){
-	      var objectiveStates = []
+	    save: function(gameName){
+	      var objectiveStates = {state: []}
 	      this.objectives.forEach(function(objective){
 	        var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
-	        objectiveStates.push(state)
-	      }) 
-	      localStorage.setItem("game"+this.id, CircularJSON.stringify(objectiveStates))
-	      this.id += 1;
-	      return {id: "game"+(this.id-1), clues: this.objectives.length, first: this.currentObj}  
+	        objectiveStates.state.push(state)
+	      }.bind(this)) 
+	      this.ajax.go("POST","/games", CircularJSON.stringify(objectiveStates))
+	      // this.id += 1;
+	      // return {id: "game"+(this.id-1), clues: this.objectives.length, first: this.currentObj}  
 	    },
 	
 	
@@ -199,28 +199,25 @@
 	
 	var Ajax = function(){
 	  this.response = ''
+	  this.status = ''
 	}
 	
 	Ajax.prototype = {
 	  go: function(type, route, data){
-	    return new Promise(function(resolve, reject) {
-	
+	      this.status = ''
 	      var request = new XMLHttpRequest();
 	      request.open(type,route);
 	      request.setRequestHeader('Content-Type', 'application/json');
 	      request.onload = function(){
-	        console.log(request.status)
 	        if (request.status === 200){
-	          console.log("hit")
 	          if(request.responseText){
 	            var jsonString = request.responseText;
-	            this.response = CircularJSON.parse(jsonString)
+	            this.response = JSON.parse(jsonString)
+	            this.status =  "done"
 	             }
-	           resolve(this.response)
 	         }
 	     }.bind(this)
 	     request.send(data || null);
-	  })//end of promise
 	  }
 	
 	}
@@ -658,6 +655,7 @@
 	  this.readyForNext = true;
 	  this.ran = false;
 	  this.games = [];
+	  this.gameState ='';
 	}
 	
 	View.prototype = {
@@ -669,9 +667,33 @@
 	    this.setCreateOrPlay();
 	  },
 	
-	  initiateSave: function(){
-	    var gameData = this.game.save()
-	    this.games.push(gameData)
+	  initiateSave: function(gameName){
+	    this.game.save(gameName)
+	  },
+	
+	  setSaveName: function(){
+	    var createPlay = document.getElementById('temp');
+	    createPlay.innerHTML = ""
+	    var name = document.createElement('h1');
+	    name.innerHTML= "Please name your game"
+	    var input = document.createElement('input');
+	    input.type = "text";
+	    input.name = "gameName";
+	    input.id = "gameName"
+	    input.required = true;
+	    input.placeholder = "enter game name";
+	    var go = document.createElement('button');
+	    go.id = "gameName"
+	    go.addEventListener("click",function(){
+	      var gameName = document.getElementById('gameName').value;
+	      this.initiateSave(gameName)
+	      this.setCreateOrPlay();
+	    }.bind(this))
+	
+	    createPlay.appendChild(name)
+	    createPlay.appendChild(input)
+	    createPlay.appendChild(go)
+	    this.setVisible('temp')
 	  },
 	
 	  setCreateOrPlay: function(){
@@ -723,11 +745,6 @@
 	  },
 	
 	  goCreate: function(){
-	    var createArea = document.getElementById('createArea');
-	    var createMessage = document.createElement('div');
-	    createMessage.id = "createMessage"
-	    createMessage.innerHTML = "Click anywhere on the map to start building your game";
-	    createArea.appendChild(createMessage);
 	    this.game.changeToCreate();
 	    this.setVisible("create")
 	  },
@@ -791,6 +808,7 @@
 	  },
 	
 	  selectTeam: function(){
+	    this.game.ajax.go("GET", "/games")
 	    var temp = document.getElementById('temp');
 	    var input1 = document.createElement('input');
 	    var header = document.createElement('h1');
@@ -834,13 +852,13 @@
 	    },
 	
 	  populateGames: function(){
+	    this.games = this.game.ajax.response
 	    var temp = document.getElementById('temp');
-	    
 	    for (var i = 0; i <= this.games.length-1; i++) {     
 	      var game = document.createElement('div')
 	      game.className = "game";
-	      game.innerHTML = "<p>"+ this.games[i].clues + " clues</p>";
-	      game.id = this.games[i].id;
+	      game.innerHTML = "<p>"+ this.games[i].state.clues + " clues</p>";
+	      game.id = this.games[i]._id;
 	      game.addEventListener('click', function(event){
 	       this.reinstateGame(event.target.id)
 	      }.bind(this))
@@ -849,16 +867,34 @@
 	  },
 	
 	  reinstateGame: function(index){
-	    var newGame = localStorage.getItem(index)
-	    var parsed = CircularJSON.parse(newGame)
-	    parsed.forEach(function(state){
-	      this.game.createObjective(state, this.game.map)
+	    this.game.objectives = [];
+	    this.game.currentObj = 0;
+	    // var promise = new Promise(function(resolve, reject){
+	      this.game.ajax.go("GET", "/games/"+ index)
+	
+	    //   console.log("running")
+	    //   if(this.game.ajax.status === "done"){
+	    //   resolve()
+	    // }
+	    // }.bind(this));  
+	
+	    // promise.then(function(resolve){
+	    //   console.log("passed")
+	      setTimeout(function(){this.generateGame()}.bind(this),100)
+	    // }.bind(this))
+	  },
+	
+	  generateGame: function(){
+	    this.gameState = this.game.ajax.response
+	    console.log(this.gameState)
+	    this.gameState.state.forEach(function(state){
+	      this.game.createObjective(state)
 	    }.bind(this))
 	    var play = document.getElementById('playArea');
 	    play.style.top = "660px"
 	    this.populatePlay()
 	    this.setVisible("play")
-	  },
+	    },
 	
 	  popFound: function(){
 	    var temp = document.getElementById('temp');
@@ -924,8 +960,9 @@
 	    var button2 = document.createElement('button');
 	    button2.innerText = "Game Complete!"
 	    button2.addEventListener('click', function(){
-	      this.initiateSave()
-	      this.setCreateOrPlay();
+	      this.setSaveName()
+	      // this.initiateSave()
+	      // this.setCreateOrPlay();
 	    }.bind(this))
 	    var form = document.createElement('form');
 	    form.id = "objective";
@@ -996,7 +1033,6 @@
 	      if(tolerance){
 	       var min = 0
 	       var max = 0
-	       console.log(this.game.map.googleMap.getZoom())
 	       switch (this.game.map.googleMap.getZoom()){
 	       case 1:
 	       case 2:
@@ -1290,11 +1326,6 @@
 	      renderTo: container,
 	      backgroundColor: 'rgba(255, 255, 255, 0.95)'
 	    },
-	    plotOptions: {
-	      series: {
-	            step: 'center' // or 'center' or 'right'
-	          }
-	        },
 	        title: {
 	          text: "ClueGo"
 	        },

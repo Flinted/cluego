@@ -10,11 +10,11 @@ var state = {
 window.onload= function(){
   state.game = new Game();
   state.view = new View(state.game);
-  state.game.addTeam("Red Team")
-  state.game.addTeam("Blue Team")
-  state.game.addTeam("Green Team")
-  state.game.addTeam("White Team")
-  state.game.addTeam("Orange Team")
+  state.game.addTeam("DarkOrange Team")
+  state.game.addTeam("BlueViolet Team")
+  state.game.addTeam("ForestGreen Team")
+  state.game.addTeam("RoyalBlue Team")
+  state.game.addTeam("Gold Team")
   state.view.initialise();
   state.game.map.initialise()
   state.game.createObjective({

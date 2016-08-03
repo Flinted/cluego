@@ -16,6 +16,7 @@ var View = function(game){
   this.readyForNext = true;
   this.ran = false;
   this.games = [];
+  this.gameState ='';
 }
 
 View.prototype = {
@@ -27,9 +28,33 @@ View.prototype = {
     this.setCreateOrPlay();
   },
 
-  initiateSave: function(){
-    var gameData = this.game.save()
-    this.games.push(gameData)
+  initiateSave: function(gameName){
+    this.game.save(gameName)
+  },
+
+  setSaveName: function(){
+    var createPlay = document.getElementById('temp');
+    createPlay.innerHTML = ""
+    var name = document.createElement('h1');
+    name.innerHTML= "Please name your game"
+    var input = document.createElement('input');
+    input.type = "text";
+    input.name = "gameName";
+    input.id = "gameName"
+    input.required = true;
+    input.placeholder = "enter game name";
+    var go = document.createElement('button');
+    go.id = "gameName"
+    go.addEventListener("click",function(){
+      var gameName = document.getElementById('gameName').value;
+      this.initiateSave(gameName)
+      this.setCreateOrPlay();
+    }.bind(this))
+
+    createPlay.appendChild(name)
+    createPlay.appendChild(input)
+    createPlay.appendChild(go)
+    this.setVisible('temp')
   },
 
   setCreateOrPlay: function(){
@@ -81,11 +106,6 @@ View.prototype = {
   },
 
   goCreate: function(){
-    var createArea = document.getElementById('createArea');
-    var createMessage = document.createElement('div');
-    createMessage.id = "createMessage"
-    createMessage.innerHTML = "Click anywhere on the map to start building your game";
-    createArea.appendChild(createMessage);
     this.game.changeToCreate();
     this.setVisible("create")
   },
@@ -149,6 +169,7 @@ View.prototype = {
   },
 
   selectTeam: function(){
+    this.game.ajax.go("GET", "/games")
     var temp = document.getElementById('temp');
     var input1 = document.createElement('input');
     var header = document.createElement('h1');
@@ -192,13 +213,13 @@ View.prototype = {
     },
 
   populateGames: function(){
+    this.games = this.game.ajax.response
     var temp = document.getElementById('temp');
-    
     for (var i = 0; i <= this.games.length-1; i++) {     
       var game = document.createElement('div')
       game.className = "game";
-      game.innerHTML = "<p>"+ this.games[i].clues + " clues</p>";
-      game.id = this.games[i].id;
+      game.innerHTML = "<p>"+ this.games[i].state.clues + " clues</p>";
+      game.id = this.games[i]._id;
       game.addEventListener('click', function(event){
        this.reinstateGame(event.target.id)
       }.bind(this))
@@ -207,16 +228,34 @@ View.prototype = {
   },
 
   reinstateGame: function(index){
-    var newGame = localStorage.getItem(index)
-    var parsed = CircularJSON.parse(newGame)
-    parsed.forEach(function(state){
-      this.game.createObjective(state, this.game.map)
+    this.game.objectives = [];
+    this.game.currentObj = 0;
+    // var promise = new Promise(function(resolve, reject){
+      this.game.ajax.go("GET", "/games/"+ index)
+
+    //   console.log("running")
+    //   if(this.game.ajax.status === "done"){
+    //   resolve()
+    // }
+    // }.bind(this));  
+
+    // promise.then(function(resolve){
+    //   console.log("passed")
+      setTimeout(function(){this.generateGame()}.bind(this),100)
+    // }.bind(this))
+  },
+
+  generateGame: function(){
+    this.gameState = this.game.ajax.response
+    console.log(this.gameState)
+    this.gameState.state.forEach(function(state){
+      this.game.createObjective(state)
     }.bind(this))
     var play = document.getElementById('playArea');
     play.style.top = "660px"
     this.populatePlay()
     this.setVisible("play")
-  },
+    },
 
   popFound: function(){
     var temp = document.getElementById('temp');
@@ -282,8 +321,9 @@ View.prototype = {
     var button2 = document.createElement('button');
     button2.innerText = "Game Complete!"
     button2.addEventListener('click', function(){
-      this.initiateSave()
-      this.setCreateOrPlay();
+      this.setSaveName()
+      // this.initiateSave()
+      // this.setCreateOrPlay();
     }.bind(this))
     var form = document.createElement('form');
     form.id = "objective";
@@ -354,7 +394,6 @@ View.prototype = {
       if(tolerance){
        var min = 0
        var max = 0
-       console.log(this.game.map.googleMap.getZoom())
        switch (this.game.map.googleMap.getZoom()){
        case 1:
        case 2:
