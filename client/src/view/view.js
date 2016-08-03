@@ -1,4 +1,5 @@
 var LineChart = require("../lineChart.js")
+var CircularJSON = require("circular-json")
 
 var state = {
  clue: "",
@@ -166,7 +167,7 @@ View.prototype = {
     p.innerText = "Please Select a Team"
     temp.appendChild(p)
     temp.appendChild(document.createElement('br'));
-    var colors = ["red","blue","green","orange", "white"]
+    var colors = ["DarkOrange","BlueViolet","ForestGreen","RoyalBlue", "Gold"]
     for (var i = 4; i >= 0; i--) {
       var color = document.createElement('div')
       color.className = "team";
@@ -196,9 +197,8 @@ View.prototype = {
     for (var i = 0; i <= this.games.length-1; i++) {     
       var game = document.createElement('div')
       game.className = "game";
-      game.innerHTML = game.clues + " clues";
-      game.id = game.id;
-
+      game.innerHTML = "<p>"+ this.games[i].clues + " clues</p>";
+      game.id = this.games[i].id;
       game.addEventListener('click', function(event){
        this.reinstateGame(event.target.id)
       }.bind(this))
@@ -207,9 +207,11 @@ View.prototype = {
   },
 
   reinstateGame: function(index){
-    console.log(index)
     var newGame = localStorage.getItem(index)
-    this.game = newGame
+    var parsed = CircularJSON.parse(newGame)
+    parsed.forEach(function(state){
+      this.game.createObjective(state, this.game.map)
+    }.bind(this))
     var play = document.getElementById('playArea');
     play.style.top = "660px"
     this.populatePlay()

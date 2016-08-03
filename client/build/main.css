@@ -160,9 +160,13 @@ choose create or play circle
 ==============================*/
 
 .game{
-  height: 75px;
-  width: 75px;
+  height: 150px;
+  width: 150px;
   border: 1px solid white;
+}
+
+.game p{
+  font-size: 0.5ems;
 }
 
 #line {

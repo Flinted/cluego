@@ -21,7 +21,6 @@ Game.prototype = {
     createObjective: function(input){
       var objective = new Objective(input, this.map.googleMap);
       objective.hints.filter(function(n){n=>true})
-      console.log(objective.hints)
       this.objectives.push(objective);
       if(this.currentObj === 0){this.currentObj = objective};
     },
@@ -31,7 +30,7 @@ Game.prototype = {
       var team = new Team(name);
       this.teams.push(team);
     },
-    
+
     rankTeams: function(){
       var ranked = []
       this.teams.forEach(function(team){
@@ -49,19 +48,14 @@ Game.prototype = {
     },
 
     save: function(){
-      // var savePromise = new Promise(function(resolve,reject){
-      //   var save = CircularJSON.stringify(this.objectives)
-      //   if(save){
-      //   resolve(save)
-      //   }
-      // }.bind(this));
-
-      // savePromise.then(function(resolve){
-      //   this.ajax.go("POST", "/games", resolve)
-      // }.bind(this)) 
-      localStorage.setItem("game"+this.id, CircularJSON.stringify(this))
+      var objectiveStates = []
+      this.objectives.forEach(function(objective){
+        var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
+        objectiveStates.push(state)
+      }) 
+      localStorage.setItem("game"+this.id, CircularJSON.stringify(objectiveStates))
       this.id += 1;
-      return {id: "game"+this.id-1, clues: this.objectives.length, first: this.currObj}  
+      return {id: "game"+(this.id-1), clues: this.objectives.length, first: this.currentObj}  
     },
 
 
