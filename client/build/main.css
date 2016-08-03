@@ -165,27 +165,35 @@ choose create or play circle
 ==============================*/
 
 .game{
-  height: 150px;
-  width: 150px;
-  border: 1px solid white;
-  border-radius: 100%;
   margin: 0;
   padding: 5px;
 }
 
 .game p{
+
   font-size: 0.5rem;
+  pointer-events : none;
+}
+.game p:hover{
+  background :;
+}
+h3 {
+  margin: 0;
 }
 
 #line {
   height: 25px;
-  width: 35%;
+  width: 80%;
   margin-top: 9%;
   border-top: 2px dotted white;
 }
 
 #create {
   margin-top: 10%;
+}
+
+#create:hover{
+  background
 }
 
 #play{
@@ -331,7 +339,6 @@ temp circle
   margin: 0;
   padding: 0;
   border: 0;
-
 }
 
 /*==============================
@@ -386,7 +393,7 @@ play area slid up
 ==============================*/
 
 .playArea {
-  padding: 20px 0 0 20px;
+  padding: 15px 0 0 10px;
   background: #fcbe32;
   position: absolute;
   left: 0;
@@ -397,26 +404,38 @@ play area slid up
   font-size: 0.9rem;
   color: #3C3530;
   display: inline-block;
+  font-family: 'Special Elite';
 }
+
+#playArea h1{
+  padding-top: 10px;
+  display: inline-block;
+  font-size: 1rem;
+
+}
+
 
 #textField{
   float:left;
-  width: 80%;
+  width: 70%;
+  display: inline-block;
 }
 
 .playArea button{
   float: right;
   width: 100px;
   border-color: black;
-  display: inline-block;
 }
 
 #pointsArea{
   float: right;
   width: 20%;
-  align: center;
-  display: inline-block;
+  padding: 10px;
+  font-size: 15px;
+}
 
+#pointsArea h3{
+  padding-bottom: 15px;
 }
 
 /*==============================
