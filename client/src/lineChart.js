@@ -1,7 +1,7 @@
 var LineChart = function(data,categories){
 
   var container = document.getElementById("lineChart");
-  container.style.display = "block"
+  
 
   var chart = new Highcharts.Chart({
     chart: {

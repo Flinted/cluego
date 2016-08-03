@@ -225,20 +225,33 @@ View.prototype = {
 
   endGame:function(){
     var create = document.getElementById('createArea');
-    create.innerHTML = "<h1>Congratulations!</h1>"
+    var h1 = document.createElement('h1')
+    h1.id = "endGameMessage"
+    h1.innerHTML = "Congratulations!"
+    create.appendChild(h1)
     this.setVisible("create")
     var results = this.game.rankTeams()
     var count = 0
-    this.prepareChart();
+    // this.prepareChart();
     results.forEach(function(team){
       var result = document.createElement('p')
-      result.id = "results"
+      result.id = "endGameResults"
       result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
       create.appendChild(result) 
     })
+    var createButton = document.createElement('button');
+    createButton.innerHTML = "show / hide stats";
+    // createButton.id = "create";
+    create.appendChild(createButton);
+    createButton.addEventListener('click',function(){
+      console.log("click")
+      this.prepareChart()
+    }.bind(this));
   },
 
   prepareChart: function(){
+    var container = document.getElementById("lineChart");
+    container.style.display = "block"
     var data = []
     this.game.teams.forEach(function(team){
       var dataPoint = [];

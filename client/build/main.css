@@ -228,16 +228,23 @@ create slider
 }
 
 #createMessage{
+  
+}
 
+#endGameMessage{
+  margin-top: 5%;
+  margin-bottom: 40px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid white;
 }
 
 
-#results{
+#endGameResults{
+  font-size: 1rem;
   margin-top: 10px;
-  padding: 5px;
+  margin-bottom: 20px;
+  padding: 15px 5px 15px 5px;
   border: 1px solid white;
-
-
 }
 
 /*==============================
