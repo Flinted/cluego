@@ -175,7 +175,7 @@ choose create or play circle
   pointer-events : none;
 }
 .game p:hover{
-  background :;
+  background:;
 }
 h3 {
   margin: 0;
@@ -193,11 +193,15 @@ h3 {
 }
 
 #create:hover{
-  background
+  background: #F16B6F;
 }
 
 #play{
   margin-top: 3%;
+}
+
+#play:hover{
+  background: #fcbe32;
 }
 
 #play, #create{
