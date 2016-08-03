@@ -3,8 +3,8 @@ var View = require('./view/view.js');
 var CircularJSON = require ('circular-json');
 
 var state = {
-  view: '',
-  game: '',
+  view: "",
+  game: "",
   games:[]
 }
 window.onload= function(){

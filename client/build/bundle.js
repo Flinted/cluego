@@ -49,8 +49,8 @@
 	var CircularJSON = __webpack_require__ (3);
 	
 	var state = {
-	  view: '',
-	  game: '',
+	  view: "",
+	  game: "",
 	  games:[]
 	}
 	window.onload= function(){
@@ -204,7 +204,9 @@
 	      request.open(type,route);
 	      request.setRequestHeader('Content-Type', 'application/json');
 	      request.onload = function(){
+	        console.log(request.status)
 	        if (request.status === 200){
+	          console.log("hit")
 	          if(request.responseText){
 	            var jsonString = request.responseText;
 	            this.response = CircularJSON.parse(jsonString)
