@@ -87,6 +87,7 @@ Game.prototype = {
     },
 
     save: function(gameName){
+      if(this.objectives == []){return}
       var objectiveStates = {name: gameName, state: []}
       this.objectives.forEach(function(objective){
         var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
