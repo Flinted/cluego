@@ -7,6 +7,13 @@
   position: absolute;
   z-index: 8000;
 }
+#logoImg{
+  position: absolute;
+  height: 125px;
+  z-index: 5000;
+  top: 6px;
+  left: 15px;
+}
 
 h1{
   font-family: 'Special Elite';
@@ -443,6 +450,13 @@ play area slid up
   font-family: 'Special Elite';
 }
 
+#playArea button{
+  border: none;
+  font-family: 'Special Elite';
+  font-size: 1.3rem;
+  width: 200px;
+}
+
 #playArea p{
   padding-left: 50px;
 }
@@ -472,7 +486,7 @@ play area slid up
   text-align: right;
   float: right;
   width: 15%;
-  padding: 10px 20px 0 0;
+  padding: 10px 40px 0 0;
   font-size: 15px;
   display: inline-block;
 }
