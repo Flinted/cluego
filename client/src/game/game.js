@@ -48,7 +48,7 @@ Game.prototype = {
     },
 
     save: function(gameName){
-      var objectiveStates = {state: []}
+      var objectiveStates = {name: gameName, state: []}
       this.objectives.forEach(function(objective){
         var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
         objectiveStates.state.push(state)
