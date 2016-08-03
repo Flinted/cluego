@@ -708,6 +708,11 @@
 	  },
 	
 	  goCreate: function(){
+	    var createArea = document.getElementById('createArea');
+	    var createMessage = document.createElement('div');
+	    createMessage.id = "createMessage"
+	    createMessage.innerHTML = "Click anywhere on the map to start building your game";
+	    createArea.appendChild(createMessage);
 	    this.game.changeToCreate();
 	    this.setVisible("create")
 	  },
