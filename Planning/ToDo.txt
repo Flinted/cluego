@@ -1,0 +1,22 @@
+CSS:
+Move hint button and main score to show when play area minimised
+Justify text in round tempArea
+add slider line back to create form
+potentially reformat infowindows
+change icon in googlemaps to logo
+change logo
+reformat end of game fields
+
+JS:
+Get DB working
+populate games in temp area, update on click to instate new game
+set bounds when game is created (lock min zoom at this area)
+add other teams to pointsArea
+add "home" link as buttons are removed
+check hints array is being filtered for empty hints
+double check tests all still pass after code tweaks
+add buttons to end game for charting, new game and create game
+refactor
+
+
+presentation

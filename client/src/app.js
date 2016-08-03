@@ -13,7 +13,6 @@ window.onload= function(){
   state.game.addTeam("Red Team")
   state.game.addTeam("Blue Team")
   state.game.addTeam("Green Team")
-
   state.view.initialise();
   state.game.map.initialise()
   state.game.createObjective({
