@@ -8,6 +8,13 @@
   z-index: 8000;
 }
 
+h1{
+  font-family: 'Special Elite';
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
 
 body {
   background-color: #FCBE32; 
@@ -49,10 +56,8 @@ navigation areas
 
 
 /*==============================
-  map
+map
 ==============================*/
-
-
 
 #map{
   margin-top: 20px;
@@ -70,14 +75,13 @@ navigation areas
 }
 
 /*==============================
-  infoBubble
+infoBubble
 ==============================
 style="overflow: auto; cursor: default; clear: both; position: relative; border: 1px solid rgb(204, 204, 204); border-radius: 10px; padding: 10px; width: 150px; height: 100px; background-color: rgb(255, 201, 82);"
 ===*/
 
-
 /*==============================
-  FORM
+FORM
 ==============================*/
 
 #slideButton{
@@ -86,7 +90,6 @@ style="overflow: auto; cursor: default; clear: both; position: relative; border:
   right: 0;
   background: #fcbe32;
   border: none;
-
 }
 
 #objective{
@@ -115,36 +118,38 @@ style="overflow: auto; cursor: default; clear: both; position: relative; border:
   color: black;
 }
 
+#enter:hover{
+  background-color: grey;
+  color: white;
+}
+
+#createMessage{
+  font-size: 2rem;
+  padding-top: 5em;
+}
+
+
 #tolerance {
   -webkit-appearance: none;
-  width: 160px;
   height: 32px;
-  margin: 10px 50px;
-  background: linear-gradient(to right, #fff 0%, #fff 100%);
-  background-size: 150px 2px;
-  background-color: white;
-  background-position: center;
-  background-repeat: no-repeat;
   overflow: hidden;
   outline: none;
   zoom: 130%;
-  display: block;
   margin: auto;
-  margin-bottom: 30px;
 }
 
 input::-webkit-slider-thumb {
- -webkit-appearance: none;
- background: url('https://d30y9cdsu7xlg0.cloudfront.net/noun-svg/109407.svg?Expires=1470223523&Signature=JaQC7yl4ss2Fm0m8~bTM4Px0jT9astO6ZvnZ7sgLFOrLh6m3q736P88esH~MOomExeXUqyQlRI-BmY1JwE2NlFf7dUe1ZfKp9JZQ~VCzj9KLMyb2t~-KoczzA4JgB-5ohoDP75hRs-~eDhARngAJ~DnYqmSV6~~9A2s1jBRAimc_&Key-Pair-Id=APKAI5ZVHAXN65CHVU2Q'); 
- width: 15px;
- height: 15px;
- /*background: #3C3530;*/
- border-radius: 100%;
- position: relative;
+  -webkit-appearance: none;
+  background: url('https://d30y9cdsu7xlg0.cloudfront.net/noun-svg/109407.svg?Expires=1470223523&Signature=JaQC7yl4ss2Fm0m8~bTM4Px0jT9astO6ZvnZ7sgLFOrLh6m3q736P88esH~MOomExeXUqyQlRI-BmY1JwE2NlFf7dUe1ZfKp9JZQ~VCzj9KLMyb2t~-KoczzA4JgB-5ohoDP75hRs-~eDhARngAJ~DnYqmSV6~~9A2s1jBRAimc_&Key-Pair-Id=APKAI5ZVHAXN65CHVU2Q'); 
+  width: 25px;
+  height: 25px;
+  /*background: #3C3530;*/
+  border-radius: 100%;
+  position: relative;
 }
 
 button {
-  height: 32px;
+  height: 40px;
   width: 250px;
   background-color: rgba(0,0,0,0);
   border: 1px solid white; 
@@ -163,10 +168,13 @@ choose create or play circle
   height: 150px;
   width: 150px;
   border: 1px solid white;
+  border-radius: 100%;
+  margin: 0;
+  padding: 5px;
 }
 
 .game p{
-  font-size: 0.5ems;
+  font-size: 0.5rem;
 }
 
 #line {
@@ -209,24 +217,12 @@ button:hover{
   width: 69%;
 }
 
-/*
-  #playArea{
-  position: absolute;
-  border-radius: 3px; 
-  margin-top: 600px;
-  color: #fff;
-  width: 100%;
-  height: 300px;
-  z-index: 2;
-  background: rgba(0, 0, 0, .7);
-  padding: 10px;
-}*/
-
 /*==============================
 create slider
 ==============================*/
 
 #createArea{
+  font-size: 2rem;
   position: absolute;
   margin: 0;
   border: 0;
@@ -238,9 +234,10 @@ create slider
   padding: 50px 10px 10px 10px;
 }
 
-#createMessage{
-
-}
+/*#createArea p{*/
+  /*padding:;*//*
+  font-family: 'Special Elite';
+}*/
 
 #endGameMessage{
   margin-top: 5%;
@@ -258,6 +255,11 @@ create slider
   border: 1px solid white;
 }
 
+
+#tolerText{
+
+  font-size: 1rem;
+}
 /*==============================
 temp circle
 ==============================*/
@@ -273,29 +275,55 @@ temp circle
   margin-left: 30%;
   width: 40%;
   height: 40vw;
-  font-size: 5vw;
+  font-size: 2vw;
   border-radius: 50%;
   z-index: 2;
   background: #a79c8e;
 }
 
+#nameForm{
+
+  font-family: 'Helvetica Neue',Helvetica,sans-serif;
+  vertical-align: middle;
+  width: 250px;
+  color: black;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight:500;
+  font-size: 1vw;
+  border-radius: 0;
+  border: 1px solid white;
+  background: none;
+  line-height: 20px;
+  padding: 10px 13px 10px 13px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
 
 .team{
-  width: 40px;
-  height:40px;
+  width: 35px;
+  height:35px;
   border-radius: 100%;
   display: inline-block;
-  margin: 15px;
+  margin: 10px;
 }
 
 #temp h1{
-  text-decoration: none;
-  font-size: 2vw;
-  color: white;
+  margin-top: 100px;
+  font-size: 1.2rem;
+  font-family: 'Special Elite';
+  color: #3C3530;
 }
 
-p {
-  font-size: 2vw;
+#temp p {
+  font-size: 1.5vw;
+  color: #3C3530;
+  font-family: 'Special Elite';
+  margin: 0;
+  padding: 0;
+  border: 0;
+
 }
 
 /*==============================
@@ -312,7 +340,6 @@ compass
   background: #222;
   padding: 2px;
   border-radius: 50%;
-  /*border: 0.1em solid darkred;*/
   overflow: hidden;
   border: 2px solid #3C3530;
 }
@@ -338,8 +365,8 @@ compass
   width: 104px;
   height: 104px;
   background-size: 100%;
- transition: all 3s;
-transition-timing: ease-in-out;
+  transition: all 3s;
+  transition-timing: ease-in-out;
 }
 
 /*  &:hover {
@@ -349,16 +376,6 @@ transform: rotate(1080deg);
 /*==============================
 play area slid up
 ==============================*/
-
-/*.stats {
-background-color: rgba(0, 0, 0, 0.7);
-position: absolute;
-left: 0;
-right: 0;
-bottom: 0;
-transition: top 1.5s ease-in-out;
-z-index: 50;
-}*/
 
 .playArea {
   padding: 5px 0 0 10px;
@@ -370,8 +387,6 @@ z-index: 50;
   transition: top 1.5s ease-in-out;
   z-index: 50;
 }
-
-
 
 /*==============================
 fade in
@@ -404,4 +419,5 @@ fade in
   outline-color: transparent;
   outline-style: none;
 }
+
 
