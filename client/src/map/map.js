@@ -63,6 +63,7 @@ var Map = function(latLng, zoom){
     center: latLng,
     zoom: zoom,
     minZoom: 2,
+    draggableCursor:'crosshair',
     mapTypeControl: false,
     zoomControlOptions: {
       position: google.maps.ControlPosition.RIGHT_CENTER 
