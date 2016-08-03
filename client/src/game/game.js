@@ -13,12 +13,15 @@ var Game = function(){
   this.teams = [];
   this.currentObj = 0;
   this.state = "create";
+  this.id = 0;
 }
 
 Game.prototype = {
     // creates a new objective using form input
     createObjective: function(input){
       var objective = new Objective(input, this.map.googleMap);
+      objective.hints.filter(function(n){n=>true})
+      console.log(objective.hints)
       this.objectives.push(objective);
       if(this.currentObj === 0){this.currentObj = objective};
     },
@@ -46,17 +49,19 @@ Game.prototype = {
     },
 
     save: function(){
-      var savePromise = new Promise(function(resolve,reject){
-        var save = CircularJSON.stringify(this.objectives)
-        if(save){
-        resolve(save)
-        }
-      }.bind(this));
+      // var savePromise = new Promise(function(resolve,reject){
+      //   var save = CircularJSON.stringify(this.objectives)
+      //   if(save){
+      //   resolve(save)
+      //   }
+      // }.bind(this));
 
-      savePromise.then(function(resolve){
-        this.ajax.go("POST", "/games", resolve)
-      }.bind(this)) 
-         
+      // savePromise.then(function(resolve){
+      //   this.ajax.go("POST", "/games", resolve)
+      // }.bind(this)) 
+      localStorage.setItem("game"+this.id, CircularJSON.stringify(this))
+      this.id += 1;
+      return {id: "game"+this.id-1, clues: this.objectives.length, first: this.currObj}  
     },
 
 
