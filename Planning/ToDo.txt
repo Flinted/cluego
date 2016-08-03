@@ -8,8 +8,6 @@ change logo
 reformat end of game fields
 
 JS:
-Get DB working
-populate games in temp area, update on click to instate new game
 set bounds when game is created (lock min zoom at this area)
 add other teams to pointsArea
 add "home" link as buttons are removed
