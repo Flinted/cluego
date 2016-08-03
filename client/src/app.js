@@ -13,6 +13,8 @@ window.onload= function(){
   state.game.addTeam("Red Team")
   state.game.addTeam("Blue Team")
   state.game.addTeam("Green Team")
+  state.game.addTeam("White Team")
+  state.game.addTeam("Orange Team")
   state.view.initialise();
   state.game.map.initialise()
   state.game.createObjective({
@@ -43,7 +45,12 @@ window.onload= function(){
 
 var main = function(){
   state.game.objectives[0].addFound(state.game.teams[1])
+  state.game.objectives[0].addFound(state.game.teams[3])
   state.game.objectives[0].addFound(state.game.teams[2])
+  state.game.objectives[1].addFound(state.game.teams[3])
+  state.game.objectives[1].addFound(state.game.teams[2])
   state.game.objectives[1].addFound(state.game.teams[1])
+  state.game.objectives[2].addFound(state.game.teams[3])  
   state.game.objectives[2].addFound(state.game.teams[1])  
+  state.game.objectives[2].addFound(state.game.teams[2])  
 }

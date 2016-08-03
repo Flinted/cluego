@@ -31,7 +31,7 @@ Game.prototype = {
       var team = new Team(name);
       this.teams.push(team);
     },
-
+    
     rankTeams: function(){
       var ranked = []
       this.teams.forEach(function(team){

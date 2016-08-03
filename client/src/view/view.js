@@ -14,6 +14,7 @@ var View = function(game){
   this.game = game;
   this.readyForNext = true;
   this.ran = false;
+  this.games = [];
 }
 
 View.prototype = {
@@ -23,6 +24,11 @@ View.prototype = {
     state.currTeam = this.game.teams[0]
     this.detectZoom();
     this.setCreateOrPlay();
+  },
+
+  initiateSave: function(){
+    var gameData = this.game.save()
+    this.games.push(gameData)
   },
 
   setCreateOrPlay: function(){
@@ -181,12 +187,7 @@ View.prototype = {
     header.innerHTML = "Please Select a Game"
     temp.innerHTML=''
     temp.appendChild(header);
-    // add a then.
-    this.game.ajax.go("GET","/games").then(function(response){
-      this.games = response;
-      this.populateGames()
-    }.bind(this))
-
+    this.populateGames()
     },
 
   populateGames: function(){
@@ -194,9 +195,9 @@ View.prototype = {
     
     for (var i = 0; i <= this.games.length-1; i++) {     
       var game = document.createElement('div')
-      game.className = "team";
-      game.innerText = "Hello";
-      game.id = i;
+      game.className = "game";
+      game.innerHTML = game.clues + " clues";
+      game.id = game.id;
 
       game.addEventListener('click', function(event){
        this.reinstateGame(event.target.id)
@@ -206,8 +207,9 @@ View.prototype = {
   },
 
   reinstateGame: function(index){
-    console.log(this.games[index]._id)
-    this.game.ajax.go("GET","/games/"+this.games[index]._id)
+    console.log(index)
+    var newGame = localStorage.getItem(index)
+    this.game = newGame
     var play = document.getElementById('playArea');
     play.style.top = "660px"
     this.populatePlay()
@@ -225,6 +227,7 @@ View.prototype = {
 
   endGame:function(){
     var create = document.getElementById('createArea');
+    create.innerHTML = "";
     var h1 = document.createElement('h1')
     h1.id = "endGameMessage"
     h1.innerHTML = "Congratulations!"
@@ -277,7 +280,7 @@ View.prototype = {
     var button2 = document.createElement('button');
     button2.innerText = "Game Complete!"
     button2.addEventListener('click', function(){
-      this.game.save()
+      this.initiateSave()
       this.setCreateOrPlay();
     }.bind(this))
     var form = document.createElement('form');
@@ -303,7 +306,7 @@ View.prototype = {
     input5.type = "text";
     input5.name = "foundMessage";
     input5.required = true;
-    input5.placeholder = "message to player";
+    input5.placeholder = "Message for player when found";
     var input6 = document.createElement('input');
     input6.type = "range";
     input6.min = 1250;
@@ -321,11 +324,14 @@ View.prototype = {
     button.type = "submit";
     button.name = "enter";
 
+    var tolerText  = document.createElement('h4');
+    tolerText.innerText = "Slide to set acceptable found area"
     form.appendChild(input1);
     form.appendChild(input2);
     form.appendChild(input3);
     form.appendChild(input4);
     form.appendChild(input5);
+    form.appendChild(tolerText);
     form.appendChild(input6);
     form.appendChild(document.createElement('br'))
     form.appendChild(button);
