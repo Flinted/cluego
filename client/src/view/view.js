@@ -224,7 +224,6 @@ View.prototype = {
     var count = 0
     results.forEach(function(team){
       var result = document.createElement('p')
-      // create a for loop to display team results //
       result.id = "results"
       result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
       create.appendChild(result) 
