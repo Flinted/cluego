@@ -695,15 +695,19 @@
 	    input.required = true;
 	    input.placeholder = "Enter game name";
 	    var go = document.createElement('button');
-	    go.id = "gameName"
+	    go.id = "gameNamez"
+	    go.innerText = "enter"
 	    go.addEventListener("click",function(){
 	      var gameName = document.getElementById('gameName').value;
 	      this.initiateSave(gameName)
 	      this.setCreateOrPlay();
 	    }.bind(this))
 	
+	    createPlay.appendChild(document.createElement('br'))
 	    createPlay.appendChild(name)
+	    createPlay.appendChild(document.createElement('br'))
 	    createPlay.appendChild(input)
+	    createPlay.appendChild(document.createElement('br'))
 	    createPlay.appendChild(go)
 	    this.setVisible('temp')
 	  },
@@ -850,18 +854,26 @@
 	  selectGame: function(color){
 	    var temp = document.getElementById('temp');
 	    var header = document.createElement('h1');
+	    var scroller = document.createElement('div');
+	    var p = document.createElement('p');
+	    p.innerHTML = "<br>scroll for more games<br>click to select"
+	    scroller.id ="scroll"
 	    this.setVisible("temp")
 	    console.log(state.currTeam)
-	    header.innerHTML = "Hello " + state.player + "<br> you have joined the " + color + " team, Please select a game"
+	    header.innerHTML = "Hello " + state.player + "<br> you have joined the " + color + " team, <br>Please select a game<br>"
 	    temp.innerHTML=''
 	    temp.appendChild(header);
+	    temp.appendChild(document.createElement('br'))
+	    temp.appendChild(scroller);
+	    temp.appendChild(document.createElement('br'))
+	    temp.appendChild(p);
 	    this.populateGames()
 	    },
 	
 	  populateGames: function(){
 	    this.games = this.game.ajax.response
 	    console.log(this.games)
-	    var temp = document.getElementById('temp');
+	    var temp = document.getElementById('scroll');
 	    for (var i = 0; i <= this.games.length-1; i++) {     
 	      var game = document.createElement('div')
 	      game.className = "game";
@@ -933,12 +945,21 @@
 	      create.appendChild(result) 
 	    })
 	    var createButton = document.createElement('button');
+	    var homeButton = document.createElement('button');
 	    createButton.innerHTML = "show / hide stats";
+	    homeButton.innerHTML = "home";
+	    createButton.id = "toggle"
+	    homeButton.id = "home"
 	    // createButton.id = "create";
+	    create.appendChild(homeButton);
 	    create.appendChild(createButton);
 	    createButton.addEventListener('click',function(){
 	      console.log("click")
 	      this.prepareChart()
+	    }.bind(this));
+	    homeButton.addEventListener('click',function(){
+	      console.log("click")
+	      this.setCreateOrPlay()
 	    }.bind(this));
 	  },
 	
@@ -968,9 +989,15 @@
 	
 	  populateCreate: function(event){
 	    this.setVisible("create")
-	    var create = document.getElementById('createArea');
+	    var create = document.getElementById('createArea')
 	    create.innerHTML = "<h1>Create</h1>"   
 	    var button2 = document.createElement('button');
+	    var home = document.createElement('button');
+	    home.id ="home"
+	    home.innerText ="home"
+	    home.addEventListener('click', function(){
+	      this.setCreateOrPlay()
+	    }.bind(this));
 	    button2.innerText = "Game Complete!"
 	    button2.addEventListener('click', function(){
 	      this.setSaveName()
@@ -1032,7 +1059,7 @@
 	    form.appendChild(button);
 	    create.appendChild(form);
 	    create.appendChild(button2)  
-	
+	    create.appendChild(home)
 	    var objective = document.getElementById( 'objective' );
 	    objective.addEventListener('submit', function(event){
 	      event.preventDefault();
@@ -1146,6 +1173,7 @@
 	 },
 	
 	 populatePlay: function(){
+	      
 	      this.populatePoints()
 	      var play = document.getElementById('textField');
 	      play.innerHTML="";
@@ -1156,6 +1184,7 @@
 	       var button = document.createElement('button');
 	       button.innerHTML = "Get a Hint"
 	       play.appendChild(button);
+	       
 	       button.addEventListener('click', function(event){
 	         this.showHint()
 	         this.populatePoints()
@@ -1163,6 +1192,12 @@
 	     },
 	
 	     populatePoints: function(){
+	      var home = document.createElement('button');
+	      home.id ="playHome"
+	      home.innerText ="home"
+	      home.addEventListener('click', function(){
+	        this.setCreateOrPlay()
+	      }.bind(this));
 	      var points = document.getElementById('pointsArea');
 	      var score = document.createElement('h3');
 	      var pointInfo = document.createElement('p');
@@ -1174,6 +1209,8 @@
 	      points.appendChild(score);
 	      points.appendChild(pointInfo);
 	      points.appendChild(penaltyInfo);
+	      points.appendChild(document.createElement('br'))
+	      points.appendChild(home);
 	    },
 	
 	    showHint: function(){

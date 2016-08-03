@@ -13,6 +13,7 @@
   z-index: 5000;
   top: 6px;
   left: 15px;
+  pointer-events : none;
 }
 
 h1{
@@ -193,10 +194,11 @@ DIV areas
   height: 60px;
   z-index: 9000;
   position: absolute;
-  background-color: #F16B6F ;
+  background:none;
   margin-left: 40%;
-  margin-top: 1%;
+  margin-top: 30%;
   text-align: center;
+
 }
 /*==============================
 choose create or play circle
@@ -204,20 +206,26 @@ choose create or play circle
 
 .game{
   margin: 0;
-  padding: 5px;
+  border-bottom: 2px dotted white;
+  padding: 10px;
+  background:#F16B6F;
+  color: white;
 }
 
 .game p{
-
   font-size: 0.5rem;
   pointer-events : none;
 }
-.game p:hover{
+/*.game :hover{
   background:;
-}
+}*/
 
 .game h1{
   font-size: 1rem;
+}
+
+.game h3{
+  pointer-events : none;
 }
 
 h2{
@@ -292,8 +300,11 @@ create slider
   padding: 50px 10px 10px 10px;
 }
 
+
+
 #createArea h1{
   font-size: 1.2rem;
+  margin-top: 70px; 
 }
 
 
@@ -310,9 +321,9 @@ create slider
 }
 
 #endGameResults{
-  font-size: 1rem;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  margin-bottom: 10px;
   padding: 15px 5px 15px 5px;
   border: 1px solid white;
 }
@@ -320,14 +331,29 @@ create slider
 #first{
   font-size: 1rem;
   color: black;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-top: 5px;
+  margin-bottom: 10px;
   padding: 15px 5px 15px 5px;
-  border: 2px dotted white;
-  background-color: #fcbe32;
+  border: 2px dotted black;
+  background-color: white;
 }
 
+#home, #toggle{
+  width: 125px;
+  margin: 5px;
+}
 
+#playHome{
+  width: 75px;
+  margin-top: 50px;
+  text-align: right;
+  background: #fcbe32;
+}
+
+/*#toggle{
+  width: 125px;
+  margin: 5px;
+}*/
 
 /*==============================
 temp circle
@@ -349,6 +375,7 @@ temp circle
   z-index: 2;
   background: #a79c8e;
 }
+
 
 #nameForm{
 
@@ -391,6 +418,29 @@ temp circle
   margin: 0;
   padding: 0;
   border: 0;
+}
+/*
+input {
+  background: none;
+  border: 1px solid white;
+  color: #3C3530;
+  width: 300px
+  height: 40px;
+}
+*/
+#temp input{
+  color: black;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight:500;
+  width:250px;
+  font-size: 1vw;
+  border-radius: 0;
+  border: 1px solid white;
+  background: none;
+  line-height: 20px;
+  padding: 10px 13px 10px 13px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 /*==============================
@@ -463,7 +513,7 @@ play area slid up
   border: none;
   font-family: 'Special Elite';
   font-size: 1.3rem;
-  width: 200px;
+  width: 150px;
 }
 
 #playArea p{
@@ -489,6 +539,7 @@ play area slid up
   width: 100px;
   border-color: black;
   display: inline-block;
+  background: #fcbe32;
 }
 
 #pointsArea{
@@ -504,6 +555,15 @@ play area slid up
   /*float: right;*/
   padding-bottom: 15px;
 }
+
+#scroll {
+  width: 80%;
+  height: 77px;
+  border: 1px solid white;
+  overflow-y: scroll;
+}
+
+
 
 /*==============================
 fade in
