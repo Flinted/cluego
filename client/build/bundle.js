@@ -824,18 +824,19 @@
 	      color.style.backgroundColor = colors[i];
 	      color.addEventListener('click', function(){
 	        state.player = input1.value || "Player"
-	        this.selectGame()
+	        this.selectGame(color.style.backgroundColor)
 	      }.bind(this))
 	      temp.appendChild(color);
 	      temp.style.display = 'block'
 	    }
 	  },
 	
-	  selectGame: function(){
+	  selectGame: function(color){
 	    var temp = document.getElementById('temp');
 	    var header = document.createElement('h1');
 	    this.setVisible("temp")
-	    header.innerHTML = "Please Select a Game"
+	    console.log(state.currTeam)
+	    header.innerHTML = "Hello " + state.player + "<br> you have joined the " + color + " team, Please select a game"
 	    temp.innerHTML=''
 	    temp.appendChild(header);
 	    this.populateGames()
@@ -848,7 +849,7 @@
 	    for (var i = 0; i <= this.games.length-1; i++) {     
 	      var game = document.createElement('div')
 	      game.className = "game";
-	      game.innerHTML = "<p>"+ this.games[i].name + "<br>"+ this.games[i].state.length + " clues</p><br><p>The First Clue: " + this.games[i].state[0].clue + "</p>";
+	      game.innerHTML = "<h3>"+ this.games[i].name + " - "+ this.games[i].state.length + " clues</h3><p>The First Clue: " + this.games[i].state[0].clue + "</p>";
 	      game.id = this.games[i]._id;
 	      game.addEventListener('click', function(event){
 	       this.reinstateGame(event.target.id)
@@ -992,16 +993,15 @@
 	    input6.id = "tolerance";
 	    input6.value = state.tolerance;
 	    input6.addEventListener('change', function(event){
-	     state.tolerance = Number(event.target.value)
-	     this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-	     this.game.map.circles.pop()
-	     this.game.map.drawCircle(state.latLng, state.tolerance)
+	    state.tolerance = Number(event.target.value)
+	    this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	    this.game.map.circles.pop()
+	    this.game.map.drawCircle(state.latLng, state.tolerance)
 	   }.bind(this))
 	    var button = document.createElement('input');
 	    button.type = "submit";
 	    button.name = "enter";
 	    button.id = "enter";
-	
 	    var tolerText  = document.createElement('p');
 	    tolerText.id = "tolerText"
 	    tolerText.innerText = "Slide to set acceptable found area"
@@ -1134,7 +1134,8 @@
 	      var play = document.getElementById('textField');
 	      play.innerHTML="";
 	       var head = document.createElement('h1')
-	       head.innerText = "Hey " + state.player + ", here is the clue: " + this.game.currentObj.clue 
+	       var question = document.createElement('h1')
+	       head.innerHTML = "Hey " + state.player + ", here is your clue: "+ "<br>" +  this.game.currentObj.clue 
 	       play.appendChild(head) 
 	       var button = document.createElement('button');
 	       button.innerHTML = "Get a Hint"
