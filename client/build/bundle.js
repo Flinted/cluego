@@ -430,7 +430,7 @@
 	  },{
 	    "featureType": "water",
 	    "stylers": [
-	      { "color": "#80d4f6" }
+	      { "color": "#71c8d4" }
 	    ]
 	  },{
 	    "featureType": "landscape.natural.terrain",
@@ -451,7 +451,7 @@
 	      { "saturation": 22 },
 	      { "gamma": 0.56 },
 	      { "lightness": 60 },
-	      { "color": "#a5d296" }
+	      { "color": "#a8dba8" }
 	    ]
 	  },{
 	    "elementType": "labels.text.fill",
@@ -655,22 +655,46 @@
 	    this.setButtons();
 	    state.currTeam = this.game.teams[0]
 	    this.detectZoom();
+	    this.setCreateOrPlay();
+	  },
+	
+	  setCreateOrPlay: function(){
+	    this.setVisible("temp")
+	    var createPlay = document.getElementById('temp');
+	    createPlay.innerHTML = ""
+	    var createButton = document.createElement('button');
+	    createButton.innerHTML = "create a game";
+	    createButton.id = "create";
+	    createPlay.appendChild(createButton);
+	    createButton.addEventListener('click',function(){
+	      this.goCreate()
+	    }.bind(this));
+	    var line = document.createElement('div');
+	    line.id = "line";
+	    createPlay.appendChild(line);
+	    var playButton = document.createElement('button');
+	    playButton.innerHTML = "ready to play?";
+	    playButton.id = "play";
+	    createPlay.appendChild(playButton);
+	    playButton.addEventListener('click',function(){
+	      this.goPlay()
+	    }.bind(this));
 	  },
 	
 	  setButtons: function(){
-	    var create = document.getElementById('create');
-	    create.addEventListener('click',function(){
-	      this.goCreate()
-	    }.bind(this))
-	    var play = document.getElementById('play');
-	    play.addEventListener('click',function(){
-	      this.goPlay()
-	    }.bind(this))
+	    // var create = document.getElementById('create');
+	    // create.addEventListener('click',function(){
+	    //   this.goCreate()
+	    // }.bind(this))
+	    // var play = document.getElementById('play');
+	    // play.addEventListener('click',function(){
+	    //   this.goPlay()
+	    // }.bind(this))
 	    var slide = document.getElementById('slideButton');
 	    slide.addEventListener('click', function(){
 	     var stats = document.getElementById('playArea')
-	     if (stats.style.top != "650px"){
-	       stats.style.top = "650px"
+	     if (stats.style.top != "660px"){
+	       stats.style.top = "660px"
 	     }else{ stats.style.top = "435px"}
 	   })
 	  },
@@ -752,6 +776,7 @@
 	    this.setVisible("temp")
 	    
 	    header.innerHTML = "Please enter Player Name"
+	    input1.id = "nameForm"
 	    input1.type = "text";
 	    input1.name = "name";
 	    input1.required = true;
@@ -812,7 +837,7 @@
 	    console.log(this.games[index]._id)
 	    this.game.ajax.go("GET","/games/"+this.games[index]._id)
 	    var play = document.getElementById('playArea');
-	    play.style.top = "650px"
+	    play.style.top = "660px"
 	    this.populatePlay()
 	    this.setVisible("play")
 	  },
@@ -834,6 +859,8 @@
 	    var count = 0
 	    results.forEach(function(team){
 	      var result = document.createElement('p')
+	      // create a for loop to display team results //
+	      result.id = "results"
 	      result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
 	      create.appendChild(result) 
 	    })
@@ -847,6 +874,7 @@
 	    button2.innerText = "Game Complete!"
 	    button2.addEventListener('click', function(){
 	      this.game.save()
+	      this.setCreateOrPlay();
 	    }.bind(this))
 	    var form = document.createElement('form');
 	    form.id = "objective";
@@ -871,7 +899,7 @@
 	    input5.type = "text";
 	    input5.name = "foundMessage";
 	    input5.required = true;
-	    input5.placeholder = "'found goal' message";
+	    input5.placeholder = "message to player";
 	    var input6 = document.createElement('input');
 	    input6.type = "range";
 	    input6.min = 1250;

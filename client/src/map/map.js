@@ -12,7 +12,7 @@
   },{
     "featureType": "water",
     "stylers": [
-      { "color": "#80d4f6" }
+      { "color": "#71c8d4" }
     ]
   },{
     "featureType": "landscape.natural.terrain",
@@ -33,7 +33,7 @@
       { "saturation": 22 },
       { "gamma": 0.56 },
       { "lightness": 60 },
-      { "color": "#a5d296" }
+      { "color": "#a8dba8" }
     ]
   },{
     "elementType": "labels.text.fill",
