@@ -720,14 +720,6 @@
 	  },
 	
 	  setButtons: function(){
-	    // var create = document.getElementById('create');
-	    // create.addEventListener('click',function(){
-	    //   this.goCreate()
-	    // }.bind(this))
-	    // var play = document.getElementById('play');
-	    // play.addEventListener('click',function(){
-	    //   this.goPlay()
-	    // }.bind(this))
 	    var slide = document.getElementById('slideButton');
 	    slide.addEventListener('click', function(){
 	     var stats = document.getElementById('playArea')
@@ -1004,8 +996,10 @@
 	    var button = document.createElement('input');
 	    button.type = "submit";
 	    button.name = "enter";
+	    button.id = "enter";
 	
-	    var tolerText  = document.createElement('h4');
+	    var tolerText  = document.createElement('p');
+	    tolerText.id = "tolerText"
 	    tolerText.innerText = "Slide to set acceptable found area"
 	    form.appendChild(input1);
 	    form.appendChild(input2);
