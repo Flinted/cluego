@@ -93,7 +93,7 @@ Map.prototype = {
       animation: google.maps.Animation.DROP,
      
       icon: {
-        path: google.maps.SymbolPath.CIRCLE,
+        path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
         scale: 5
       },
     })

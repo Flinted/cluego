@@ -164,6 +164,7 @@
 	    },
 	
 	    save: function(gameName){
+	      if(this.objectives == []){return}
 	      var objectiveStates = {name: gameName, state: []}
 	      this.objectives.forEach(function(objective){
 	        var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
@@ -524,7 +525,7 @@
 	      animation: google.maps.Animation.DROP,
 	     
 	      icon: {
-	        path: google.maps.SymbolPath.CIRCLE,
+	        path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
 	        scale: 5
 	      },
 	    })
