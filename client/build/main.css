@@ -207,15 +207,8 @@ button:hover{
   /*border: 2px solid black;*/
 }
 
-#pointsArea{
-  float: right;
-  width: 30%;
-}
 
-#textField{
-  float:left;
-  width: 69%;
-}
+
 
 /*==============================
 create slider
@@ -378,7 +371,7 @@ play area slid up
 ==============================*/
 
 .playArea {
-  padding: 5px 0 0 10px;
+  padding: 20px 0 0 20px;
   background: #fcbe32;
   position: absolute;
   left: 0;
@@ -386,6 +379,29 @@ play area slid up
   bottom: 0;
   transition: top 1.5s ease-in-out;
   z-index: 50;
+  font-size: 0.9rem;
+  color: #3C3530;
+  display: inline-block;
+}
+
+#textField{
+  float:left;
+  width: 80%;
+}
+
+.playArea button{
+  float: right;
+  width: 100px;
+  border-color: black;
+  display: inline-block;
+}
+
+#pointsArea{
+  float: right;
+  width: 20%;
+  align: center;
+  display: inline-block;
+
 }
 
 /*==============================
