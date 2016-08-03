@@ -3,19 +3,19 @@
 var Objective = function(params, map){
   this.clue = params.clue;
   this.hints =  params.hints;
-  this.googleMap= map;
+  this.googleMap= "TESTER";
   this.hintCount = 0;
   this.latLng = params.latLng;
   this.tolerance =  params.tolerance;
   this.found = [];
   this.foundMessage = params.foundMessage;
   this.points = 0;
-  this.circle = new google.maps.Circle({
+  this.circle = {
     map: this.googleMap,
     center: this.latLng,
     radius: this.tolerance,
     visible: false
-  });
+  };
 }
 
 Objective.prototype = {

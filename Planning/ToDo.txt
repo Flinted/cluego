@@ -13,17 +13,9 @@ populate games in temp area, update on click to instate new game
 set bounds when game is created (lock min zoom at this area)
 add other teams to pointsArea
 add "home" link as buttons are removed
-check hints array is being filtered for empty hints
-double check tests all still pass after code tweaks
 add buttons to end game for charting, new game and create game
 refactor
 
-
-<<<<<<< HEAD
 presentation
 
 
-
-=======
-presentation
->>>>>>> chris
