@@ -13,6 +13,7 @@ h1{
   padding: 0;
   margin: 0;
   border: 0;
+
 }
 
 
@@ -89,6 +90,14 @@ FORM
   top: -30px;
   right: 0;
   background: #fcbe32;
+  border: none;
+}
+
+#pointsDisplay{
+  position: absolute;
+  top: -60px;
+  right: 0;
+  /*background: #fcbe32;*/
   border: none;
 }
 
@@ -192,7 +201,7 @@ choose create or play circle
 }
 
 .game h1{
-  font-size: 22rem;
+  font-size: 1rem;
 }
 
 h2{
@@ -434,6 +443,10 @@ play area slid up
   font-family: 'Special Elite';
 }
 
+#playArea p{
+  padding-left: 50px;
+}
+
 #playArea h1{
   /*padding-top: 4px;*/
   padding-left: 20px;
@@ -441,12 +454,10 @@ play area slid up
   font-size: 1.3rem;
 }
 
-playArea
-
 
 #textField{
   float:left;
-  width: 80%;
+  width: 75%;
   display: inline-block;
 }
 
@@ -454,16 +465,20 @@ playArea
   float: right;
   width: 100px;
   border-color: black;
+  display: inline-block;
 }
 
 #pointsArea{
+  text-align: right;
   float: right;
   width: 15%;
-  padding: 10px;
+  padding: 10px 20px 0 0;
   font-size: 15px;
+  display: inline-block;
 }
 
 #pointsArea h3{
+  /*float: right;*/
   padding-bottom: 15px;
 }
 
