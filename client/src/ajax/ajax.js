@@ -3,12 +3,12 @@ var CircularJSON = require ('circular-json');
 
 var Ajax = function(){
   this.response = ''
+  this.status = ''
 }
 
 Ajax.prototype = {
   go: function(type, route, data){
-    return new Promise(function(resolve, reject) {
-
+      this.status = ''
       var request = new XMLHttpRequest();
       request.open(type,route);
       request.setRequestHeader('Content-Type', 'application/json');
@@ -16,14 +16,12 @@ Ajax.prototype = {
         if (request.status === 200){
           if(request.responseText){
             var jsonString = request.responseText;
-            this.response = CircularJSON.parse(jsonString)
+            this.response = JSON.parse(jsonString)
+            this.status =  "done"
              }
-           resolve(this.response)
          }
      }.bind(this)
-     console.log(data)
      request.send(data || null);
-  })//end of promise
   }
 
 }

@@ -41,7 +41,7 @@ describe("team", function(){
     redteam.addPoints({clue: "clue 1", value: 3})
     redteam.addPoints({clue: "clue 2", value: 2})
     redteam.addPenalty(2)
-    assert.deepEqual(3, redteam.totalPoints())
+    assert.deepEqual(3, redteam.score())
   })
 
 

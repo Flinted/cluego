@@ -1,3 +1,6 @@
+var LineChart = require("../lineChart.js")
+var CircularJSON = require("circular-json")
+
 var state = {
  clue: "",
  hints: [],
@@ -12,6 +15,8 @@ var View = function(game){
   this.game = game;
   this.readyForNext = true;
   this.ran = false;
+  this.games = [];
+  this.gameState ='';
 }
 
 View.prototype = {
@@ -20,22 +25,67 @@ View.prototype = {
     this.setButtons();
     state.currTeam = this.game.teams[0]
     this.detectZoom();
+    this.setCreateOrPlay();
+  },
+
+  initiateSave: function(gameName){
+    this.game.save(gameName)
+  },
+
+  setSaveName: function(){
+    var createPlay = document.getElementById('temp');
+    createPlay.innerHTML = ""
+    var name = document.createElement('h1');
+    name.innerHTML= "Please name your game"
+    var input = document.createElement('input');
+    input.type = "text";
+    input.name = "gameName";
+    input.id = "gameName"
+    input.required = true;
+    input.placeholder = "enter game name";
+    var go = document.createElement('button');
+    go.id = "gameName"
+    go.addEventListener("click",function(){
+      var gameName = document.getElementById('gameName').value;
+      this.initiateSave(gameName)
+      this.setCreateOrPlay();
+    }.bind(this))
+
+    createPlay.appendChild(name)
+    createPlay.appendChild(input)
+    createPlay.appendChild(go)
+    this.setVisible('temp')
+  },
+
+  setCreateOrPlay: function(){
+    this.setVisible("temp")
+    var createPlay = document.getElementById('temp');
+    createPlay.innerHTML = ""
+    var createButton = document.createElement('button');
+    createButton.innerHTML = "create a game";
+    createButton.id = "create";
+    createPlay.appendChild(createButton);
+    createButton.addEventListener('click',function(){
+      this.goCreate()
+    }.bind(this));
+    var line = document.createElement('div');
+    line.id = "line";
+    createPlay.appendChild(line);
+    var playButton = document.createElement('button');
+    playButton.innerHTML = "ready to play?";
+    playButton.id = "play";
+    createPlay.appendChild(playButton);
+    playButton.addEventListener('click',function(){
+      this.goPlay()
+    }.bind(this));
   },
 
   setButtons: function(){
-    var create = document.getElementById('create');
-    create.addEventListener('click',function(){
-      this.goCreate()
-    }.bind(this))
-    var play = document.getElementById('play');
-    play.addEventListener('click',function(){
-      this.goPlay()
-    }.bind(this))
     var slide = document.getElementById('slideButton');
     slide.addEventListener('click', function(){
      var stats = document.getElementById('playArea')
-     if (stats.style.top != "650px"){
-       stats.style.top = "650px"
+     if (stats.style.top != "660px"){
+       stats.style.top = "660px"
      }else{ stats.style.top = "435px"}
    })
   },
@@ -111,12 +161,14 @@ View.prototype = {
   },
 
   selectTeam: function(){
+    this.game.ajax.go("GET", "/games")
     var temp = document.getElementById('temp');
     var input1 = document.createElement('input');
     var header = document.createElement('h1');
     this.setVisible("temp")
     
     header.innerHTML = "Please enter Player Name"
+    input1.id = "nameForm"
     input1.type = "text";
     input1.name = "name";
     input1.required = true;
@@ -128,7 +180,7 @@ View.prototype = {
     p.innerText = "Please Select a Team"
     temp.appendChild(p)
     temp.appendChild(document.createElement('br'));
-    var colors = ["red","blue","green","orange", "white"]
+    var colors = ["DarkOrange","BlueViolet","ForestGreen","RoyalBlue", "Gold"]
     for (var i = 4; i >= 0; i--) {
       var color = document.createElement('div')
       color.className = "team";
@@ -149,23 +201,17 @@ View.prototype = {
     header.innerHTML = "Please Select a Game"
     temp.innerHTML=''
     temp.appendChild(header);
-    // add a then.
-    this.game.ajax.go("GET","/games").then(function(response){
-      this.games = response;
-      this.populateGames()
-    }.bind(this))
-
+    this.populateGames()
     },
 
   populateGames: function(){
+    this.games = this.game.ajax.response
     var temp = document.getElementById('temp');
-    
     for (var i = 0; i <= this.games.length-1; i++) {     
       var game = document.createElement('div')
-      game.className = "team";
-      game.innerText = "Hello";
-      game.id = i;
-
+      game.className = "game";
+      game.innerHTML = "<p>"+ this.games[i].state.clues + " clues</p>";
+      game.id = this.games[i]._id;
       game.addEventListener('click', function(event){
        this.reinstateGame(event.target.id)
       }.bind(this))
@@ -174,13 +220,34 @@ View.prototype = {
   },
 
   reinstateGame: function(index){
-    console.log(this.games[index]._id)
-    this.game.ajax.go("GET","/games/"+this.games[index]._id)
+    this.game.objectives = [];
+    this.game.currentObj = 0;
+    // var promise = new Promise(function(resolve, reject){
+      this.game.ajax.go("GET", "/games/"+ index)
+
+    //   console.log("running")
+    //   if(this.game.ajax.status === "done"){
+    //   resolve()
+    // }
+    // }.bind(this));  
+
+    // promise.then(function(resolve){
+    //   console.log("passed")
+      setTimeout(function(){this.generateGame()}.bind(this),100)
+    // }.bind(this))
+  },
+
+  generateGame: function(){
+    this.gameState = this.game.ajax.response
+    console.log(this.gameState)
+    this.gameState.state.forEach(function(state){
+      this.game.createObjective(state)
+    }.bind(this))
     var play = document.getElementById('playArea');
-    play.style.top = "650px"
+    play.style.top = "660px"
     this.populatePlay()
     this.setVisible("play")
-  },
+    },
 
   popFound: function(){
     var temp = document.getElementById('temp');
@@ -193,14 +260,49 @@ View.prototype = {
 
   endGame:function(){
     var create = document.getElementById('createArea');
-    create.innerHTML = "<h1>Congratulations!</h1>"
+    create.innerHTML = "";
+    var h1 = document.createElement('h1')
+    h1.id = "endGameMessage"
+    h1.innerHTML = "Congratulations!"
+    create.appendChild(h1)
     this.setVisible("create")
     var results = this.game.rankTeams()
     var count = 0
+    // this.prepareChart();
     results.forEach(function(team){
       var result = document.createElement('p')
+      result.id = "endGameResults"
       result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
       create.appendChild(result) 
+    })
+    var createButton = document.createElement('button');
+    createButton.innerHTML = "show / hide stats";
+    // createButton.id = "create";
+    create.appendChild(createButton);
+    createButton.addEventListener('click',function(){
+      console.log("click")
+      this.prepareChart()
+    }.bind(this));
+  },
+
+  prepareChart: function(){
+    var container = document.getElementById("lineChart");
+    container.style.display = "block"
+    var data = []
+    this.game.teams.forEach(function(team){
+      var dataPoint = [];
+      team.points.forEach(function(point){
+        dataPoint.push(point.value)
+      })
+    var chartPoint = {name: team.name, color: team.name.split(" ")[0], data: dataPoint}
+    data.push(chartPoint)
+    })
+
+    var categories = []
+    this.game.objectives.forEach(function(objective){
+      categories.push(objective.clue)
+
+    new LineChart(data,categories)
     })
   },
 
@@ -211,7 +313,9 @@ View.prototype = {
     var button2 = document.createElement('button');
     button2.innerText = "Game Complete!"
     button2.addEventListener('click', function(){
-      this.game.save()
+      this.setSaveName()
+      // this.initiateSave()
+      // this.setCreateOrPlay();
     }.bind(this))
     var form = document.createElement('form');
     form.id = "objective";
@@ -236,7 +340,7 @@ View.prototype = {
     input5.type = "text";
     input5.name = "foundMessage";
     input5.required = true;
-    input5.placeholder = "'found goal' message";
+    input5.placeholder = "Message for player when found";
     var input6 = document.createElement('input');
     input6.type = "range";
     input6.min = 1250;
@@ -253,12 +357,17 @@ View.prototype = {
     var button = document.createElement('input');
     button.type = "submit";
     button.name = "enter";
+    button.id = "enter";
 
+    var tolerText  = document.createElement('p');
+    tolerText.id = "tolerText"
+    tolerText.innerText = "Slide to set acceptable found area"
     form.appendChild(input1);
     form.appendChild(input2);
     form.appendChild(input3);
     form.appendChild(input4);
     form.appendChild(input5);
+    form.appendChild(tolerText);
     form.appendChild(input6);
     form.appendChild(document.createElement('br'))
     form.appendChild(button);
@@ -279,7 +388,6 @@ View.prototype = {
       if(tolerance){
        var min = 0
        var max = 0
-       console.log(this.game.map.googleMap.getZoom())
        switch (this.game.map.googleMap.getZoom()){
        case 1:
        case 2:

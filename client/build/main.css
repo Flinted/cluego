@@ -1,3 +1,21 @@
+#lineChart{
+  width: 65%%;
+  height: 70%;
+  margin-top: 10%;
+  margin-left: 27%;
+  position: right;
+  position: absolute;
+  z-index: 8000;
+}
+
+h1{
+  font-family: 'Special Elite';
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+
 body {
   background-color: #FCBE32; 
   padding: 0;
@@ -11,10 +29,11 @@ body {
 navigation areas
 ==============================*/
 
-
 #logo{
   font-family: 'Bowlby One', arial bold;
-  font-size: 5vw;
+  font-size: 3rem;
+  pointer-events : none;
+  padding: 0 0 0 10vw;
 }
 
 #nav{
@@ -28,37 +47,23 @@ navigation areas
   margin: 0px;
   border: 0px;
   z-index: 5 ;
-  border-top: 20px solid #3C3530;
+  border-top: 25px solid #3C3530;
 }
 
 #nav h1{
   display:inline;
 }
 
-#nav button{
-  float: left;
-}
 
-button{
-  height: 50px;
-  margin-top: 5px;
-  margin-right: 15px;
-  background-color: rgba(0,0,0,0);
-  border: 1px solid white;
-  width: 120px;
-}
-
-#nav button:hover{
-  background-color: grey;
-  color: white;
-  /*border: 2px solid black;*/
-}
+/*==============================
+map
+==============================*/
 
 #map{
   margin-top: 20px;
   z-index: 1;
   width: 100%;
-  height: 685px;
+  height: 730px;
 }
 
 #fixed{
@@ -70,13 +75,25 @@ button{
 }
 
 /*==============================
-  FORM
+infoBubble
+==============================
+style="overflow: auto; cursor: default; clear: both; position: relative; border: 1px solid rgb(204, 204, 204); border-radius: 10px; padding: 10px; width: 150px; height: 100px; background-color: rgb(255, 201, 82);"
+===*/
+
+/*==============================
+FORM
 ==============================*/
 
+#slideButton{
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background: #fcbe32;
+  border: none;
+}
 
 #objective{
   font-family: 'Helvetica Neue',Helvetica,sans-serif;
-  /*text-decoration: none;*/
   vertical-align: middle;
   padding: 10px;
   width: 250px;
@@ -101,103 +118,205 @@ button{
   color: black;
 }
 
-#objective input:focus {
-  /*color: #cccccc;*/
+#enter:hover{
+  background-color: grey;
+  color: white;
 }
+
+#createMessage{
+  font-size: 2rem;
+  padding-top: 5em;
+}
+
 
 #tolerance {
   -webkit-appearance: none;
-  width: 160px;
   height: 32px;
-  margin: 10px 50px;
-  background: linear-gradient(to right, #fff 0%, #fff 100%);
-  background-size: 150px 2px;
-  background-color: white;
-  background-position: center;
-  background-repeat: no-repeat;
   overflow: hidden;
   outline: none;
   zoom: 130%;
-  display: block;
   margin: auto;
-  margin-bottom: 30px;
+}
+
+input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: url('https://d30y9cdsu7xlg0.cloudfront.net/noun-svg/109407.svg?Expires=1470223523&Signature=JaQC7yl4ss2Fm0m8~bTM4Px0jT9astO6ZvnZ7sgLFOrLh6m3q736P88esH~MOomExeXUqyQlRI-BmY1JwE2NlFf7dUe1ZfKp9JZQ~VCzj9KLMyb2t~-KoczzA4JgB-5ohoDP75hRs-~eDhARngAJ~DnYqmSV6~~9A2s1jBRAimc_&Key-Pair-Id=APKAI5ZVHAXN65CHVU2Q'); 
+  width: 25px;
+  height: 25px;
+  /*background: #3C3530;*/
+  border-radius: 100%;
+  position: relative;
+}
+
+button {
+  height: 40px;
+  width: 250px;
+  background-color: rgba(0,0,0,0);
+  border: 1px solid white; 
 }
 
 /*==============================
 DIV areas
 ==============================*/
 
-/*
-  #playArea{
-  position: absolute;
-  border-radius: 3px; 
-  margin-top: 600px;
-  color: #fff;
-  width: 100%;
-  height: 300px;
-  z-index: 2;
-  background: rgba(0, 0, 0, .7);
-  padding: 10px;
-}*/
+
+/*==============================
+choose create or play circle
+==============================*/
+
+.game{
+  height: 150px;
+  width: 150px;
+  border: 1px solid white;
+  border-radius: 100%;
+  margin: 0;
+  padding: 5px;
+}
+
+.game p{
+  font-size: 0.5rem;
+}
+
+#line {
+  height: 25px;
+  width: 35%;
+  margin-top: 9%;
+  border-top: 2px dotted white;
+}
+
+#create {
+  margin-top: 10%;
+}
+
+#play{
+  margin-top: 3%;
+}
+
+#play, #create{
+  height: 30%;
+  width: 12vw;
+  font-size: 0.9rem;
+  background-color: rgba(0,0,0,0);
+  border-radius: 100%;
+  border: 1px solid white;
+}
+
+button:hover{
+  background-color: grey;
+  color: white;
+  /*border: 2px solid black;*/
+}
+
+
+
+
+/*==============================
+create slider
+==============================*/
 
 #createArea{
+  font-size: 2rem;
   position: absolute;
   margin: 0;
   border: 0;
   color: #fff;
-  width: 300px;
+  width: 25%;
   height: 100%;
   z-index: 2;
   background: #F16B6F;
-  /*background: rgba(254, 67, 101, .9);*/
   padding: 50px 10px 10px 10px;
 }
 
-#pointsArea{
-  float: right;
-  width: 30%;
+/*#createArea p{*/
+  /*padding:;*//*
+  font-family: 'Special Elite';
+}*/
+
+#endGameMessage{
+  margin-top: 5%;
+  margin-bottom: 40px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid white;
 }
 
-#textField{
-  float:left;
-  width: 69%;
+
+#endGameResults{
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 15px 5px 15px 5px;
+  border: 1px solid white;
+}
+
+
+#tolerText{
+
+  font-size: 1rem;
+}
+/*==============================
+temp circle
+==============================*/
+
+
+#tempParent{
+  min-width: 100%;
 }
 
 #temp{
   position: absolute;
+  top: 20%;
   margin-left: 30%;
-  margin-top: 100px;
   width: 40%;
   height: 40vw;
-  font-size: 5vw;
+  font-size: 2vw;
   border-radius: 50%;
   z-index: 2;
-  background: grey;
-  
-
+  background: #a79c8e;
 }
 
-/*#temp{
-  transform: rotate(-45deg);
-  font-family: 'Bowlby One', cursive;
-}*/
+#nameForm{
+
+  font-family: 'Helvetica Neue',Helvetica,sans-serif;
+  vertical-align: middle;
+  width: 250px;
+  color: black;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight:500;
+  font-size: 1vw;
+  border-radius: 0;
+  border: 1px solid white;
+  background: none;
+  line-height: 20px;
+  padding: 10px 13px 10px 13px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
 
 .team{
-  width: 40px;
-  height:40px;
+  width: 35px;
+  height:35px;
   border-radius: 100%;
   display: inline-block;
-  margin: 15px;
+  margin: 10px;
 }
 
 #temp h1{
-  text-decoration: none;
-  font-size: 3vw;
-  color: white;
+  margin-top: 100px;
+  font-size: 1.2rem;
+  font-family: 'Special Elite';
+  color: #3C3530;
 }
 
-p {
-  font-size: 2vw;
+#temp p {
+  font-size: 1.5vw;
+  color: #3C3530;
+  font-family: 'Special Elite';
+  margin: 0;
+  padding: 0;
+  border: 0;
+
 }
 
 /*==============================
@@ -214,8 +333,8 @@ compass
   background: #222;
   padding: 2px;
   border-radius: 50%;
-  /*border: 0.1em solid darkred;*/
   overflow: hidden;
+  border: 2px solid #3C3530;
 }
 
 .compass .disc {
@@ -236,11 +355,11 @@ compass
   left: 0;
   z-index: 4;
   background: url('http://dev.rvltn.eu/compass/arrow.svg');
-  width: 110px;
-  height: 110px;
+  width: 104px;
+  height: 104px;
   background-size: 100%;
-/* transition: all 3s;
-transition-timing: ease-in-out;*/
+  transition: all 3s;
+  transition-timing: ease-in-out;
 }
 
 /*  &:hover {
@@ -251,25 +370,38 @@ transform: rotate(1080deg);
 play area slid up
 ==============================*/
 
-/*.stats {
-background-color: rgba(0, 0, 0, 0.7);
-position: absolute;
-left: 0;
-right: 0;
-bottom: 0;
-transition: top 1.5s ease-in-out;
-z-index: 50;
-}*/
-
 .playArea {
-  padding: 5px 0 0 10px;
-  background: #41D3BD;
+  padding: 20px 0 0 20px;
+  background: #fcbe32;
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   transition: top 1.5s ease-in-out;
   z-index: 50;
+  font-size: 0.9rem;
+  color: #3C3530;
+  display: inline-block;
+}
+
+#textField{
+  float:left;
+  width: 80%;
+}
+
+.playArea button{
+  float: right;
+  width: 100px;
+  border-color: black;
+  display: inline-block;
+}
+
+#pointsArea{
+  float: right;
+  width: 20%;
+  align: center;
+  display: inline-block;
+
 }
 
 /*==============================
@@ -298,3 +430,10 @@ fade in
   border: 1px solid #333;
   background: #999;
 }
+
+:focus {
+  outline-color: transparent;
+  outline-style: none;
+}
+
+

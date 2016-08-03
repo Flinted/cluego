@@ -4,45 +4,48 @@
   <title>ClueGo</title>
   <link href='https://fonts.googleapis.com/css?family=Special+Elite|Bowlby+One|Londrina+Outline' rel='stylesheet' type='text/css'>
   <script type="text/javascript" src="bundle.js"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?&libraries=geometry"></script>
   <link rel="stylesheet" type="text/css" href="main.css"></head>
 </head>
 <header>
 
-
   <section id='nav'>
 
+    <h1 id="logo">ClueGo</h1>
     <div class="compass">
       <div class="arrow" id="arrow"></div>
       <div class="disc" id="compassDiscImg"></div>
     </div>
 
-    <h1 id="logo">ClueGo</h1>
-    <button id='play'>Play a game</button>
-    <button id='create'>Make a game</button>
+<!--     <button id='play'>Play a game</button>
+  <button id='create'>Make a game</button> -->
 
-  </section> 
+</section> 
 </header>
 <body>
 
   <aside>
-    <div id="createArea" align="center" class="box fade-in one" style="display:none"></div>
-  </aside>
+    <div id="createArea" align="center" class="box fade-in one" style="display:none">
+      <h1 id="createMessage">Click anywhere on the map to start building your game.<h1></div>
+      </aside>
 
-  <section>
-    <div id="playArea" class="playArea" style="display:none">
-      <button id="slideButton">button
-      </button> 
-      <div id="textField"></div>
-      <div id="pointsArea"></div>
-    </div>
-  </section>
+      <section>
+        <div id="playArea" class="playArea" style="display:none">
+          <button id="slideButton">expand
+          </button> 
+          <div id="textField"></div>
+          <div id="pointsArea"></div>
+        </div>
+      </section>
 
-  <main>
-    
-    <div id="temp" align="center" style="display:none"></div>
-    <div id='map'></div>
-  </main>
+      <main>
 
-</body>
-</html>
+        <div id="lineChart" style="display:none"></div>
+        <div id="temp" align="center" style="display:none"></div>
+
+        <div id='map'></div>
+      </main>
+
+    </body>
+    </html>

@@ -8,7 +8,7 @@ var path = require('path');
 var CircularJSON = require ('circular-json');
 
 
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({limit: '500mb'}));
 app.use(express.static('client/build'));
 
 var url = 'mongodb://localhost:27017/cluego';
@@ -34,7 +34,7 @@ app.get('/games/:id', function(req, res) {
   app.get('/games', function(req, res) {
     MongoClient.connect( url, function( err, db ) {
       var collection = db.collection( 'games' );
-      collection.find({},{_id:1}).toArray( function( err, docs ) {
+      collection.find({}).toArray( function( err, docs ) {
         res.json( docs );
         db.close();
       })
@@ -46,8 +46,9 @@ app.get('/games/:id', function(req, res) {
   app.post('/games', function(req, res) {
     MongoClient.connect( url, function( err, db ) {
      var collection = db.collection( 'games' );
-     console.log(req.body)
-     collection.insert( req.body )
+     console.log(req.body);
+     console.log(db);
+     collection.insert( req.body );
      res.status(200).end();
      db.close();
    })
