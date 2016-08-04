@@ -25,10 +25,47 @@ Game.prototype = {
       if(this.currentObj === 0){this.currentObj = objective};
     },
 
+    setZoom: function(){
+      var north = 0
+      var south = 0
+      var east = 0
+      var west = 0
+
+      this.objectives.forEach(function(objective){
+        var lat = objective.latLng.lat 
+        var lng = objective.latLng.lng 
+        if(!north){north = lat}
+        if(!south){south = lat}
+        if(!east ){east = lng}
+        if(!west ){west = lng}
+        if(lat > north){north = lat}
+        if(lat < south){south = lat}
+        if(lng > east ){east = lng}
+        if(lng < west ){west = lng}
+      })
+      this.map.googleMap.setZoom(2)
+      this.map.googleMap.fitBounds({north: north, south: south, east: east, west: west})  
+    },
+
     // new up a team and add it to the teams array
     addTeam: function(name){
       var team = new Team(name);
       this.teams.push(team);
+    },
+
+    restart: function(name){
+      this.objectives = [];
+      this.currentObj = 0;
+      this.state = "create";
+      this.map.markers=[];
+      this.map.circles =[];
+      this.map.path = '';
+      this.map.foundMarkers=[];
+      this.map.foundWindows=[];
+
+      this.teams.forEach(function(team){
+        team.logGame()
+      })
     },
 
     rankTeams: function(){
@@ -48,6 +85,7 @@ Game.prototype = {
     },
 
     save: function(gameName){
+      if(this.objectives.length === 0){return}
       var objectiveStates = {name: gameName, state: []}
       this.objectives.forEach(function(objective){
         var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}

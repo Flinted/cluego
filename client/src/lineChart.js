@@ -5,7 +5,7 @@ var LineChart = function(data,categories){
 
   var chart = new Highcharts.Chart({
     chart: {
-      type: "line",
+      type: "spline",
       renderTo: container,
       backgroundColor: 'rgba(255, 255, 255, 0.95)'
     },
@@ -18,7 +18,7 @@ var LineChart = function(data,categories){
           },
           minorGridLineWidth: 0,
           gridLineWidth: 0,
-    plotBands: [{ // Light air
+    plotBands: [{ 
      from: 0.5,
      to: 2.5,
      color: 'rgba(68, 170, 213, 0.1)',

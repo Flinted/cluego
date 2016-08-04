@@ -63,42 +63,12 @@
 	  state.game.addTeam("Gold Team")
 	  state.view.initialise();
 	  state.game.map.initialise()
-	  state.game.createObjective({
-	    clue: "This is where a king might live?",
-	    hints: ["You will hear from it at 1pm", "You can see it from all around Edinburgh", "at the top of the Royal Mile!"],
-	    latLng: {lat: 55.9486, lng: -3.1999},
-	    tolerance: 5000,
-	    foundMessage: "Well Done, it was Edinburgh Castle"
-	  })
-	  state.game.createObjective({
-	    clue: "This is where a king might rest?",
-	    hints: ["It's near a very old pub...", "Not far from Duddingston"],
-	    latLng: {lat: 55.9441, lng: -3.1618},
-	    tolerance: 5000,
-	    foundMessage: "Well Done, it was Arthurs Seat"
-	  })
-	  state.game.createObjective({
-	
-	    clue: "Go Forth!",
-	    hints: ["Over the water", "Choo Choo", "Big Red"],
-	    latLng: {lat: 56.0006, lng: -3.3884},
-	    tolerance: 5000,
-	    foundMessage: "Well Done, it was the Forth Rail Bridge"
-	  })
 	  main();
 	}
 	
 	
 	var main = function(){
-	  state.game.objectives[0].addFound(state.game.teams[1])
-	  state.game.objectives[0].addFound(state.game.teams[3])
-	  state.game.objectives[0].addFound(state.game.teams[2])
-	  state.game.objectives[1].addFound(state.game.teams[3])
-	  state.game.objectives[1].addFound(state.game.teams[2])
-	  state.game.objectives[1].addFound(state.game.teams[1])
-	  state.game.objectives[2].addFound(state.game.teams[3])  
-	  state.game.objectives[2].addFound(state.game.teams[1])  
-	  state.game.objectives[2].addFound(state.game.teams[2])  
+	  
 	}
 
 /***/ },
@@ -132,10 +102,47 @@
 	      if(this.currentObj === 0){this.currentObj = objective};
 	    },
 	
+	    setZoom: function(){
+	      var north = 0
+	      var south = 0
+	      var east = 0
+	      var west = 0
+	
+	      this.objectives.forEach(function(objective){
+	        var lat = objective.latLng.lat 
+	        var lng = objective.latLng.lng 
+	        if(!north){north = lat}
+	        if(!south){south = lat}
+	        if(!east ){east = lng}
+	        if(!west ){west = lng}
+	        if(lat > north){north = lat}
+	        if(lat < south){south = lat}
+	        if(lng > east ){east = lng}
+	        if(lng < west ){west = lng}
+	      })
+	      this.map.googleMap.setZoom(2)
+	      this.map.googleMap.fitBounds({north: north, south: south, east: east, west: west})  
+	    },
+	
 	    // new up a team and add it to the teams array
 	    addTeam: function(name){
 	      var team = new Team(name);
 	      this.teams.push(team);
+	    },
+	
+	    restart: function(name){
+	      this.objectives = [];
+	      this.currentObj = 0;
+	      this.state = "create";
+	      this.map.markers=[];
+	      this.map.circles =[];
+	      this.map.path = '';
+	      this.map.foundMarkers=[];
+	      this.map.foundWindows=[];
+	
+	      this.teams.forEach(function(team){
+	        team.logGame()
+	      })
 	    },
 	
 	    rankTeams: function(){
@@ -155,6 +162,7 @@
 	    },
 	
 	    save: function(gameName){
+	      if(this.objectives.length === 0){return}
 	      var objectiveStates = {name: gameName, state: []}
 	      this.objectives.forEach(function(objective){
 	        var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
@@ -424,7 +432,7 @@
 	  {
 	    "featureType": "poi",
 	    "stylers": [
-	      { "visibility": "off" }
+	      { "visibility": "on" }
 	    ]
 	  },{
 	    "featureType": "road",
@@ -485,6 +493,8 @@
 	    center: latLng,
 	    zoom: zoom,
 	    minZoom: 2,
+	    clickableIcons: false, 
+	    draggableCursor:'crosshair',
 	    mapTypeControl: false,
 	    zoomControlOptions: {
 	      position: google.maps.ControlPosition.RIGHT_CENTER 
@@ -512,8 +522,9 @@
 	      position:  latLng,
 	      map: this.googleMap,
 	      animation: google.maps.Animation.DROP,
+	     
 	      icon: {
-	        path: google.maps.SymbolPath.CIRCLE,
+	        path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
 	        scale: 5
 	      },
 	    })
@@ -601,10 +612,10 @@
 	  // shows circle around marker based on tolerance
 	  drawCircle: function(latLng, tolerance){ 
 	    var circle = new google.maps.Circle({
-	      strokeColor: 'black',
-	      strokeOpacity: 0.8,
-	      strokeWeight: 2,
-	      fillColor: 'wheat',
+	      strokeColor: '#F16B6F',
+	      strokeOpacity: 0.9,
+	      strokeWeight: 3,
+	      fillColor: '#F16B6F',
 	      fillOpacity: 0.35,
 	      geodesic: false,
 	      clickable: false,
@@ -639,6 +650,7 @@
 
 	var LineChart = __webpack_require__(8)
 	var CircularJSON = __webpack_require__(3)
+	var Game = __webpack_require__(1)
 	
 	var state = {
 	 clue: "",
@@ -681,17 +693,21 @@
 	    input.name = "gameName";
 	    input.id = "gameName"
 	    input.required = true;
-	    input.placeholder = "enter game name";
+	    input.placeholder = "Enter game name";
 	    var go = document.createElement('button');
-	    go.id = "gameName"
+	    go.id = "gameNamez"
+	    go.innerText = "enter"
 	    go.addEventListener("click",function(){
 	      var gameName = document.getElementById('gameName').value;
 	      this.initiateSave(gameName)
 	      this.setCreateOrPlay();
 	    }.bind(this))
 	
+	    createPlay.appendChild(document.createElement('br'))
 	    createPlay.appendChild(name)
+	    createPlay.appendChild(document.createElement('br'))
 	    createPlay.appendChild(input)
+	    createPlay.appendChild(document.createElement('br'))
 	    createPlay.appendChild(go)
 	    this.setVisible('temp')
 	  },
@@ -725,7 +741,7 @@
 	     var stats = document.getElementById('playArea')
 	     if (stats.style.top != "660px"){
 	       stats.style.top = "660px"
-	     }else{ stats.style.top = "435px"}
+	     }else{ stats.style.top = "485px"}
 	   })
 	  },
 	  
@@ -737,8 +753,10 @@
 	  },
 	
 	  goCreate: function(){
+	    this.game.restart();
+	    this.game.map.googleMap.minZoom = 2;
 	    this.game.changeToCreate();
-	    this.setVisible("create")
+	    this.setVisible("create");
 	  },
 	
 	  setVisible: function(area){
@@ -771,7 +789,7 @@
 	          if(this.game.currentObj.checkFound(event.latLng)){
 	            this.game.currentObj.addFound(state.currTeam)
 	            var content = this.generateContent();
-	            this.game.map.addFoundWindow(this.game.currentObj.latLng, content)
+	            this.game.map.addFoundWindow(this.game.currentObj.latLng, content);
 	            // this.popFound();
 	            if(this.game.updateCurrent()){
 	              this.endGame()
@@ -806,7 +824,7 @@
 	    var header = document.createElement('h1');
 	    this.setVisible("temp")
 	    
-	    header.innerHTML = "Please enter Player Name"
+	    header.innerHTML = "<br>Please enter Player Name"
 	    input1.id = "nameForm"
 	    input1.type = "text";
 	    input1.name = "name";
@@ -816,40 +834,56 @@
 	    temp.appendChild(header);
 	    temp.appendChild(input1);
 	    var p = document.createElement('p');
-	    p.innerText = "Please Select a Team"
+	    p.innerHTML = "<br><br>Please Select a Team"
 	    temp.appendChild(p)
-	    temp.appendChild(document.createElement('br'));
 	    var colors = ["DarkOrange","BlueViolet","ForestGreen","RoyalBlue", "Gold"]
 	    for (var i = 4; i >= 0; i--) {
 	      var color = document.createElement('div')
 	      color.className = "team";
 	      color.style.backgroundColor = colors[i];
-	      color.addEventListener('click', function(){
+	      color.id = colors[i]
+	      color.addEventListener('click', function(event){
+	        console.log(event.target.id)
 	        state.player = input1.value || "Player"
-	        this.selectGame()
+	        this.selectGame(event.target.id)
 	      }.bind(this))
 	      temp.appendChild(color);
 	      temp.style.display = 'block'
 	    }
 	  },
 	
-	  selectGame: function(){
+	  selectGame: function(color){
+	    this.game.teams.forEach(function(team){
+	      if(color === team.name.split(' ')[0]){
+	        state.currTeam = team
+	      }
+	    })
 	    var temp = document.getElementById('temp');
 	    var header = document.createElement('h1');
+	    var scroller = document.createElement('div');
+	    var p = document.createElement('p');
+	    p.innerHTML = "<br>scroll for more games<br>click to select"
+	    scroller.id ="scroll"
 	    this.setVisible("temp")
-	    header.innerHTML = "Please Select a Game"
+	    console.log(state.currTeam)
+	    header.innerHTML = "Hello " + state.player + "<br> you have joined the " + color + " team, <br>Please select a game<br>"
 	    temp.innerHTML=''
 	    temp.appendChild(header);
+	    temp.appendChild(document.createElement('br'))
+	    temp.appendChild(scroller);
+	    temp.appendChild(document.createElement('br'))
+	    temp.appendChild(p);
 	    this.populateGames()
 	    },
 	
 	  populateGames: function(){
 	    this.games = this.game.ajax.response
-	    var temp = document.getElementById('temp');
+	    console.log(this.games)
+	    var temp = document.getElementById('scroll');
 	    for (var i = 0; i <= this.games.length-1; i++) {     
 	      var game = document.createElement('div')
 	      game.className = "game";
-	      game.innerHTML = "<p>"+ this.games[i].state.clues + " clues</p>";
+	      game.innerHTML = "<h3>"+ this.games[i].name + " - "+ this.games[i].state.length + " clues</h3><p>The First Clue: " + this.games[i].state[0].clue + "</p>";
 	      game.id = this.games[i]._id;
 	      game.addEventListener('click', function(event){
 	       this.reinstateGame(event.target.id)
@@ -872,16 +906,16 @@
 	
 	    // promise.then(function(resolve){
 	    //   console.log("passed")
-	      setTimeout(function(){this.generateGame()}.bind(this),100)
+	      setTimeout(function(){this.generateGame()}.bind(this),300)
 	    // }.bind(this))
 	  },
 	
 	  generateGame: function(){
 	    this.gameState = this.game.ajax.response
-	    console.log(this.gameState)
 	    this.gameState.state.forEach(function(state){
 	      this.game.createObjective(state)
 	    }.bind(this))
+	    this.game.setZoom();
 	    var play = document.getElementById('playArea');
 	    play.style.top = "660px"
 	    this.populatePlay()
@@ -912,21 +946,35 @@
 	      var result = document.createElement('p')
 	      result.id = "endGameResults"
 	      result.innerHTML ="The " + team.name + " have " + team.points + " points.<br> They incurred " + team.penalties + " penalty points. <br> Giving them a score of " + team.score
+	      if(count === 0){result.id = "first"}
+	      count = 1
 	      create.appendChild(result) 
 	    })
 	    var createButton = document.createElement('button');
+	    var homeButton = document.createElement('button');
 	    createButton.innerHTML = "show / hide stats";
+	    homeButton.innerHTML = "home";
+	    createButton.id = "toggle"
+	    homeButton.id = "home"
 	    // createButton.id = "create";
+	    create.appendChild(homeButton);
 	    create.appendChild(createButton);
 	    createButton.addEventListener('click',function(){
 	      console.log("click")
 	      this.prepareChart()
 	    }.bind(this));
+	    homeButton.addEventListener('click',function(){
+	      console.log("click")
+	      this.setCreateOrPlay()
+	    }.bind(this));
 	  },
 	
 	  prepareChart: function(){
 	    var container = document.getElementById("lineChart");
-	    container.style.display = "block"
+	    if(container.style.display === "block"){
+	      container.style.display = "none"
+	    }else{container.style.display = "block"}
+	    
 	    var data = []
 	    this.game.teams.forEach(function(team){
 	      var dataPoint = [];
@@ -947,9 +995,15 @@
 	
 	  populateCreate: function(event){
 	    this.setVisible("create")
-	    var create = document.getElementById('createArea');
+	    var create = document.getElementById('createArea')
 	    create.innerHTML = "<h1>Create</h1>"   
 	    var button2 = document.createElement('button');
+	    var home = document.createElement('button');
+	    home.id ="home"
+	    home.innerText ="home"
+	    home.addEventListener('click', function(){
+	      this.setCreateOrPlay()
+	    }.bind(this));
 	    button2.innerText = "Game Complete!"
 	    button2.addEventListener('click', function(){
 	      this.setSaveName()
@@ -982,22 +1036,21 @@
 	    input5.placeholder = "Message for player when found";
 	    var input6 = document.createElement('input');
 	    input6.type = "range";
-	    input6.min = 1250;
-	    input6.max = 28000;
+	    input6.min = 0;
+	    input6.max = 0;
 	    input6.name = "setTolerance";
 	    input6.id = "tolerance";
 	    input6.value = state.tolerance;
 	    input6.addEventListener('change', function(event){
-	     state.tolerance = Number(event.target.value)
-	     this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
-	     this.game.map.circles.pop()
-	     this.game.map.drawCircle(state.latLng, state.tolerance)
+	    state.tolerance = Number(event.target.value)
+	    this.game.map.circles[this.game.map.circles.length-1].setVisible(false)
+	    this.game.map.circles.pop()
+	    this.game.map.drawCircle(state.latLng, state.tolerance)
 	   }.bind(this))
 	    var button = document.createElement('input');
 	    button.type = "submit";
 	    button.name = "enter";
 	    button.id = "enter";
-	
 	    var tolerText  = document.createElement('p');
 	    tolerText.id = "tolerText"
 	    tolerText.innerText = "Slide to set acceptable found area"
@@ -1012,6 +1065,8 @@
 	    form.appendChild(button);
 	    create.appendChild(form);
 	    create.appendChild(button2)  
+	    create.appendChild(home)
+	    this.setTolerance();
 	
 	    var objective = document.getElementById( 'objective' );
 	    objective.addEventListener('submit', function(event){
@@ -1023,94 +1078,97 @@
 	
 	  detectZoom: function(){
 	     google.maps.event.addListener( this.game.map.googleMap, 'zoom_changed', function(){
-	     var tolerance = document.getElementById('tolerance');
-	      if(tolerance){
-	       var min = 0
-	       var max = 0
-	       switch (this.game.map.googleMap.getZoom()){
-	       case 1:
-	       case 2:
-	       case 3:
-	       min = 300000
-	       max = 2500000
-	       break;
-	       case 4:
-	       min = 80000
-	       max = 1500000
-	       break;
-	       case 5:
-	       min = 40000
-	       max = 700000
-	       break;
-	       case 6:
-	       min = 20000
-	       max = 400000
-	       break;
-	       case 7:
-	       min = 7500
-	       max = 190000
-	       break;
-	       case 8:
-	       min = 6000
-	       max = 100000
-	       break;
-	       case 9:
-	       min = 2000
-	       max = 50000
-	       break;
-	       case 10:
-	       min = 1250
-	       max = 28000
-	       break;
-	       case 11:
-	       min = 600
-	       max = 15000
-	       break;
-	       case 12:
-	       min = 300
-	       max = 8000
-	       break;
-	       case 13:
-	       min = 150
-	       max = 4000
-	       break;
-	       case 14:
-	       min = 70
-	       max = 1900
-	       break;
-	       case 15:
-	       min = 30
-	       max = 1000
-	       break;
-	       case 16:
-	       min = 15
-	       max = 500
-	       break;
-	       case 17:
-	       min = 10
-	       max = 230
-	       break;
-	       case 18:
-	       min = 5
-	       max = 130
-	       break;
-	       case 19:
-	       min = 2
-	       max = 60
-	       break;
-	       case 20:
-	       min = 1
-	       max = 25
-	       break;
-	       default:
-	       break; 
-	     }
-	     tolerance.min = min
-	     tolerance.max = max
-	     }
+	     this.setTolerance();
 	   }.bind(this))
 	   },
 	
+	  setTolerance: function(){
+	    var tolerance = document.getElementById('tolerance');
+	     if(tolerance){
+	      var min = 0
+	      var max = 0
+	      switch (this.game.map.googleMap.getZoom()){
+	      case 1:
+	      case 2:
+	      case 3:
+	      min = 300000
+	      max = 2500000
+	      break;
+	      case 4:
+	      min = 80000
+	      max = 1500000
+	      break;
+	      case 5:
+	      min = 40000
+	      max = 700000
+	      break;
+	      case 6:
+	      min = 20000
+	      max = 400000
+	      break;
+	      case 7:
+	      min = 7500
+	      max = 190000
+	      break;
+	      case 8:
+	      min = 6000
+	      max = 100000
+	      break;
+	      case 9:
+	      min = 2000
+	      max = 50000
+	      break;
+	      case 10:
+	      min = 1250
+	      max = 28000
+	      break;
+	      case 11:
+	      min = 600
+	      max = 15000
+	      break;
+	      case 12:
+	      min = 300
+	      max = 8000
+	      break;
+	      case 13:
+	      min = 150
+	      max = 4000
+	      break;
+	      case 14:
+	      min = 70
+	      max = 1900
+	      break;
+	      case 15:
+	      min = 30
+	      max = 1000
+	      break;
+	      case 16:
+	      min = 15
+	      max = 500
+	      break;
+	      case 17:
+	      min = 10
+	      max = 230
+	      break;
+	      case 18:
+	      min = 5
+	      max = 130
+	      break;
+	      case 19:
+	      min = 2
+	      max = 60
+	      break;
+	      case 20:
+	      min = 1
+	      max = 25
+	      break;
+	      default:
+	      break; 
+	    }
+	    tolerance.min = min
+	    tolerance.max = max
+	    }
+	  },
 	
 	  handleSubmit: function(event){
 	   state.clue = event.srcElement[0].value
@@ -1126,22 +1184,39 @@
 	 },
 	
 	 populatePlay: function(){
+	      
 	      this.populatePoints()
 	      var play = document.getElementById('textField');
 	      play.innerHTML="";
-	       var head = document.createElement('h1')
-	       head.innerText = "Hey " + state.player + ", here is the clue: " + this.game.currentObj.clue 
-	       play.appendChild(head) 
+	       var head = document.createElement('h5')
+	       var question = document.createElement('h1')
+	       head.innerHTML = "Hey " + state.player + ", here is your clue:"
+	       question.innerHTML =  this.game.currentObj.clue
 	       var button = document.createElement('button');
-	       button.innerHTML = "Get a Hint"
 	       play.appendChild(button);
+	       play.appendChild(head) 
+	       play.appendChild(document.createElement("br"))
+	       play.appendChild(question)
+	
+	       button.innerHTML = "Get a Hint"
 	       button.addEventListener('click', function(event){
 	         this.showHint()
 	         this.populatePoints()
+	         var stats = document.getElementById('playArea')  
+	         if(this.game.currentObj.hintCount === 0){stats.style.top = "660px"}
+	         if(this.game.currentObj.hintCount === 1){stats.style.top = "625px"}
+	         if(this.game.currentObj.hintCount === 2){stats.style.top = "600px"}
+	         if(this.game.currentObj.hintCount === 3){stats.style.top = "560px"}
 	       }.bind(this))
 	     },
 	
 	     populatePoints: function(){
+	      var home = document.createElement('button');
+	      home.id ="playHome"
+	      home.innerText ="home"
+	      home.addEventListener('click', function(){
+	        this.setCreateOrPlay()
+	      }.bind(this));
 	      var points = document.getElementById('pointsArea');
 	      var score = document.createElement('h3');
 	      var pointInfo = document.createElement('p');
@@ -1153,6 +1228,22 @@
 	      points.appendChild(score);
 	      points.appendChild(pointInfo);
 	      points.appendChild(penaltyInfo);
+	      points.appendChild(document.createElement('br'))
+	      this.getOthersPoints()
+	      points.appendChild(home);
+	    },
+	
+	    getOthersPoints: function(){
+	        var scoreDiv = document.getElementById('scoreDiv')
+	        scoreDiv.innerHTML = ""
+	
+	      this.game.teams.forEach(function(team){
+	        if(team != state.currTeam){
+	        var scoreInfo = document.createElement('p');
+	        scoreInfo.innerHTML= team.name + ": " + team.score() + " points."
+	        scoreDiv.appendChild(scoreInfo)
+	        };
+	      }.bind(this))
 	    },
 	
 	    showHint: function(){
@@ -1215,8 +1306,10 @@
 	    this.penalties += penalty
 	  }, 
 	
-	  getEndGame: function(){
-	
+	  logGame: function(){
+	    this.games.push({score:this.score, points: this.totalPoints, penalties: this.penalties});
+	    this.points = [];
+	    this.penalties = 0;
 	  }
 	
 	}
@@ -1262,12 +1355,14 @@
 	  // returns next hint in the array or a directional hint if all used.  charges penalty for use
 	  giveHint: function(latLng, team){
 	    team.addPenalty(1);
+	    this.showPoints(-1)
 	    this.hintCount +=1;
 	    if(this.hintCount > this.hints.length){
 	      this.directionHint(latLng);
 	    }else{
 	      return this.hints[this.hintCount-1];
 	    }
+	
 	  },
 	
 	  // updates compass with bearing to next clue if not hints left
@@ -1279,7 +1374,7 @@
 	      position:  this.latLng
 	    })
 	    var bearing = google.maps.geometry.spherical.computeHeading(marker1.getPosition(),marker2.getPosition());
-	    console.log(this.latLng, latLng, bearing)
+	    console.log(this.latLng, latLng, bearing);
 	    var compassDisc = document.getElementById("arrow");
 	    compassDisc.style.webkitTransform = "rotate("+ bearing +"deg)";
 	  },
@@ -1287,7 +1382,7 @@
 	  // adds point with info to the given team
 	  addFound: function(team){
 	    this.found.push(team);
-	    var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)}
+	    var point = {clue: this.clue, latLng: this.latLng, value: this.givePoints(team)};
 	    team.addPoints(point);
 	  },
 	
@@ -1296,10 +1391,19 @@
 	    this.found.forEach(function(foundTeam, index){
 	      if(foundTeam.name === team.name){
 	        this.points = 10 - (index * 2);
-	        if(this.points < 0){ this.points = 0}
+	        if(this.points < 0){ this.points = 0};
 	      }
 	  }.bind(this))
+	    this.showPoints(this.points);
 	    return this.points;
+	  },
+	
+	  showPoints: function(pointsToShow){
+	    var points = document.getElementById('points');
+	    console.log(points)
+	    points.innerHTML= "<h1>"+ pointsToShow + " points!</h1>";
+	    points.style.display = "block";
+	    setTimeout(function(){points.style.display = 'none'},2000);
 	  }
 	}
 	
@@ -1316,7 +1420,7 @@
 	
 	  var chart = new Highcharts.Chart({
 	    chart: {
-	      type: "line",
+	      type: "spline",
 	      renderTo: container,
 	      backgroundColor: 'rgba(255, 255, 255, 0.95)'
 	    },
@@ -1329,7 +1433,7 @@
 	          },
 	          minorGridLineWidth: 0,
 	          gridLineWidth: 0,
-	    plotBands: [{ // Light air
+	    plotBands: [{ 
 	     from: 0.5,
 	     to: 2.5,
 	     color: 'rgba(68, 170, 213, 0.1)',

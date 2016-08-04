@@ -1,19 +1,14 @@
-CSS:
-Move hint button and main score to show when play area minimised
+
 Justify text in round tempArea
+add scrolling div to game selector
 add slider line back to create form
 potentially reformat infowindows
-change icon in googlemaps to logo
-change logo
-reformat end of game fields
+move down text fields on create and endgame 
+add other teams to points area
+add back to menu button to:  playarea, createmenu and endgame
+don't save on empty game
+restyle savegame window
 
-JS:
-Get DB working
-populate games in temp area, update on click to instate new game
-set bounds when game is created (lock min zoom at this area)
-add other teams to pointsArea
-add "home" link as buttons are removed
-add buttons to end game for charting, new game and create game
 refactor
 
 presentation

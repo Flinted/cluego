@@ -41,7 +41,6 @@ app.get('/games/:id', function(req, res) {
     })
   })
 
-
   // Save one new game object to mongodb.
   app.post('/games', function(req, res) {
     MongoClient.connect( url, function( err, db ) {
