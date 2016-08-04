@@ -1,11 +1,11 @@
 #lineChart{
-  width: 65%%;
-  height: 70%;
-  margin-top: 10%;
-  margin-left: 27%;
+  width: 75%;
+  height: 100%;
+  margin-top: -20px;
+  margin-left: 25%;
   position: right;
   position: absolute;
-  z-index: 8000;
+  z-index: 250;
 }
 #logoImg{
   position: absolute;
@@ -378,13 +378,14 @@ temp circle
 #temp{
   position: absolute;
   top: 20%;
+  border: 2px dotted black;
   margin-left: 30%;
   width: 40%;
   height: 40vw;
   font-size: 2vw;
   border-radius: 50%;
   z-index: 2;
-  background: #a79c8e;
+  background: rgba(220, 220, 220, 0.9);
 }
 
 
@@ -413,6 +414,7 @@ temp circle
   border-radius: 100%;
   display: inline-block;
   margin: 10px;
+  border: 1px solid #3C3530;
 }
 
 #temp h1{
@@ -429,6 +431,7 @@ temp circle
   margin: 0;
   padding: 0;
   border: 0;
+
 }
 /*
 input {
@@ -470,6 +473,7 @@ compass
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid #3C3530;
+  z-index: 301;
 }
 
 .compass .disc {
@@ -477,7 +481,7 @@ compass
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 3;
+  z-index: 303;
   background: url('http://dev.rvltn.eu/compass/compass.svg');
   width: 150px;
   height: 150px;
@@ -488,7 +492,7 @@ compass
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 4;
+  z-index: 304;
   background: url('http://dev.rvltn.eu/compass/arrow.svg');
   width: 150px;
   height: 150px;
