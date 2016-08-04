@@ -2,7 +2,7 @@
   {
     "featureType": "poi",
     "stylers": [
-      { "visibility": "off" }
+      { "visibility": "on" }
     ]
   },{
     "featureType": "road",
@@ -63,6 +63,7 @@ var Map = function(latLng, zoom){
     center: latLng,
     zoom: zoom,
     minZoom: 2,
+    clickableIcons: false, 
     draggableCursor:'crosshair',
     mapTypeControl: false,
     zoomControlOptions: {
@@ -181,10 +182,10 @@ Map.prototype = {
   // shows circle around marker based on tolerance
   drawCircle: function(latLng, tolerance){ 
     var circle = new google.maps.Circle({
-      strokeColor: 'black',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: 'wheat',
+      strokeColor: '#F16B6F',
+      strokeOpacity: 0.9,
+      strokeWeight: 3,
+      fillColor: '#F16B6F',
       fillOpacity: 0.35,
       geodesic: false,
       clickable: false,

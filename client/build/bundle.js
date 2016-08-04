@@ -115,15 +115,13 @@
 	        if(!south){south = lat}
 	        if(!east ){east = lng}
 	        if(!west ){west = lng}
-	        console.log(lat, lng)
-	        if(lat > north){north = lat + 0.2}
-	        if(lat < south){south = lat - 0.2}
-	        if(lng > east ){east = lng + 0.2}
-	        if(lng < west ){west = lng - 0.2}
+	        if(lat > north){north = lat}
+	        if(lat < south){south = lat}
+	        if(lng > east ){east = lng}
+	        if(lng < west ){west = lng}
 	      })
+	      this.map.googleMap.setZoom(2)
 	      this.map.googleMap.fitBounds({north: north, south: south, east: east, west: west})  
-	      var gameZoom = this.map.googleMap.getZoom()
-	      this.map.googleMap.minZoom = gameZoom - 1
 	    },
 	
 	    // new up a team and add it to the teams array
@@ -164,7 +162,7 @@
 	    },
 	
 	    save: function(gameName){
-	      if(this.objectives == []){return}
+	      if(this.objectives.length === 0){return}
 	      var objectiveStates = {name: gameName, state: []}
 	      this.objectives.forEach(function(objective){
 	        var state = {clue: objective.clue, hints: objective.hints, latLng: objective.latLng, tolerance: objective.tolerance, foundMessage: objective.foundMessage}
@@ -434,7 +432,7 @@
 	  {
 	    "featureType": "poi",
 	    "stylers": [
-	      { "visibility": "off" }
+	      { "visibility": "on" }
 	    ]
 	  },{
 	    "featureType": "road",
@@ -495,6 +493,7 @@
 	    center: latLng,
 	    zoom: zoom,
 	    minZoom: 2,
+	    clickableIcons: false, 
 	    draggableCursor:'crosshair',
 	    mapTypeControl: false,
 	    zoomControlOptions: {
@@ -613,10 +612,10 @@
 	  // shows circle around marker based on tolerance
 	  drawCircle: function(latLng, tolerance){ 
 	    var circle = new google.maps.Circle({
-	      strokeColor: 'black',
-	      strokeOpacity: 0.8,
-	      strokeWeight: 2,
-	      fillColor: 'wheat',
+	      strokeColor: '#F16B6F',
+	      strokeOpacity: 0.9,
+	      strokeWeight: 3,
+	      fillColor: '#F16B6F',
 	      fillOpacity: 0.35,
 	      geodesic: false,
 	      clickable: false,
@@ -790,7 +789,7 @@
 	          if(this.game.currentObj.checkFound(event.latLng)){
 	            this.game.currentObj.addFound(state.currTeam)
 	            var content = this.generateContent();
-	            this.game.map.addFoundWindow(this.game.currentObj.latLng, content)
+	            this.game.map.addFoundWindow(this.game.currentObj.latLng, content);
 	            // this.popFound();
 	            if(this.game.updateCurrent()){
 	              this.endGame()
@@ -1037,8 +1036,8 @@
 	    input5.placeholder = "Message for player when found";
 	    var input6 = document.createElement('input');
 	    input6.type = "range";
-	    input6.min = 1250;
-	    input6.max = 28000;
+	    input6.min = 0;
+	    input6.max = 0;
 	    input6.name = "setTolerance";
 	    input6.id = "tolerance";
 	    input6.value = state.tolerance;
@@ -1067,6 +1066,8 @@
 	    create.appendChild(form);
 	    create.appendChild(button2)  
 	    create.appendChild(home)
+	    this.setTolerance();
+	
 	    var objective = document.getElementById( 'objective' );
 	    objective.addEventListener('submit', function(event){
 	      event.preventDefault();
@@ -1077,94 +1078,97 @@
 	
 	  detectZoom: function(){
 	     google.maps.event.addListener( this.game.map.googleMap, 'zoom_changed', function(){
-	     var tolerance = document.getElementById('tolerance');
-	      if(tolerance){
-	       var min = 0
-	       var max = 0
-	       switch (this.game.map.googleMap.getZoom()){
-	       case 1:
-	       case 2:
-	       case 3:
-	       min = 300000
-	       max = 2500000
-	       break;
-	       case 4:
-	       min = 80000
-	       max = 1500000
-	       break;
-	       case 5:
-	       min = 40000
-	       max = 700000
-	       break;
-	       case 6:
-	       min = 20000
-	       max = 400000
-	       break;
-	       case 7:
-	       min = 7500
-	       max = 190000
-	       break;
-	       case 8:
-	       min = 6000
-	       max = 100000
-	       break;
-	       case 9:
-	       min = 2000
-	       max = 50000
-	       break;
-	       case 10:
-	       min = 1250
-	       max = 28000
-	       break;
-	       case 11:
-	       min = 600
-	       max = 15000
-	       break;
-	       case 12:
-	       min = 300
-	       max = 8000
-	       break;
-	       case 13:
-	       min = 150
-	       max = 4000
-	       break;
-	       case 14:
-	       min = 70
-	       max = 1900
-	       break;
-	       case 15:
-	       min = 30
-	       max = 1000
-	       break;
-	       case 16:
-	       min = 15
-	       max = 500
-	       break;
-	       case 17:
-	       min = 10
-	       max = 230
-	       break;
-	       case 18:
-	       min = 5
-	       max = 130
-	       break;
-	       case 19:
-	       min = 2
-	       max = 60
-	       break;
-	       case 20:
-	       min = 1
-	       max = 25
-	       break;
-	       default:
-	       break; 
-	     }
-	     tolerance.min = min
-	     tolerance.max = max
-	     }
+	     this.setTolerance();
 	   }.bind(this))
 	   },
 	
+	  setTolerance: function(){
+	    var tolerance = document.getElementById('tolerance');
+	     if(tolerance){
+	      var min = 0
+	      var max = 0
+	      switch (this.game.map.googleMap.getZoom()){
+	      case 1:
+	      case 2:
+	      case 3:
+	      min = 300000
+	      max = 2500000
+	      break;
+	      case 4:
+	      min = 80000
+	      max = 1500000
+	      break;
+	      case 5:
+	      min = 40000
+	      max = 700000
+	      break;
+	      case 6:
+	      min = 20000
+	      max = 400000
+	      break;
+	      case 7:
+	      min = 7500
+	      max = 190000
+	      break;
+	      case 8:
+	      min = 6000
+	      max = 100000
+	      break;
+	      case 9:
+	      min = 2000
+	      max = 50000
+	      break;
+	      case 10:
+	      min = 1250
+	      max = 28000
+	      break;
+	      case 11:
+	      min = 600
+	      max = 15000
+	      break;
+	      case 12:
+	      min = 300
+	      max = 8000
+	      break;
+	      case 13:
+	      min = 150
+	      max = 4000
+	      break;
+	      case 14:
+	      min = 70
+	      max = 1900
+	      break;
+	      case 15:
+	      min = 30
+	      max = 1000
+	      break;
+	      case 16:
+	      min = 15
+	      max = 500
+	      break;
+	      case 17:
+	      min = 10
+	      max = 230
+	      break;
+	      case 18:
+	      min = 5
+	      max = 130
+	      break;
+	      case 19:
+	      min = 2
+	      max = 60
+	      break;
+	      case 20:
+	      min = 1
+	      max = 25
+	      break;
+	      default:
+	      break; 
+	    }
+	    tolerance.min = min
+	    tolerance.max = max
+	    }
+	  },
 	
 	  handleSubmit: function(event){
 	   state.clue = event.srcElement[0].value
@@ -1198,6 +1202,11 @@
 	       button.addEventListener('click', function(event){
 	         this.showHint()
 	         this.populatePoints()
+	         var stats = document.getElementById('playArea')  
+	         if(this.game.currentObj.hintCount === 0){stats.style.top = "660px"}
+	         if(this.game.currentObj.hintCount === 1){stats.style.top = "625px"}
+	         if(this.game.currentObj.hintCount === 2){stats.style.top = "600px"}
+	         if(this.game.currentObj.hintCount === 3){stats.style.top = "560px"}
 	       }.bind(this))
 	     },
 	
